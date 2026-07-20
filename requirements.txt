@@ -1,0 +1,21 @@
+# ARGUS Secure Code Review Platform - dependencies
+Django==5.0.6
+
+# Security scanning engines
+bandit==1.9.4
+semgrep==1.170.0
+
+# PDF report generation
+reportlab==4.4.10
+
+# Chart rendering for PDF reports (web dashboard uses Chart.js via CDN)
+matplotlib==3.10.8
+
+# GitHub repository cloning
+GitPython==3.1.52
+
+# PostgreSQL support (optional - only needed if ARGUS_DB_ENGINE=postgres)
+# psycopg2-binary==2.9.9
+
+# Production WSGI server (optional)
+# gunicorn==22.0.0

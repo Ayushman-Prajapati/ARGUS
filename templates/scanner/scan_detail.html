@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-4 gap-2">
+    <div>
+        <h3 class="fw-bold mb-1">{{ project.name }}</h3>
+        <div class="text-muted small">
+            {{ project.get_source_type_display }} &middot;
+            {{ project.files_scanned }} file(s) scanned &middot;
+            {% if project.duration_seconds %}{{ project.duration_seconds }}s{% endif %} &middot;
+            {{ project.created_at|date:"M d, Y H:i" }}
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <form method="post" action="{% url 'scanner:rescan' project.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-clockwise"></i> Re-scan</button>
+        </form>
+        <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus btn-sm">
+            <i class="bi bi-file-earmark-pdf"></i> Full PDF Report
+        </a>
+        <a href="{% url 'reports:generate_report' project.id %}?appendix=0" class="btn btn-outline-light btn-sm">
+            Summary Only
+        </a>
+    </div>
+</div>
+
+{% if project.status == 'failed' %}
+    <div class="alert alert-danger">Scan failed: {{ project.error_message }}</div>
+{% elif project.status != 'completed' %}
+    <div class="alert alert-warning">Scan is {{ project.get_status_display }}...</div>
+{% endif %}
+
+{% if project.error_message and project.status == 'completed' %}
+    <div class="alert alert-warning small"><i class="bi bi-exclamation-triangle"></i> {{ project.error_message|linebreaksbr }}</div>
+{% endif %}
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="argus-panel text-center h-100 d-flex flex-column justify-content-center">
+            <div class="risk-gauge" style="border-color: {% if risk_score >= 70 %}var(--argus-critical){% elif risk_score >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">
+                <div class="risk-value">{{ risk_score }}</div>
+                <div class="risk-max">/ 100</div>
+            </div>
+            <div class="text-muted small mt-3">Overall Risk Score</div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="argus-panel chart-card h-100">
+            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY SEVERITY</div>
+            <canvas id="severityChart"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="argus-panel chart-card h-100">
+            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY ENGINE</div>
+            <canvas id="sourceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="argus-card">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="fw-bold mb-0">Findings ({{ project.total_findings }})</h5>
+        <div>
+            <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill {% if not active_severity %}active{% endif %}">All severities</a>
+            {% for sev, label in project.findings.model.SEVERITY_CHOICES %}
+                <a href="?severity={{ sev }}{% if active_source %}&source={{ active_source }}{% endif %}" class="filter-pill {% if active_severity == sev %}active{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="mb-3">
+        <a href="?{% if active_severity %}severity={{ active_severity }}{% endif %}" class="filter-pill {% if not active_source %}active{% endif %}">All engines</a>
+        {% for src, label in project.findings.model.SOURCE_CHOICES %}
+            <a href="?source={{ src }}{% if active_severity %}&severity={{ active_severity }}{% endif %}" class="filter-pill {% if active_source == src %}active{% endif %}">{{ label }}</a>
+        {% endfor %}
+    </div>
+
+    {% for f in findings %}
+        <div class="finding-row">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                    <span class="badge severity-badge badge-{{ f.severity }}">{{ f.get_severity_display|upper }}</span>
+                    <span class="badge bg-secondary severity-badge">{{ f.get_source_display }}</span>
+                    {% if f.cwe_id %}<span class="badge bg-dark severity-badge">{{ f.cwe_id }}</span>{% endif %}
+                    <div class="fw-semibold mt-2">{{ f.title }}</div>
+                    <div class="text-muted small font-monospace">{{ f.file_path }}:{{ f.line_number }}</div>
+                </div>
+            </div>
+            {% if f.description %}<p class="mt-2 mb-2 small">{{ f.description }}</p>{% endif %}
+            {% if f.code_snippet %}<div class="finding-code">{{ f.code_snippet }}</div>{% endif %}
+            {% if f.remediation %}
+                <div class="mt-2 small"><i class="bi bi-wrench-adjustable text-primary"></i> <strong>Remediation:</strong> {{ f.remediation }}</div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="text-muted text-center py-4 mb-0">No findings match the current filters.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+const severityCounts = {{ severity_counts_json|safe }};
+const sourceCounts = {{ source_counts_json|safe }};
+
+new Chart(document.getElementById('severityChart'), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(severityCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+        datasets: [{
+            data: Object.values(severityCounts),
+            backgroundColor: ['#ef4444', '#f97316', '#06b6d4', '#6b7280', '#94a3b8'],
+            borderRadius: 6,
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { ticks: { color: '#8b96ad' }, grid: { display: false } },
+            y: { ticks: { color: '#8b96ad', precision: 0 }, grid: { color: '#232d45' } }
+        }
+    }
+});
+
+new Chart(document.getElementById('sourceChart'), {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(sourceCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+        datasets: [{
+            data: Object.values(sourceCounts),
+            backgroundColor: ['#4c6ef5', '#37b24d', '#f59f00', '#adb5bd'],
+        }]
+    },
+    options: {
+        plugins: { legend: { position: 'bottom', labels: { color: '#8b96ad' } } }
+    }
+});
+</script>
+{% endblock %}

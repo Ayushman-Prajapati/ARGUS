@@ -1,0 +1,207 @@
+:root {
+    --argus-bg: #0a0e1a;
+    --argus-bg-elevated: #101627;
+    --argus-bg-card: #131b2e;
+    --argus-border: #232d45;
+    --argus-accent: #3b82f6;
+    --argus-accent-soft: #1d4ed8;
+    --argus-text: #e2e8f0;
+    --argus-text-muted: #8b96ad;
+    --argus-critical: #ef4444;
+    --argus-high: #f97316;
+    --argus-medium: #06b6d4;
+    --argus-low: #6b7280;
+    --argus-info: #94a3b8;
+    --argus-success: #22c55e;
+    --font-display: "Inter", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+body {
+    background: radial-gradient(circle at 15% 0%, #0f1830 0%, var(--argus-bg) 45%);
+    color: var(--argus-text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+}
+
+.argus-navbar {
+    background: rgba(10, 14, 26, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--argus-border);
+}
+
+.argus-brand {
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: 0.5px;
+    color: var(--argus-text) !important;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+.argus-brand i { color: var(--argus-accent); }
+.argus-brand-sub {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--argus-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.navbar-nav .nav-link {
+    color: var(--argus-text-muted) !important;
+    font-weight: 500;
+    font-size: 0.92rem;
+    transition: color 0.15s ease;
+}
+.navbar-nav .nav-link:hover { color: var(--argus-text) !important; }
+
+.argus-main { max-width: 1320px; margin: 0 auto; }
+
+.argus-card {
+    background: linear-gradient(180deg, var(--argus-bg-card), var(--argus-bg-elevated));
+    border: 1px solid var(--argus-border);
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+
+.argus-hero {
+    padding: 3.5rem 0 2.5rem;
+    text-align: center;
+}
+.argus-hero h1 {
+    font-weight: 800;
+    font-size: 2.75rem;
+    background: linear-gradient(135deg, #ffffff, var(--argus-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -1px;
+}
+.argus-hero p { color: var(--argus-text-muted); font-size: 1.1rem; max-width: 640px; margin: 0.75rem auto 0; }
+
+.argus-stat-card {
+    background: var(--argus-bg-card);
+    border: 1px solid var(--argus-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+}
+.argus-stat-card .stat-value { font-size: 2.1rem; font-weight: 800; font-family: var(--font-mono); }
+.argus-stat-card .stat-label { color: var(--argus-text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+.argus-method-card {
+    background: var(--argus-bg-card);
+    border: 1px solid var(--argus-border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    height: 100%;
+    text-decoration: none;
+    color: var(--argus-text);
+    display: block;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.argus-method-card:hover {
+    border-color: var(--argus-accent);
+    transform: translateY(-3px);
+    color: var(--argus-text);
+}
+.argus-method-card .method-icon {
+    font-size: 1.9rem;
+    color: var(--argus-accent);
+    margin-bottom: 0.75rem;
+}
+.argus-method-card h5 { font-weight: 700; margin-bottom: 0.4rem; }
+.argus-method-card p { color: var(--argus-text-muted); font-size: 0.88rem; margin-bottom: 0; }
+
+.argus-panel {
+    background: var(--argus-bg-card);
+    border: 1px solid var(--argus-border);
+    border-radius: 14px;
+    padding: 1.75rem;
+}
+
+.form-control, .form-select {
+    background-color: var(--argus-bg-elevated);
+    border: 1px solid var(--argus-border);
+    color: var(--argus-text);
+}
+.form-control:focus, .form-select:focus {
+    background-color: var(--argus-bg-elevated);
+    color: var(--argus-text);
+    border-color: var(--argus-accent);
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2);
+}
+.form-check-input { background-color: var(--argus-bg-elevated); border-color: var(--argus-border); }
+.form-check-input:checked { background-color: var(--argus-accent); border-color: var(--argus-accent); }
+label { color: var(--argus-text-muted); font-weight: 500; font-size: 0.9rem; }
+
+.code-textarea { font-family: var(--font-mono); font-size: 0.85rem; }
+
+.btn-argus {
+    background: linear-gradient(135deg, var(--argus-accent), var(--argus-accent-soft));
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    transition: filter 0.15s ease;
+}
+.btn-argus:hover { filter: brightness(1.12); color: white; }
+
+.severity-badge { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.5px; padding: 0.3em 0.6em; }
+
+.badge-critical { background: var(--argus-critical); color: white; }
+.badge-high { background: var(--argus-high); color: #1a1200; }
+.badge-medium { background: var(--argus-medium); color: #041a1e; }
+.badge-low { background: var(--argus-low); color: white; }
+.badge-info { background: var(--argus-info); color: #0a0e1a; }
+
+.risk-gauge {
+    width: 130px; height: 130px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    border: 6px solid var(--argus-border);
+    font-family: var(--font-mono);
+    margin: 0 auto;
+}
+.risk-gauge .risk-value { font-size: 1.9rem; font-weight: 800; }
+.risk-gauge .risk-max { font-size: 0.7rem; color: var(--argus-text-muted); }
+
+.finding-row { border-bottom: 1px solid var(--argus-border); padding: 1rem 0; }
+.finding-row:last-child { border-bottom: none; }
+.finding-code {
+    background: #060a14;
+    border: 1px solid var(--argus-border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+.table { color: var(--argus-text); }
+.table > :not(caption) > * > * { background: transparent; border-color: var(--argus-border); }
+
+.argus-footer { color: var(--argus-text-muted); font-size: 0.8rem; border-top: 1px solid var(--argus-border); margin-top: 3rem; }
+
+.argus-fade-in { opacity: 0; }
+
+a { color: var(--argus-accent); }
+
+.filter-pill {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--argus-border);
+    color: var(--argus-text-muted);
+    font-size: 0.82rem;
+    text-decoration: none;
+    margin-right: 0.4rem;
+    margin-bottom: 0.4rem;
+}
+.filter-pill.active { background: var(--argus-accent); color: white; border-color: var(--argus-accent); }
+.filter-pill:hover { color: var(--argus-text); text-decoration: none; }
+
+.chart-card canvas { max-height: 280px; }

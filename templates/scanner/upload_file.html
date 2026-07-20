@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Upload File{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="argus-panel">
+            <h4 class="fw-bold mb-1"><i class="bi bi-file-earmark-code text-primary"></i> Upload a Python File</h4>
+            <p class="text-muted mb-4">Scan a single .py file for security issues.</p>
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label">{{ form.file.label }}</label>
+                    {{ form.file }}
+                    {% if form.file.errors %}<div class="text-danger small mt-1">{{ form.file.errors }}</div>{% endif %}
+                </div>
+                {% include "scanner/_scan_options.html" %}
+                <button type="submit" class="btn btn-argus w-100">
+                    <i class="bi bi-play-fill"></i> Run Scan
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

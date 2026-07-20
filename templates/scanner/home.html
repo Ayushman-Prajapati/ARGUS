@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="argus-hero">
+    <h1>Find vulnerabilities before attackers do</h1>
+    <p>ARGUS combines Bandit, Semgrep, and a custom Python AST engine to scan your code
+       for security issues &mdash; then turns the results into clear dashboards and
+       audit-ready PDF reports.</p>
+</div>
+
+<div class="row g-3 mb-5">
+    <div class="col-6 col-md-3">
+        <div class="argus-stat-card">
+            <div class="stat-value">{{ stats.total_scans }}</div>
+            <div class="stat-label">Scans Run</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="argus-stat-card">
+            <div class="stat-value">{{ stats.total_findings }}</div>
+            <div class="stat-label">Total Findings</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="argus-stat-card">
+            <div class="stat-value" style="color:var(--argus-critical)">{{ stats.critical_findings }}</div>
+            <div class="stat-label">Critical Issues</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="argus-stat-card">
+            <div class="stat-value" style="color:var(--argus-success)">3</div>
+            <div class="stat-label">Scan Engines</div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3" style="color: var(--argus-text-muted); font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.85rem;">
+    Start a new scan
+</h5>
+<div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+        <a href="{% url 'scanner:upload_file' %}" class="argus-method-card">
+            <div class="method-icon"><i class="bi bi-file-earmark-code"></i></div>
+            <h5>Upload a File</h5>
+            <p>Scan a single .py file for quick, focused analysis.</p>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <a href="{% url 'scanner:upload_zip' %}" class="argus-method-card">
+            <div class="method-icon"><i class="bi bi-file-earmark-zip"></i></div>
+            <h5>Upload a Project</h5>
+            <p>Upload a .zip archive to scan an entire codebase at once.</p>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <a href="{% url 'scanner:paste_code' %}" class="argus-method-card">
+            <div class="method-icon"><i class="bi bi-clipboard-code"></i></div>
+            <h5>Paste Code</h5>
+            <p>Paste a snippet directly into the browser &mdash; no file needed.</p>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <a href="{% url 'scanner:scan_github' %}" class="argus-method-card">
+            <div class="method-icon"><i class="bi bi-github"></i></div>
+            <h5>GitHub Repository</h5>
+            <p>Point ARGUS at a public repo URL and scan it directly.</p>
+        </a>
+    </div>
+</div>
+
+{% if recent_scans %}
+<h5 class="mb-3" style="color: var(--argus-text-muted); font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.85rem;">
+    Recent scans
+</h5>
+<div class="argus-card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr style="color: var(--argus-text-muted); font-size:0.8rem; text-transform:uppercase;">
+                    <th>Name</th><th>Source</th><th>Status</th><th>Findings</th><th>Created</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for scan in recent_scans %}
+                <tr>
+                    <td class="fw-semibold">{{ scan.name|truncatechars:40 }}</td>
+                    <td><span class="text-muted">{{ scan.get_source_type_display }}</span></td>
+                    <td>
+                        {% if scan.status == 'completed' %}<span class="badge bg-success">Completed</span>
+                        {% elif scan.status == 'failed' %}<span class="badge bg-danger">Failed</span>
+                        {% elif scan.status == 'running' %}<span class="badge bg-warning text-dark">Running</span>
+                        {% else %}<span class="badge bg-secondary">Pending</span>{% endif %}
+                    </td>
+                    <td>{{ scan.total_findings }}</td>
+                    <td class="text-muted">{{ scan.created_at|date:"M d, H:i" }}</td>
+                    <td><a href="{% url 'scanner:scan_detail' scan.id %}" class="btn btn-sm btn-outline-light">View</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

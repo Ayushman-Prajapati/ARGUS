@@ -1,0 +1,15 @@
+<div class="mb-4">
+    <label class="form-label d-block mb-2">Scan engines</label>
+    <div class="form-check">
+        {{ form.run_bandit }}
+        <label class="form-check-label" for="{{ form.run_bandit.id_for_label }}">{{ form.run_bandit.label }}</label>
+    </div>
+    <div class="form-check">
+        {{ form.run_semgrep }}
+        <label class="form-check-label" for="{{ form.run_semgrep.id_for_label }}">{{ form.run_semgrep.label }}</label>
+    </div>
+    <div class="form-check">
+        {{ form.run_ast_checks }}
+        <label class="form-check-label" for="{{ form.run_ast_checks.id_for_label }}">{{ form.run_ast_checks.label }}</label>
+    </div>
+</div>

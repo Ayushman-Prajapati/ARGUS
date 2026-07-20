@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}All Scans{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">All Scans</h3>
+    <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus"><i class="bi bi-plus-lg"></i> New Scan</a>
+</div>
+
+<div class="argus-card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr style="color: var(--argus-text-muted); font-size:0.8rem; text-transform:uppercase;">
+                    <th>Name</th><th>Source</th><th>Status</th><th>Risk</th><th>Findings</th><th>Created</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for scan in projects %}
+                <tr>
+                    <td class="fw-semibold">{{ scan.name|truncatechars:45 }}</td>
+                    <td class="text-muted">{{ scan.get_source_type_display }}</td>
+                    <td>
+                        {% if scan.status == 'completed' %}<span class="badge bg-success">Completed</span>
+                        {% elif scan.status == 'failed' %}<span class="badge bg-danger">Failed</span>
+                        {% elif scan.status == 'running' %}<span class="badge bg-warning text-dark">Running</span>
+                        {% else %}<span class="badge bg-secondary">Pending</span>{% endif %}
+                    </td>
+                    <td><span class="font-monospace">{{ scan.risk_score }}</span>/100</td>
+                    <td>{{ scan.total_findings }}</td>
+                    <td class="text-muted">{{ scan.created_at|date:"M d, Y H:i" }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'scanner:scan_detail' scan.id %}" class="btn btn-sm btn-outline-light">View</a>
+                        <form method="post" action="{% url 'scanner:delete_scan' scan.id %}" class="d-inline" onsubmit="return confirm('Delete this scan and all its findings?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No scans yet. <a href="{% url 'scanner:upload_file' %}">Run your first scan</a>.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

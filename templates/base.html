@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ARGUS{% endblock %} · Secure Code Review Platform</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg argus-navbar sticky-top">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand argus-brand" href="{% url 'scanner:home' %}">
+            <i class="bi bi-shield-lock-fill"></i> ARGUS
+            <span class="argus-brand-sub">Secure Code Review</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{% url 'scanner:home' %}"><i class="bi bi-house-door"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'scanner:dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'scanner:scan_list' %}"><i class="bi bi-list-check"></i> Scans</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-plus-circle"></i> New Scan
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="{% url 'scanner:upload_file' %}"><i class="bi bi-file-earmark-code me-2"></i>Upload .py file</a></li>
+                        <li><a class="dropdown-item" href="{% url 'scanner:upload_zip' %}"><i class="bi bi-file-earmark-zip me-2"></i>Upload .zip project</a></li>
+                        <li><a class="dropdown-item" href="{% url 'scanner:paste_code' %}"><i class="bi bi-clipboard-code me-2"></i>Paste code</a></li>
+                        <li><a class="dropdown-item" href="{% url 'scanner:scan_github' %}"><i class="bi bi-github me-2"></i>GitHub repository</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="container-fluid px-4 py-4 argus-main">
+    {% if messages %}
+        <div class="argus-messages mb-3">
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show argus-fade-in" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="argus-footer text-center py-4">
+    <small>ARGUS Secure Code Review Platform &middot; Bandit + Semgrep + Python AST &middot; Built with Django</small>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js"></script>
+<script src="{% static 'js/animations.js' %}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>
