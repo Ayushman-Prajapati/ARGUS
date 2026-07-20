@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 75vh;">
+    <div class="col-md-5 col-lg-4">
+        <div class="cyber-panel p-4 p-md-5">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="bi bi-shield-check" style="font-size: 2.5rem; color: var(--neon-green);"></i>
+                </div>
+                <h2 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Welcome Back</h2>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">Sign in to access your secure dashboard</p>
+            </div>
+
+            <!-- Login Form -->
+            <form method="post" id="login-form" novalidate>
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger py-2 px-3" style="font-size: 0.82rem; border-radius: 8px; background: rgba(244, 63, 94, 0.15); border-color: var(--neon-pink); color: var(--argus-text);">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Invalid username or password. Please try again.
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label small">
+                        <i class="bi bi-person me-1"></i> Username
+                    </label>
+                    {{ form.username }}
+                </div>
+
+                <div class="mb-4">
+                    <label for="{{ form.password.id_for_label }}" class="form-label small">
+                        <i class="bi bi-lock me-1"></i> Password
+                    </label>
+                    {{ form.password }}
+                </div>
+
+                <button type="submit" class="btn btn-argus-primary w-100 py-2 mb-3" id="login-submit-btn">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="d-flex align-items-center my-3">
+                <hr class="flex-grow-1" style="border-color: var(--argus-border);">
+                <span class="px-3 text-muted" style="font-size: 0.78rem;">OR</span>
+                <hr class="flex-grow-1" style="border-color: var(--argus-border);">
+            </div>
+
+            <!-- Register Link -->
+            <div class="text-center">
+                <p class="mb-0 text-muted" style="font-size: 0.88rem;">
+                    Don't have an account?
+                    <a href="{% url 'accounts:register' %}" class="fw-semibold" style="color: var(--neon-cyan); text-decoration: none;">
+                        Create One <i class="bi bi-arrow-right-short"></i>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

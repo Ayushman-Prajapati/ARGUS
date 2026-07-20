@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "scanner.apps.ScannerConfig",
     "reports.apps.ReportsConfig",
+    "accounts.apps.AccountsConfig",
 ]
 
 MIDDLEWARE = [
@@ -118,3 +119,10 @@ ARGUS_SCAN_TIMEOUT = int(os.environ.get("ARGUS_SCAN_TIMEOUT", 120))
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
+
+# --------------------------------------------------------------------------
+# Authentication
+# --------------------------------------------------------------------------
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
