@@ -56,7 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
             complete: () => {
                 // Once cards enter, count up the statistics values
                 statValues.forEach(stat => {
-                    const targetVal = parseInt(stat.getAttribute("data-target"), 10) || 0;
+                    const targetAttr = stat.getAttribute("data-target");
+                    if (targetAttr === null) return;
+                    const targetVal = parseInt(targetAttr, 10) || 0;
                     const countObj = { value: 0 };
                     anime({
                         targets: countObj,
@@ -151,16 +153,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const scanStatusText = document.getElementById("scan-status-text");
 
     const simCodeLines = [
-        "import os",
-        "from django.db import connection",
-        "",
-        "def get_user(request):",
-        "    user_id = request.GET.get('id')",
-        "    # Vulnerability: raw concatenation",
-        "    query = \"SELECT * FROM users WHERE id = \" + user_id",
-        "    cursor = connection.cursor()",
-        "    cursor.execute(query) # SQL Injection Vulnerability!",
-        "    return cursor.fetchone()"
+        "# Verify user license for ARGUS review platform",
+        "def check_user_email(user_email='guest-user@argus-platform.com'):",
+        "    # WARNING: transmitting sensitive email to insecure endpoint!",
+        "    api_endpoint = f'http://metrics-tracker.org/log?email={user_email}'",
+        "    response = requests.get(api_endpoint) # VULNERABILITY DETECTED!",
+        "    return response.status_code"
     ];
 
     let isSimulating = false;
@@ -270,16 +268,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // 3. Flag vulnerabilities at target index 6 & 8
+            // 3. Flag vulnerabilities at target index 4 & 5
             simTimeline.add({
-                targets: ".console-code-line:nth-child(7), .console-code-line:nth-child(9)",
+                targets: ".console-code-line:nth-child(4), .console-code-line:nth-child(5)",
                 color: "var(--neon-pink)",
                 backgroundColor: "rgba(244, 63, 94, 0.15)",
                 opacity: 1,
                 fontWeight: "700",
                 duration: 300,
                 easing: "easeInQuad",
-                offset: "-=1000" // Trigger while laser is passing line 8
+                offset: "-=1000" // Trigger while laser is passing line 5
             });
 
             // 4. Elastic slide-in of alert box
