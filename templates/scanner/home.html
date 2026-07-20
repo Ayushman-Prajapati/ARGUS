@@ -1,41 +1,85 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<div class="argus-hero">
-    <h1>Find vulnerabilities before attackers do</h1>
-    <p>ARGUS combines Bandit, Semgrep, and a custom Python AST engine to scan your code
-       for security issues &mdash; then turns the results into clear dashboards and
-       audit-ready PDF reports.</p>
+<div class="row align-items-center mb-5 g-5 pt-4">
+    <!-- Left Hero Column -->
+    <div class="col-lg-6 argus-hero text-lg-start text-center">
+        <h1>Find vulnerabilities before attackers do</h1>
+        <p class="lead mb-4 text-muted">
+            ARGUS combines Bandit, Semgrep, and a custom Python AST engine to scan your code
+            for security issues &mdash; then turns the results into clear dashboards and
+            audit-ready PDF reports.
+        </p>
+        <div class="d-flex flex-wrap gap-3 justify-content-lg-start justify-content-center">
+            <button id="trigger-scan-btn" class="btn-argus-primary btn-lg">
+                <i class="bi bi-play-fill me-1"></i> Trigger Scan Demo
+            </button>
+            <a href="#start-scan-section" class="btn-argus-neon btn-lg text-decoration-none">
+                <i class="bi bi-chevron-down me-1"></i> Start New Scan
+            </a>
+        </div>
+    </div>
+    
+    <!-- Right Stagger Grid Column -->
+    <div class="col-lg-6">
+        <div class="grid-visualizer-container cyber-panel">
+            <!-- 14x10 grid dynamically populated by animations.js -->
+            <div id="stagger-grid" class="stagger-grid"></div>
+            
+            <!-- Scan console overlay for simulation -->
+            <div id="scan-console" class="scan-console-overlay">
+                <div class="console-header">
+                    <span><i class="bi bi-terminal me-1 text-success"></i> ARGUS SIMULATOR</span>
+                    <span id="scan-status-text">STATUS: ACTIVE_MONITOR</span>
+                </div>
+                <div class="console-body">
+                    <div id="laser-line" class="laser-sweep"></div>
+                    <div id="console-code" class="d-flex flex-column h-100 justify-content-center">
+                        <!-- Filled by animations.js during demo -->
+                    </div>
+                    
+                    <!-- Sim Alert Box -->
+                    <div id="sim-alert" class="sim-alert-box">
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+                        <div>
+                            <div class="fw-bold text-white" style="font-size:0.75rem;">SQL INJECTION DETECTED</div>
+                            <div class="text-muted" style="font-size:0.65rem;">Severity: Critical | Line: 8</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row g-3 mb-5">
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value">{{ stats.total_scans }}</div>
+            <div class="stat-value" data-target="{{ stats.total_scans }}">0</div>
             <div class="stat-label">Scans Run</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value">{{ stats.total_findings }}</div>
+            <div class="stat-value" data-target="{{ stats.total_findings }}">0</div>
             <div class="stat-label">Total Findings</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value" style="color:var(--argus-critical)">{{ stats.critical_findings }}</div>
+            <div class="stat-value" data-target="{{ stats.critical_findings }}" style="color:var(--argus-critical)">0</div>
             <div class="stat-label">Critical Issues</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value" style="color:var(--argus-success)">3</div>
+            <div class="stat-value" data-target="3" style="color:var(--argus-success)">0</div>
             <div class="stat-label">Scan Engines</div>
         </div>
     </div>
 </div>
 
-<h5 class="mb-3" style="color: var(--argus-text-muted); font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.85rem;">
+<h5 id="start-scan-section" class="mb-3" style="color: var(--argus-text-muted); font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.85rem;">
     Start a new scan
 </h5>
 <div class="row g-4 mb-5">

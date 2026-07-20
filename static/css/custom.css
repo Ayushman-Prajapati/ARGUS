@@ -205,3 +205,249 @@ a { color: var(--argus-accent); }
 .filter-pill:hover { color: var(--argus-text); text-decoration: none; }
 
 .chart-card canvas { max-height: 280px; }
+
+/* --- CYBER ANIMATION & INTERACTIVE GRID SYSTEMS --- */
+
+:root {
+    --neon-purple: #d946ef;
+    --neon-blue: #3b82f6;
+    --neon-cyan: #06b6d4;
+    --neon-green: #10b981;
+    --neon-pink: #f43f5e;
+    --neon-glow: rgba(59, 130, 246, 0.15);
+    --glass-bg: rgba(19, 27, 46, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Redefined body gradient for higher premium feel */
+body {
+    background: radial-gradient(circle at 10% 20%, #111827 0%, #070a13 50%, #020408 100%);
+}
+
+/* Glassmorphic Cyber Panels */
+.cyber-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.cyber-panel:hover {
+    border-color: rgba(59, 130, 246, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), 0 0 15px rgba(59, 130, 246, 0.1);
+}
+
+/* Custom header typography glow */
+.argus-hero h1 {
+    font-weight: 800;
+    font-size: 3.25rem;
+    background: linear-gradient(135deg, #ffffff 20%, var(--neon-cyan) 60%, var(--neon-purple) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -1.5px;
+    text-shadow: 0 0 30px rgba(6, 182, 212, 0.1);
+}
+
+/* Interactive Grid Stagger Canvas */
+.grid-visualizer-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: rgba(8, 12, 22, 0.6);
+    border: 1px solid var(--argus-border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.stagger-grid {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 5px;
+    width: 100%;
+    height: 100%;
+}
+
+.grid-cell {
+    background-color: rgba(35, 45, 69, 0.4);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.grid-cell:hover {
+    background-color: var(--neon-cyan);
+    box-shadow: 0 0 12px var(--neon-cyan);
+    transform: scale(1.15);
+}
+
+/* Simulated Scan Console Overlay */
+.scan-console-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 14, 26, 0.95);
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.scan-console-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--argus-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    color: var(--argus-text-muted);
+}
+
+.console-body {
+    flex: 1;
+    position: relative;
+    background: #040711;
+    border: 1px solid var(--argus-border);
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #a7f3d0; /* Soft terminal green */
+    overflow: hidden;
+}
+
+.laser-sweep {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+    box-shadow: 0 0 12px var(--neon-green), 0 0 4px var(--neon-green);
+    top: -5px;
+    z-index: 5;
+    opacity: 0;
+}
+
+.console-code-line {
+    white-space: pre-wrap;
+    opacity: 0.3;
+    transition: opacity 0.2s, color 0.2s;
+    margin-bottom: 0.25rem;
+}
+
+.console-code-line.active {
+    opacity: 1;
+    color: #ffffff;
+}
+
+.console-code-line.vuln {
+    opacity: 1;
+    color: var(--neon-pink);
+    background: rgba(244, 63, 94, 0.15);
+    border-left: 2px solid var(--neon-pink);
+    padding-left: 4px;
+}
+
+.sim-alert-box {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(19, 27, 46, 0.95);
+    border: 1px solid var(--neon-pink);
+    border-radius: 8px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.3);
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+}
+
+/* Stat Cards & Counters */
+.argus-stat-card {
+    position: relative;
+    background: linear-gradient(135deg, var(--argus-bg-card) 0%, var(--argus-bg-elevated) 100%);
+    border: 1px solid var(--argus-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    overflow: hidden;
+}
+.argus-stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.argus-stat-card:hover::after {
+    transform: scaleX(1);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 40%, var(--argus-text-muted) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.25rem;
+}
+
+/* Neon buttons */
+.btn-argus-neon {
+    background: transparent;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
+    transition: all 0.3s ease;
+}
+.btn-argus-neon:hover {
+    background: var(--neon-cyan);
+    color: #040711;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+.btn-argus-primary {
+    background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(217, 70, 239, 0.2);
+    transition: all 0.3s ease;
+}
+.btn-argus-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(217, 70, 239, 0.4);
+    color: white;
+}
+
