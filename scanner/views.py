@@ -1,7 +1,7 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
@@ -10,7 +10,6 @@ from .forms import FileUploadForm, GithubRepoForm, PasteCodeForm, ZipUploadForm
 from .models import Finding, ScanProject
 
 
-@login_required
 def home(request):
     recent_scans = ScanProject.objects.all()[:8]
     stats = {
@@ -37,7 +36,6 @@ def _run_and_redirect(request, project: ScanProject):
     return redirect("scanner:scan_detail", project_id=project.id)
 
 
-@login_required
 @require_http_methods(["GET", "POST"])
 def upload_file(request):
     if request.method == "POST":
@@ -66,7 +64,6 @@ def upload_file(request):
     return render(request, "scanner/upload_file.html", {"form": form})
 
 
-@login_required
 @require_http_methods(["GET", "POST"])
 def upload_zip(request):
     if request.method == "POST":
@@ -95,7 +92,6 @@ def upload_zip(request):
     return render(request, "scanner/upload_zip.html", {"form": form})
 
 
-@login_required
 @require_http_methods(["GET", "POST"])
 def paste_code(request):
     if request.method == "POST":
@@ -119,7 +115,6 @@ def paste_code(request):
     return render(request, "scanner/paste_code.html", {"form": form})
 
 
-@login_required
 @require_http_methods(["GET", "POST"])
 def scan_github(request):
     if request.method == "POST":
@@ -149,13 +144,11 @@ def scan_github(request):
     return render(request, "scanner/scan_github.html", {"form": form})
 
 
-@login_required
 def scan_list(request):
     projects = ScanProject.objects.all()
     return render(request, "scanner/scan_list.html", {"projects": projects})
 
 
-@login_required
 def scan_detail(request, project_id):
     project = get_object_or_404(ScanProject, id=project_id)
     findings = project.findings.all()
@@ -167,9 +160,20 @@ def scan_detail(request, project_id):
     if source_filter:
         findings = findings.filter(source=source_filter)
 
+    paginator = Paginator(findings, 25)
+    page_number = request.GET.get("page", 1)
+    findings_page = paginator.get_page(page_number)
+
+    # Preserve active filters when building pagination links
+    querydict = request.GET.copy()
+    querydict.pop("page", None)
+    filter_qs = querydict.urlencode()
+
     context = {
         "project": project,
-        "findings": findings,
+        "findings_page": findings_page,
+        "filtered_count": paginator.count,
+        "filter_qs": filter_qs,
         "severity_counts": project.severity_counts(),
         "source_counts": project.source_counts(),
         "severity_counts_json": json.dumps(project.severity_counts()),
@@ -181,7 +185,6 @@ def scan_detail(request, project_id):
     return render(request, "scanner/scan_detail.html", context)
 
 
-@login_required
 def dashboard(request):
     projects = ScanProject.objects.filter(status="completed")
     total_findings = Finding.objects.filter(project__in=projects)
@@ -207,7 +210,6 @@ def dashboard(request):
     return render(request, "scanner/dashboard.html", context)
 
 
-@login_required
 @require_http_methods(["POST"])
 def rescan(request, project_id):
     project = get_object_or_404(ScanProject, id=project_id)
@@ -215,7 +217,6 @@ def rescan(request, project_id):
     return _run_and_redirect(request, project)
 
 
-@login_required
 @require_http_methods(["POST"])
 def delete_scan(request, project_id):
     project = get_object_or_404(ScanProject, id=project_id)

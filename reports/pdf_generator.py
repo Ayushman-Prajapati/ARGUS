@@ -211,16 +211,32 @@ def _top_findings_table(story, project, styles):
     story.append(PageBreak())
 
 
+MAX_APPENDIX_FINDINGS = 400
+
+
 def _technical_appendix(story, project, styles):
     story.append(Paragraph("Technical Appendix", styles["ArgusH2"]))
     story.append(Paragraph(
         "Full detail for every finding identified during this scan, grouped by file.",
         styles["ArgusBody"],
     ))
+
+    total = project.total_findings
+    all_findings = list(project.findings.all().order_by("severity", "file_path", "line_number"))
+    truncated = total > MAX_APPENDIX_FINDINGS
+    if truncated:
+        all_findings = all_findings[:MAX_APPENDIX_FINDINGS]
+        story.append(Paragraph(
+            f"<b>Note:</b> this scan produced {total} findings. To keep the report a "
+            f"manageable size, this appendix lists the {MAX_APPENDIX_FINDINGS} highest-severity "
+            f"findings. Use the web dashboard's filters to review the remaining "
+            f"{total - MAX_APPENDIX_FINDINGS}.",
+            styles["ArgusBody"],
+        ))
     story.append(Spacer(1, 8))
 
     findings_by_file = {}
-    for f in project.findings.all():
+    for f in all_findings:
         findings_by_file.setdefault(f.file_path, []).append(f)
 
     for file_path, findings in sorted(findings_by_file.items()):

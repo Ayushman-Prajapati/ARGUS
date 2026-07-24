@@ -62,7 +62,9 @@
 
 <div class="argus-card">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 class="fw-bold mb-0">Findings ({{ project.total_findings }})</h5>
+        <h5 class="fw-bold mb-0">
+            Findings ({{ filtered_count }}{% if filtered_count != project.total_findings %} of {{ project.total_findings }}{% endif %})
+        </h5>
         <div>
             <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill {% if not active_severity %}active{% endif %}">All severities</a>
             {% for sev, label in project.findings.model.SEVERITY_CHOICES %}
@@ -77,7 +79,14 @@
         {% endfor %}
     </div>
 
-    {% for f in findings %}
+    {% if filtered_count > 25 %}
+    <div class="text-muted small mb-3">
+        Showing {{ findings_page.start_index }}&ndash;{{ findings_page.end_index }} of {{ filtered_count }}.
+        Large result sets are paginated so the page stays responsive &mdash; narrow with the filters above to see fewer at once.
+    </div>
+    {% endif %}
+
+    {% for f in findings_page %}
         <div class="finding-row">
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                 <div>
@@ -88,15 +97,36 @@
                     <div class="text-muted small font-monospace">{{ f.file_path }}:{{ f.line_number }}</div>
                 </div>
             </div>
-            {% if f.description %}<p class="mt-2 mb-2 small">{{ f.description }}</p>{% endif %}
-            {% if f.code_snippet %}<div class="finding-code">{{ f.code_snippet }}</div>{% endif %}
+            {% if f.description %}<p class="mt-2 mb-2 small">{{ f.description|truncatechars:400 }}</p>{% endif %}
+            {% if f.code_snippet %}
+                <details class="mb-2">
+                    <summary class="small text-muted" style="cursor:pointer;">View code snippet</summary>
+                    <div class="finding-code mt-2">{{ f.code_snippet|truncatechars:800 }}</div>
+                </details>
+            {% endif %}
             {% if f.remediation %}
-                <div class="mt-2 small"><i class="bi bi-wrench-adjustable text-primary"></i> <strong>Remediation:</strong> {{ f.remediation }}</div>
+                <div class="mt-2 small"><i class="bi bi-wrench-adjustable text-primary"></i> <strong>Remediation:</strong> {{ f.remediation|truncatechars:300 }}</div>
             {% endif %}
         </div>
     {% empty %}
         <p class="text-muted text-center py-4 mb-0">No findings match the current filters.</p>
     {% endfor %}
+
+    {% if findings_page.paginator.num_pages > 1 %}
+        <nav class="mt-4" aria-label="Findings pagination">
+            <ul class="pagination pagination-sm justify-content-center flex-wrap">
+                {% if findings_page.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1{% if filter_qs %}&{{ filter_qs }}{% endif %}">First</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.previous_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Prev</a></li>
+                {% endif %}
+                <li class="page-item disabled"><span class="page-link">Page {{ findings_page.number }} of {{ findings_page.paginator.num_pages }}</span></li>
+                {% if findings_page.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.next_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.paginator.num_pages }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Last</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 </div>
 {% endblock %}
 
