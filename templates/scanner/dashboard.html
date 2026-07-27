@@ -367,32 +367,88 @@
 </div>
 
 <!-- Highest Risk Projects -->
-<div class="argus-card mt-4">
-    <h5 class="fw-bold mb-3">Highest Risk Projects</h5>
+<div class="highest-risk-section argus-card mt-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-fire me-2" style="color:var(--argus-critical);font-size:1.1rem;"></i>Highest Risk Projects
+        </h5>
+        {% if top_risk_projects %}
+        <span class="text-muted small">Top {{ top_risk_projects|length }}</span>
+        {% endif %}
+    </div>
+
+    {% if top_risk_projects %}
     <div class="table-responsive">
-        <table class="table align-middle mb-0">
+        <table class="table align-middle mb-0 highest-risk-table">
             <thead>
-                <tr style="color: var(--argus-text-muted); font-size:0.8rem; text-transform:uppercase;">
-                    <th>Name</th><th>Risk Score</th><th>Findings</th><th>Scanned</th><th></th>
+                <tr>
+                    <th>Project</th>
+                    <th>Risk Score</th>
+                    <th>Findings</th>
+                    <th>Last Scanned</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             {% for p in top_risk_projects %}
                 <tr>
-                    <td class="fw-semibold">{{ p.name|truncatechars:40 }}</td>
                     <td>
-                        <span class="font-monospace fw-bold" style="color: {% if p.risk_score >= 70 %}var(--argus-critical){% elif p.risk_score >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">{{ p.risk_score }}</span>/100
+                        <div class="d-flex align-items-center gap-2">
+                            {% if p.source_type == "github" %}
+                                <i class="bi bi-github text-muted" style="font-size:0.9rem;"></i>
+                            {% elif p.source_type == "file" %}
+                                <i class="bi bi-file-earmark-code text-muted" style="font-size:0.9rem;"></i>
+                            {% elif p.source_type == "zip" %}
+                                <i class="bi bi-file-archive text-muted" style="font-size:0.9rem;"></i>
+                            {% elif p.source_type == "paste" %}
+                                <i class="bi bi-clipboard text-muted" style="font-size:0.9rem;"></i>
+                            {% endif %}
+                            <div>
+                                <span class="fw-semibold project-name">{{ p.name|truncatechars:40 }}</span>
+                                {% if p.source_reference %}
+                                <span class="project-ref text-muted">{{ p.source_reference|truncatechars:30 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </td>
-                    <td>{{ p.total_findings }}</td>
-                    <td class="text-muted">{{ p.created_at|date:"M d, Y" }}</td>
-                    <td><a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light">View</a></td>
+                    <td>
+                        {% with score=p.risk_score %}
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="risk-value font-monospace fw-bold" style="color:{% if score >= 70 %}var(--argus-critical){% elif score >= 40 %}var(--argus-high){% elif score >= 20 %}var(--argus-medium){% else %}var(--argus-success){% endif %};">{{ score }}</span>
+                            <div class="risk-minibar">
+                                <div class="risk-minibar-fill" style="width:{{ score }}%;background:{% if score >= 70 %}var(--argus-critical){% elif score >= 40 %}var(--argus-high){% elif score >= 20 %}var(--argus-medium){% else %}var(--argus-success){% endif %};"></div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <span class="findings-count">{{ p.total_findings }}</span>
+                    </td>
+                    <td class="text-nowrap">
+                        <span class="scan-date">{{ p.created_at|date:"M d, Y" }}</span>
+                        {% if p.created_at|date:"H:i" != "00:00" %}
+                        <span class="scan-time text-muted">{{ p.created_at|date:"H:i" }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light view-btn">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </td>
                 </tr>
-            {% empty %}
-                <tr><td colspan="5" class="text-center text-muted py-4">No completed scans yet.</td></tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+    {% else %}
+    <div class="highest-risk-empty">
+        <i class="bi bi-shield-check"></i>
+        <p>No completed scans yet.</p>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary btn-sm">
+            <i class="bi bi-plus-lg"></i> Start New Scan
+        </a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 

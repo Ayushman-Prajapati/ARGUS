@@ -1,6 +1,6 @@
 # ARGUS ROADMAP
 
-Version: 3.0
+Version: 3.1
 
 Status: Active Development
 
@@ -10,7 +10,14 @@ Status: Active Development
 
 Argus is a modern Secure Code Review Platform built with Django.
 
-Its long-term goal is to provide enterprise-grade static application security testing (SAST), secret detection, dependency analysis, repository exploration, AI-assisted remediation, and professional reporting.
+Its long-term goal is to become an enterprise-grade Application Security (AppSec) platform capable of performing:
+
+- Static Application Security Testing (SAST)
+- Secret Detection
+- Dependency Analysis
+- Repository Exploration
+- AI-assisted Security Explanations
+- Professional Reporting
 
 The platform should evolve incrementally while maintaining:
 
@@ -28,12 +35,12 @@ Development is feature-driven.
 
 Every feature:
 
-- Is implemented on its own Git branch
+- Lives on its own Git feature branch
 - Is independently testable
-- Must not break existing functionality
-- Is completed before starting the next major feature
+- Preserves existing functionality
+- Is completed before beginning the next major feature
 
-Each phase represents a major milestone.
+Each phase represents a significant milestone in the evolution of Argus.
 
 ---
 
@@ -43,7 +50,7 @@ Status
 
 ✅ Completed
 
-Objectives
+Completed Sprints
 
 - Executive Summary
 - Metadata Grid
@@ -53,14 +60,15 @@ Objectives
 - Code Viewer
 - Charts
 - Responsive Design
-- Cleanup
+- Final Cleanup
 
 Deliverables
 
 - Professional Scan Detail page
-- Responsive layout
 - Modern cybersecurity UI
+- Responsive layout
 - Improved usability
+- Maintainable frontend
 
 ---
 
@@ -70,39 +78,57 @@ Status
 
 🚧 In Progress
 
+Current Sprint Progress
+
+- ✅ Dashboard Hero
+- ✅ Recent Scans
+- ✅ Dashboard Analytics
+- ✅ Quick Actions
+- ✅ Activity Timeline
+- 🔄 Highest Risk Projects
+- ⏳ Responsive & Empty States
+- ⏳ Final Cleanup & Accessibility
+
 Objectives
 
-Build a professional security dashboard.
+Build a professional security operations dashboard.
 
-Components
+Core Components
 
 - Dashboard Hero
-- Security Overview
-- Statistics Cards
+- Security Overview Cards
+- Dashboard Analytics
 - Recent Scans
-- Security Analytics
 - Quick Actions
 - Activity Timeline
+- Highest Risk Projects
+- Responsive Layout
 - Empty States
-- Responsive Design
+- Accessibility Improvements
 
-Future
+Future Enhancements
 
 - Risk Trends
 - Historical Analytics
-- Scan Metrics
+- Scan Velocity
 - Team Activity
+- Project Health Metrics
 
 Success Criteria
 
-- Responsive
-- Fast
-- Clean layout
-- Consistent with Scan Detail
+- Responsive on all devices
+- Fast rendering
+- Consistent design language
+- Professional AppSec appearance
+- Matches Scan Detail quality
 
 ---
 
 # Phase 3 — Static Analysis Engine
+
+Status
+
+📅 Planned
 
 Objectives
 
@@ -136,9 +162,19 @@ Each finding should include
 - Remediation
 - References
 
+Future
+
+- Rule engine
+- Plugin architecture
+- Custom detection rules
+
 ---
 
 # Phase 4 — Secret Scanner
+
+Status
+
+📅 Planned
 
 Objectives
 
@@ -167,11 +203,15 @@ Future
 
 - Entropy Analysis
 - Custom Regex Rules
-- User-defined Patterns
+- User-defined Secret Patterns
 
 ---
 
 # Phase 5 — Dependency Scanner
+
+Status
+
+📅 Planned
 
 Objectives
 
@@ -196,6 +236,10 @@ Future
 
 # Phase 6 — Repository Explorer
 
+Status
+
+📅 Planned
+
 Objectives
 
 Build a VS Code–style repository browser.
@@ -208,10 +252,43 @@ Features
 - Search Files
 - Jump to Vulnerability
 - File Metadata
+- Breadcrumb Navigation
 
 ---
 
-# Phase 7 — Reports
+# Phase 7 — AI Security Assistant
+
+Status
+
+📅 Planned
+
+Objectives
+
+Provide AI-assisted vulnerability explanations.
+
+Each finding should include
+
+- Why it is vulnerable
+- Attack scenario
+- Secure alternative
+- OWASP explanation
+- CWE explanation
+- Secure code example
+
+Future
+
+- LLM Integration
+- Offline Explanations
+- AI Risk Prioritization
+- AI Secure Refactoring
+
+---
+
+# Phase 8 — Reports
+
+Status
+
+📅 Planned
 
 Objectives
 
@@ -229,7 +306,7 @@ Include
 - Remediation
 - Appendix
 
-Exports
+Export Formats
 
 - PDF
 - HTML
@@ -239,31 +316,11 @@ Exports
 
 ---
 
-# Phase 8 — AI Security Assistant
-
-Objectives
-
-Provide AI-assisted vulnerability explanations.
-
-Each finding should include
-
-- Why it is vulnerable
-- Possible attack scenario
-- Secure alternative
-- OWASP explanation
-- CWE explanation
-- Secure code example
-
-Future
-
-- LLM Integration
-- Offline Explanations
-- AI Risk Prioritization
-- AI Secure Refactoring
-
----
-
 # Phase 9 — Background Processing
+
+Status
+
+📅 Planned
 
 Objectives
 
@@ -287,9 +344,13 @@ Features
 
 # Phase 10 — REST API
 
+Status
+
+📅 Planned
+
 Objectives
 
-Expose platform functionality through APIs.
+Expose platform functionality through REST APIs.
 
 Modules
 
@@ -303,16 +364,20 @@ Features
 - Authentication
 - Pagination
 - Filtering
-- Swagger
-- OpenAPI
+- Swagger UI
+- OpenAPI Specification
 
 ---
 
 # Phase 11 — Authentication & Organizations
 
+Status
+
+📅 Planned
+
 Objectives
 
-Support multi-user collaboration.
+Support enterprise collaboration.
 
 Features
 
@@ -334,15 +399,19 @@ Future
 - GitHub Login
 - Google Login
 - Microsoft Login
-- SSO
+- Single Sign-On (SSO)
 
 ---
 
 # Phase 12 — DevOps & Deployment
 
+Status
+
+📅 Planned
+
 Objectives
 
-Production deployment.
+Production-ready deployment.
 
 Technology
 
@@ -355,33 +424,47 @@ Technology
 Infrastructure
 
 - Environment Variables
-- Logging
+- Structured Logging
 - Production Settings
 - GitHub Actions
-- CI/CD
+- CI/CD Pipeline
 
 ---
 
 # Future Integrations
 
-Source Control
+## Source Control
 
 - GitHub
 - GitLab
 - Bitbucket
 - Azure DevOps
 
-Developer Tools
+## Developer Tools
 
 - VS Code Extension
-- CLI
+- Command Line Interface (CLI)
 - Desktop Client
 
-CI/CD
+## CI/CD
 
 - Jenkins
 - GitHub Actions
 - GitLab CI
+
+---
+
+# Long-Term Vision
+
+Argus should evolve into a complete Application Security platform capable of helping developers identify, understand, prioritize, and remediate security vulnerabilities throughout the software development lifecycle.
+
+The emphasis should always remain on:
+
+- Accuracy
+- Performance
+- Scalability
+- Developer Experience
+- Professional User Interface
 
 ---
 
@@ -390,18 +473,20 @@ CI/CD
 Always prefer
 
 - Small incremental improvements
-- Modular architecture
+- Clean architecture
+- Modular components
 - Readable code
-- Reusable components
-- Clean UI
+- Reusable code
 - Stable functionality
+- Professional UI consistency
 
 Avoid
 
 - Large rewrites
-- Breaking changes
+- Breaking existing functionality
 - Duplicate code
 - Premature optimization
+- Unnecessary complexity
 
 ---
 
@@ -413,9 +498,10 @@ A feature is complete only when:
 - ✅ No Python errors
 - ✅ No template errors
 - ✅ No CSS regressions
+- ✅ No JavaScript regressions
 - ✅ Responsive on desktop, tablet, and mobile
 - ✅ Existing functionality preserved
 - ✅ Code reviewed
-- ✅ Committed to feature branch
+- ✅ Committed to its feature branch
 - ✅ Merged into `main`
 - ✅ Documentation updated
