@@ -1736,3 +1736,144 @@ a { color: var(--argus-accent); }
     }
 }
 
+/* ================================================================
+   DASHBOARD RESPONSIVE IMPROVEMENTS
+   ================================================================ */
+
+@media (max-width: 767.98px) {
+    .dashboard-hero-title {
+        font-size: 1.6rem;
+    }
+    .dashboard-hero-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .argus-stat-card {
+        padding: 1rem 1rem;
+    }
+    .stat-value {
+        font-size: 2rem;
+    }
+    .stat-icon {
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .quick-actions-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .chart-card {
+        padding: 1.25rem;
+    }
+    .chart-card canvas {
+        max-height: 220px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dashboard-hero-header .btn-lg {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+    .dashboard-hero-meta {
+        margin-top: 0.5rem;
+        gap: 0.35rem;
+    }
+    .hero-badge {
+        font-size: 0.68rem;
+        padding: 0.15rem 0.55rem;
+    }
+
+    .row.g-3.mb-4 {
+        margin-bottom: 1rem !important;
+    }
+
+    .stat-value {
+        font-size: 1.6rem;
+    }
+    .argus-stat-card {
+        padding: 0.85rem 0.75rem;
+    }
+
+    .argus-card {
+        padding: 1rem;
+    }
+    .recent-scans-section,
+    .activity-timeline-section,
+    .highest-risk-section {
+        padding: 1rem;
+    }
+
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    .quick-action-card {
+        padding: 0.85rem 0.5rem;
+    }
+    .quick-action-icon i {
+        font-size: 1.25rem;
+    }
+    .quick-action-title {
+        font-size: 0.72rem;
+    }
+    .quick-action-desc {
+        display: none;
+    }
+
+    /* Table: hide Status column on mobile */
+    .recent-scans-table thead th:nth-child(3),
+    .recent-scans-table tbody td:nth-child(3) {
+        display: none;
+    }
+
+    /* Highest Risk: hide Last Scanned column on mobile */
+    .highest-risk-table thead th:nth-child(4),
+    .highest-risk-table tbody td:nth-child(4) {
+        display: none;
+    }
+
+    .chart-card canvas {
+        max-height: 180px;
+    }
+
+    .timeline {
+        padding-left: 1.25rem;
+    }
+    .timeline::before {
+        left: 0.6rem;
+    }
+    .timeline-marker {
+        width: 24px;
+        height: 24px;
+        font-size: 0.6rem;
+    }
+    .timeline-time {
+        font-size: 0.6rem;
+    }
+}
+
+/* ================================================================
+   ACCESSIBILITY
+   ================================================================ */
+
+/* Keyboard focus indicators */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.quick-action-card:focus-visible {
+    outline: 2px solid var(--argus-accent);
+    outline-offset: 2px;
+}
+
+.quick-action-card:focus-visible {
+    border-color: var(--argus-accent);
+}
+
+.recent-scans-table .view-btn:focus-visible,
+.highest-risk-table .view-btn:focus-visible {
+    background: var(--argus-accent);
+    color: #fff;
+}
+
