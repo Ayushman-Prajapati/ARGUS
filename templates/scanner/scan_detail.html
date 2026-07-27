@@ -112,16 +112,58 @@
                 </div>
             </div>
         </div>
-    <div class="col-md-5">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY SEVERITY</div>
-            <canvas id="severityChart"></canvas>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY ENGINE</div>
-            <canvas id="sourceChart"></canvas>
+    <div class="col-md-9">
+        <div class="row g-4 h-100">
+            <div class="col-md-6 d-flex">
+                <div class="argus-panel chart-card w-100 d-flex flex-column">
+                    <div class="chart-card-header">
+                        <div class="chart-card-header-left">
+                            <i class="bi bi-bar-chart-fill chart-card-icon"></i>
+                            <span class="chart-card-title">Findings by Severity</span>
+                        </div>
+                        <span class="chart-card-badge">BAR</span>
+                    </div>
+                    <p class="chart-card-desc">Distribution of findings categorized by severity level.</p>
+                    {% if severity_counts_json == '{}' %}
+                    <div class="chart-empty-state">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>No data available</span>
+                    </div>
+                    {% else %}
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="severityChart"></canvas>
+                    </div>
+                    {% endif %}
+                    <div class="chart-card-footer mt-auto">
+                        <i class="bi bi-layers"></i> {{ project.total_findings }} total findings
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex">
+                <div class="argus-panel chart-card w-100 d-flex flex-column">
+                    <div class="chart-card-header">
+                        <div class="chart-card-header-left">
+                            <i class="bi bi-pie-chart-fill chart-card-icon"></i>
+                            <span class="chart-card-title">Findings by Engine</span>
+                        </div>
+                        <span class="chart-card-badge">DOUGHNUT</span>
+                    </div>
+                    <p class="chart-card-desc">Breakdown of findings detected by each scanning engine.</p>
+                    {% if source_counts_json == '{}' %}
+                    <div class="chart-empty-state">
+                        <i class="bi bi-pie-chart"></i>
+                        <span>No data available</span>
+                    </div>
+                    {% else %}
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="sourceChart"></canvas>
+                    </div>
+                    {% endif %}
+                    <div class="chart-card-footer mt-auto">
+                        <i class="bi bi-gear"></i> {{ project.get_enabled_engines }} enabled
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -250,37 +292,41 @@
 const severityCounts = {{ severity_counts_json|safe }};
 const sourceCounts = {{ source_counts_json|safe }};
 
-new Chart(document.getElementById('severityChart'), {
-    type: 'bar',
-    data: {
-        labels: Object.keys(severityCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
-        datasets: [{
-            data: Object.values(severityCounts),
-            backgroundColor: ['#ef4444', '#f97316', '#06b6d4', '#6b7280', '#94a3b8'],
-            borderRadius: 6,
-        }]
-    },
-    options: {
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { ticks: { color: '#8b96ad' }, grid: { display: false } },
-            y: { ticks: { color: '#8b96ad', precision: 0 }, grid: { color: '#232d45' } }
+if (Object.keys(severityCounts).length > 0) {
+    new Chart(document.getElementById('severityChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(severityCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+            datasets: [{
+                data: Object.values(severityCounts),
+                backgroundColor: ['#ef4444', '#f97316', '#06b6d4', '#6b7280', '#94a3b8'],
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#8b96ad' }, grid: { display: false } },
+                y: { ticks: { color: '#8b96ad', precision: 0 }, grid: { color: '#232d45' } }
+            }
         }
-    }
-});
+    });
+}
 
-new Chart(document.getElementById('sourceChart'), {
-    type: 'doughnut',
-    data: {
-        labels: Object.keys(sourceCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
-        datasets: [{
-            data: Object.values(sourceCounts),
-            backgroundColor: ['#4c6ef5', '#37b24d', '#f59f00', '#adb5bd'],
-        }]
-    },
-    options: {
-        plugins: { legend: { position: 'bottom', labels: { color: '#8b96ad' } } }
-    }
-});
+if (Object.keys(sourceCounts).length > 0) {
+    new Chart(document.getElementById('sourceChart'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(sourceCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+            datasets: [{
+                data: Object.values(sourceCounts),
+                backgroundColor: ['#4c6ef5', '#37b24d', '#f59f00', '#adb5bd'],
+            }]
+        },
+        options: {
+            plugins: { legend: { position: 'bottom', labels: { color: '#8b96ad' } } }
+        }
+    });
+}
 </script>
 {% endblock %}
