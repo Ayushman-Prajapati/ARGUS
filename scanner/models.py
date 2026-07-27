@@ -76,6 +76,17 @@ class ScanProject(models.Model):
         raw = sum(weights[k] * v for k, v in counts.items())
         return min(100, raw)
 
+    def get_enabled_engines(self):
+        """Return a comma-separated string of enabled scan engines."""
+        engines = []
+        if self.run_bandit:
+            engines.append("Bandit")
+        if self.run_semgrep:
+            engines.append("Semgrep")
+        if self.run_ast_checks:
+            engines.append("ARGUS AST")
+        return ", ".join(engines) if engines else "None"
+
 
 class Finding(models.Model):
     """A single security finding, normalized across Bandit/Semgrep/AST engines."""

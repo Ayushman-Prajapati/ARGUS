@@ -1,51 +1,95 @@
 {% extends "base.html" %}
+{% load argus_tags %}
 {% block title %}{{ project.name }}{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap justify-content-between align-items-start mb-4 gap-2">
-    <div>
-        <h3 class="fw-bold mb-1">{{ project.name }}</h3>
-        <div class="text-muted small">
-            {{ project.get_source_type_display }} &middot;
-            {{ project.files_scanned }} file(s) scanned &middot;
-            {% if project.duration_seconds %}{{ project.duration_seconds }}s{% endif %} &middot;
-            {{ project.created_at|date:"M d, Y H:i" }}
-        </div>
-    </div>
-    <div class="d-flex gap-2">
-        <form method="post" action="{% url 'scanner:rescan' project.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-clockwise"></i> Re-scan</button>
-        </form>
-        <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus btn-sm">
-            <i class="bi bi-file-earmark-pdf"></i> Full PDF Report
-        </a>
-        <a href="{% url 'reports:generate_report' project.id %}?appendix=0" class="btn btn-outline-light btn-sm">
-            Summary Only
-        </a>
-    </div>
-</div>
-
-{% if project.status == 'failed' %}
-    <div class="alert alert-danger">Scan failed: {{ project.error_message }}</div>
-{% elif project.status != 'completed' %}
-    <div class="alert alert-warning">Scan is {{ project.get_status_display }}...</div>
-{% endif %}
-
-{% if project.error_message and project.status == 'completed' %}
-    <div class="alert alert-warning small"><i class="bi bi-exclamation-triangle"></i> {{ project.error_message|linebreaksbr }}</div>
-{% endif %}
-
-<div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="argus-panel text-center h-100 d-flex flex-column justify-content-center">
-            <div class="risk-gauge" style="border-color: {% if risk_score >= 70 %}var(--argus-critical){% elif risk_score >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">
-                <div class="risk-value">{{ risk_score }}</div>
-                <div class="risk-max">/ 100</div>
+<!-- Executive Summary Section -->
+<div class="argus-executive-summary mb-4">
+    <!-- Project Header Row -->
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div class="flex-grow-1 min-width-0">
+            <div class="d-flex flex-wrap align-items-baseline gap-2 mb-2">
+                <h2 class="fw-bold mb-0 text-truncate" style="max-width: 100%;">{{ project.name }}</h2>
+                <!-- Security Grade Badge -->
+                <span class="security-grade-badge security-grade-{{ project.risk_score|security_grade }}" title="{{ project.risk_score|security_grade_label }}">{{ project.risk_score|security_grade }}</span>
+                <!-- Scan Status Badge -->
+                <span class="scan-status-badge scan-status-{{ project.status }}">{{ project.get_status_display }}</span>
             </div>
-            <div class="text-muted small mt-3">Overall Risk Score</div>
+            <!-- Source Reference Subtitle -->
+            {% if project.source_reference %}
+            <div class="scan-subtitle">
+                <i class="bi bi-link-45deg me-1"></i> {{ project.source_reference }}
+            </div>
+            {% endif %}
+            <!-- Scan Metadata Grid -->
+            <div class="scan-metadata-grid">
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-box-seam me-1"></i> Source Type</span>
+                    <span class="scan-meta-value">{{ project.get_source_type_display }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-files me-1"></i> Files Scanned</span>
+                    <span class="scan-meta-value">{{ project.files_scanned }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-clock me-1"></i> Scan Duration</span>
+                    <span class="scan-meta-value">{{ project.duration_seconds|format_duration }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-calendar me-1"></i> Scan Date</span>
+                    <span class="scan-meta-value">{{ project.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-gear me-1"></i> Enabled Engines</span>
+                    <span class="scan-meta-value">
+                        {% with engines=project.get_enabled_engines %}{{ engines }}{% endwith %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- Action Buttons -->
+        <div class="d-flex flex-wrap gap-2 ms-3">
+            <form method="post" action="{% url 'scanner:rescan' project.id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-argus-neon btn-sm">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Re-scan
+                </button>
+            </form>
+            <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus-primary btn-sm">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Full PDF Report
+            </a>
+            <a href="{% url 'reports:generate_report' project.id %}?appendix=0" class="btn btn-argus-neon btn-sm">
+                <i class="bi bi-file-text me-1"></i> Summary Only
+            </a>
         </div>
     </div>
+
+    <!-- Error/Warning Alerts (preserved) -->
+    {% if project.status == 'failed' %}
+        <div class="alert alert-danger alert-custom mb-3">Scan failed: {{ project.error_message }}</div>
+    {% elif project.status != 'completed' %}
+        <div class="alert alert-warning alert-custom mb-3">Scan is {{ project.get_status_display }}...</div>
+    {% endif %}
+
+    {% if project.error_message and project.status == 'completed' %}
+        <div class="alert alert-warning alert-custom alert-custom-small mb-3"><i class="bi bi-exclamation-triangle me-2"></i> {{ project.error_message|linebreaksbr }}</div>
+    {% endif %}
+
+    <!-- Risk Score & Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="argus-panel cyber-panel text-center h-100 d-flex flex-column justify-content-center">
+                <div class="risk-gauge risk-gauge-enhanced" style="--risk-percent: {{ risk_score }}; border-color: {% if risk_score >= 70 %}var(--argus-critical){% elif risk_score >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">
+                    <div class="risk-value">{{ risk_score }}</div>
+                    <div class="risk-max">/ 100</div>
+                </div>
+                <div class="text-muted small mt-3">Overall Risk Score</div>
+                <!-- Security Grade in Risk Card -->
+                <div class="mt-2">
+                    <span class="risk-grade-label">Security Grade <span class="grade-badge-inline">{{ project.risk_score|security_grade }}</span> <span class="text-muted">· {{ project.risk_score|security_grade_label }}</span></span>
+                </div>
+            </div>
+        </div>
     <div class="col-md-5">
         <div class="argus-panel chart-card h-100">
             <div class="text-muted small mb-2 fw-semibold">FINDINGS BY SEVERITY</div>
