@@ -1,62 +1,132 @@
 # ARGUS ROADMAP
 
-Version: 2.0
-Status: In Development
+Version: 3.1
+
+Status: Active Development
 
 ---
 
 # Vision
 
-Argus will become a modern Secure Code Review Platform capable of analyzing source code, detecting vulnerabilities, explaining security risks, and producing professional reports.
+Argus is a modern Secure Code Review Platform built with Django.
 
-The project should evolve gradually without sacrificing code quality.
+Its long-term goal is to become an enterprise-grade Application Security (AppSec) platform capable of performing:
+
+- Static Application Security Testing (SAST)
+- Secret Detection
+- Dependency Analysis
+- Repository Exploration
+- AI-assisted Security Explanations
+- Professional Reporting
+
+The platform should evolve incrementally while maintaining:
+
+- Clean Architecture
+- Modular Design
+- Professional UI/UX
+- Stable Functionality
+- Maintainable Code
 
 ---
 
 # Development Strategy
 
-Development follows incremental feature releases.
+Development is feature-driven.
 
-Every release must leave the application fully functional.
+Every feature:
 
-Each feature is developed on its own Git branch.
+- Lives on its own Git feature branch
+- Is independently testable
+- Preserves existing functionality
+- Is completed before beginning the next major feature
 
-No feature should require redesigning the entire application.
+Each phase represents a significant milestone in the evolution of Argus.
 
 ---
 
-# Phase 1
-## Professional UI
+# Phase 1 — Scan Detail Experience
 
-Status:
-IN PROGRESS
+Status
 
-Objectives
+✅ Completed
 
-- Improve Scan Detail page
-- Improve Dashboard
-- Improve Homepage
-- Better typography
-- Better spacing
-- Better responsiveness
-- Better findings cards
-- Better charts
-- Better code viewer
+Completed Sprints
+
+- Executive Summary
+- Metadata Grid
+- Findings Section
+- Findings Filters
+- Risk Score Card
+- Code Viewer
+- Charts
+- Responsive Design
+- Final Cleanup
+
+Deliverables
+
+- Professional Scan Detail page
+- Modern cybersecurity UI
+- Responsive layout
+- Improved usability
+- Maintainable frontend
+
+---
+
+# Phase 2 — Dashboard
+
+Status
+
+✅ Completed
+
+Completed Sprints
+
+- ✅ Dashboard Hero
+- ✅ Recent Scans
+- ✅ Dashboard Analytics
+- ✅ Quick Actions
+- ✅ Activity Timeline
+- ✅ Highest Risk Projects
+- ✅ Responsive & Empty States
+- ✅ Final Cleanup & Accessibility
+
+Deliverables
+
+- Professional Security Dashboard
+- Consistent design language across all components
+- Responsive on desktop, tablet, and mobile
+- Accessible keyboard navigation
+- Clean, maintainable CSS with minimal duplication
+- Responsive Layout
+- Empty States
+- Accessibility Improvements
+
+Future Enhancements
+
+- Risk Trends
+- Historical Analytics
+- Scan Velocity
+- Team Activity
+- Project Health Metrics
 
 Success Criteria
 
-- No layout regressions
-- Mobile responsive
-- Existing functionality preserved
+- Responsive on all devices
+- Fast rendering
+- Consistent design language
+- Professional AppSec appearance
+- Matches Scan Detail quality
 
 ---
 
-# Phase 2
-## Better Static Analysis
+# Phase 3 — Static Analysis Engine
+
+Status
+
+📅 Planned
 
 Objectives
 
-Improve ARGUS AST Engine.
+Expand the ARGUS AST Engine.
 
 Detect
 
@@ -82,17 +152,27 @@ Each finding should include
 - CWE
 - OWASP
 - Description
+- Evidence
 - Remediation
 - References
 
+Future
+
+- Rule engine
+- Plugin architecture
+- Custom detection rules
+
 ---
 
-# Phase 3
-## Secret Detection
+# Phase 4 — Secret Scanner
+
+Status
+
+📅 Planned
 
 Objectives
 
-Create a dedicated Secret Scanner.
+Create a dedicated Secret Detection Engine.
 
 Detect
 
@@ -103,7 +183,7 @@ Detect
 - GitLab Tokens
 - Slack Tokens
 - Discord Tokens
-- JWT
+- JWT Tokens
 - RSA Keys
 - SSH Keys
 - OpenAI Keys
@@ -111,284 +191,274 @@ Detect
 - Gemini Keys
 - Stripe Keys
 - Twilio Keys
-- Passwords
+- Hardcoded Passwords
 
 Future
 
-Entropy analysis
-
-Custom regex rules
+- Entropy Analysis
+- Custom Regex Rules
+- User-defined Secret Patterns
 
 ---
 
-# Phase 4
-## Dependency Scanning
+# Phase 5 — Dependency Scanner
+
+Status
+
+📅 Planned
 
 Objectives
 
 Support
 
-requirements.txt
-
-poetry.lock
-
-Pipfile.lock
-
-package.json
-
-Cargo.toml
-
-composer.json
+- requirements.txt
+- poetry.lock
+- Pipfile.lock
+- package.json
+- Cargo.toml
+- composer.json
 
 Future
 
-OSV integration
-
-Package risk scoring
-
-CVSS
-
-Upgrade recommendations
+- OSV Integration
+- CVE Database
+- CVSS Scoring
+- Upgrade Recommendations
+- License Detection
 
 ---
 
-# Phase 5
-## Repository Explorer
+# Phase 6 — Repository Explorer
+
+Status
+
+📅 Planned
 
 Objectives
 
-VSCode-style file explorer.
+Build a VS Code–style repository browser.
 
 Features
 
-- Folder tree
-- File preview
-- Syntax highlighting
-- Jump to vulnerability
-- Search files
+- Folder Tree
+- File Preview
+- Syntax Highlighting
+- Search Files
+- Jump to Vulnerability
+- File Metadata
+- Breadcrumb Navigation
 
 ---
 
-# Phase 6
-## AI Security Assistant
+# Phase 7 — AI Security Assistant
+
+Status
+
+📅 Planned
 
 Objectives
 
-Each finding should provide
+Provide AI-assisted vulnerability explanations.
 
-Explain
+Each finding should include
 
-Why vulnerable
-
-Attack example
-
-Secure alternative
-
-OWASP explanation
-
-CWE explanation
-
-Secure code example
+- Why it is vulnerable
+- Attack scenario
+- Secure alternative
+- OWASP explanation
+- CWE explanation
+- Secure code example
 
 Future
 
-LLM integration
-
-Caching
-
-Offline explanations
+- LLM Integration
+- Offline Explanations
+- AI Risk Prioritization
+- AI Secure Refactoring
 
 ---
 
-# Phase 7
-## Reports
+# Phase 8 — Reports
+
+Status
+
+📅 Planned
 
 Objectives
 
-Improve PDF reports.
+Professional reporting.
 
 Include
 
-Executive Summary
+- Executive Summary
+- Findings
+- Charts
+- Risk Score
+- CWE Mapping
+- OWASP Mapping
+- Evidence
+- Remediation
+- Appendix
 
-Charts
+Export Formats
 
-Risk Score
-
-OWASP Mapping
-
-CWE
-
-Evidence
-
-Remediation
-
-Appendix
-
-Future
-
-HTML Reports
-
-SARIF Export
-
-JSON Export
-
-CSV Export
+- PDF
+- HTML
+- SARIF
+- JSON
+- CSV
 
 ---
 
-# Phase 8
-## Dashboard
+# Phase 9 — Background Processing
+
+Status
+
+📅 Planned
 
 Objectives
 
-Executive Dashboard
+Introduce asynchronous scanning.
 
-Recent Scans
+Technology
 
-Recent Findings
+- Celery
+- Redis
 
-Risk Trends
+Features
 
-Top Vulnerabilities
-
-Most Vulnerable Projects
-
-Engine Statistics
-
-Future
-
-Historical analytics
-
-Trend charts
+- Scan Queue
+- Progress Tracking
+- Live Updates
+- Cancellation
+- Retry
+- Worker Monitoring
 
 ---
 
-# Phase 9
-## Background Processing
+# Phase 10 — REST API
+
+Status
+
+📅 Planned
 
 Objectives
 
-Use
+Expose platform functionality through REST APIs.
 
-Celery
+Modules
 
-Redis
+- Projects API
+- Findings API
+- Reports API
+- Dashboard API
 
-Queue
+Features
 
-Progress tracking
-
-Live updates
-
-Cancellation
-
-Retry
-
-Worker monitoring
+- Authentication
+- Pagination
+- Filtering
+- Swagger UI
+- OpenAPI Specification
 
 ---
 
-# Phase 10
-## REST API
+# Phase 11 — Authentication & Organizations
+
+Status
+
+📅 Planned
 
 Objectives
 
-Projects API
+Support enterprise collaboration.
 
-Findings API
+Features
 
-Reports API
-
-Dashboard API
-
-Authentication
-
-Pagination
-
-Filtering
-
-Swagger
-
-OpenAPI
-
----
-
-# Phase 11
-## Authentication
-
-Objectives
-
-Organizations
-
-Projects
-
-Teams
+- Authentication
+- Organizations
+- Projects
+- Teams
+- Roles
+- Permissions
 
 Roles
 
-Permissions
-
-Admin
-
-Member
-
-Viewer
+- Administrator
+- Member
+- Viewer
 
 Future
 
-SSO
-
-GitHub Login
-
-Google Login
+- GitHub Login
+- Google Login
+- Microsoft Login
+- Single Sign-On (SSO)
 
 ---
 
-# Phase 12
-## DevOps
+# Phase 12 — DevOps & Deployment
+
+Status
+
+📅 Planned
 
 Objectives
 
-Docker
+Production-ready deployment.
 
-Docker Compose
+Technology
 
-PostgreSQL
+- Docker
+- Docker Compose
+- PostgreSQL
+- Gunicorn
+- Nginx
 
-Gunicorn
+Infrastructure
 
-Nginx
-
-Environment Variables
-
-Logging
-
-Production Settings
-
-CI/CD
-
-GitHub Actions
+- Environment Variables
+- Structured Logging
+- Production Settings
+- GitHub Actions
+- CI/CD Pipeline
 
 ---
 
 # Future Integrations
 
-GitHub
+## Source Control
 
-GitLab
+- GitHub
+- GitLab
+- Bitbucket
+- Azure DevOps
 
-Bitbucket
+## Developer Tools
 
-Azure DevOps
+- VS Code Extension
+- Command Line Interface (CLI)
+- Desktop Client
 
-Jenkins
+## CI/CD
 
-VS Code Extension
+- Jenkins
+- GitHub Actions
+- GitLab CI
 
-CLI
+---
 
-Desktop Client
+# Long-Term Vision
+
+Argus should evolve into a complete Application Security platform capable of helping developers identify, understand, prioritize, and remediate security vulnerabilities throughout the software development lifecycle.
+
+The emphasis should always remain on:
+
+- Accuracy
+- Performance
+- Scalability
+- Developer Experience
+- Professional User Interface
 
 ---
 
@@ -396,46 +466,36 @@ Desktop Client
 
 Always prefer
 
-Small improvements
-
-Clean architecture
-
-Modular code
-
-Readable code
-
-Reusable components
+- Small incremental improvements
+- Clean architecture
+- Modular components
+- Readable code
+- Reusable code
+- Stable functionality
+- Professional UI consistency
 
 Avoid
 
-Large rewrites
-
-Breaking existing features
-
-Duplicate code
-
-Premature optimization
+- Large rewrites
+- Breaking existing functionality
+- Duplicate code
+- Premature optimization
+- Unnecessary complexity
 
 ---
 
 # Definition of Done
 
-Every completed feature must satisfy
+A feature is complete only when:
 
-✓ Application starts successfully
-
-✓ No template errors
-
-✓ No Python errors
-
-✓ No layout regressions
-
-✓ Responsive
-
-✓ Existing functionality preserved
-
-✓ Code reviewed
-
-✓ Committed to feature branch
-
-✓ Ready for merge
+- ✅ Application starts successfully
+- ✅ No Python errors
+- ✅ No template errors
+- ✅ No CSS regressions
+- ✅ No JavaScript regressions
+- ✅ Responsive on desktop, tablet, and mobile
+- ✅ Existing functionality preserved
+- ✅ Code reviewed
+- ✅ Committed to its feature branch
+- ✅ Merged into `main`
+- ✅ Documentation updated

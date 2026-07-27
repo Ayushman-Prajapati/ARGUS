@@ -2,79 +2,453 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold mb-0">Dashboard</h3>
-    <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus"><i class="bi bi-plus-lg"></i> New Scan</a>
+<!-- Dashboard Hero -->
+<div class="dashboard-hero">
+    <div class="dashboard-hero-header">
+        <div class="dashboard-hero-text">
+            <h1 class="dashboard-hero-title">Security Dashboard</h1>
+            <p class="dashboard-hero-subtitle">Real-time security posture overview across all scanned projects.</p>
+            <div class="dashboard-hero-meta">
+                <span class="hero-badge"><i class="bi bi-shield-check"></i> {{ total_scans }} scans</span>
+                <span class="hero-badge"><i class="bi bi-bug"></i> {{ total_findings }} findings</span>
+                {% if projects %}
+                <span class="hero-badge"><i class="bi bi-clock-history"></i> Last scan {{ projects.0.created_at|date:"M d, Y" }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary btn-lg">
+            <i class="bi bi-plus-lg"></i> Start New Scan
+        </a>
+    </div>
 </div>
 
+<!-- Security Overview Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-3 col-xl-3">
         <div class="argus-stat-card">
+            <i class="bi bi-shield-check stat-icon"></i>
             <div class="stat-value">{{ total_scans }}</div>
-            <div class="stat-label">Completed Scans</div>
+            <div class="stat-label">Total Scans</div>
+            <div class="stat-sub">Projects analyzed</div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-3 col-xl-3">
         <div class="argus-stat-card">
+            <i class="bi bi-bug stat-icon"></i>
             <div class="stat-value">{{ total_findings }}</div>
             <div class="stat-label">Total Findings</div>
+            <div class="stat-sub">Issues detected</div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-3 col-xl-3">
         <div class="argus-stat-card">
-            <div class="stat-value" style="color:var(--argus-critical)">{{ severity_agg.critical }}</div>
-            <div class="stat-label">Critical</div>
+            <i class="bi bi-exclamation-triangle stat-icon text-critical"></i>
+            <div class="stat-value text-critical">{{ severity_agg.critical }}</div>
+            <div class="stat-label">Critical Findings</div>
+            <div class="stat-sub">Need immediate attention</div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-3 col-xl-3">
         <div class="argus-stat-card">
-            <div class="stat-value" style="color:var(--argus-high)">{{ severity_agg.high }}</div>
-            <div class="stat-label">High</div>
+            <i class="bi bi-speedometer2 stat-icon"></i>
+            <div class="stat-value">
+                {% if total_findings > 0 %}
+                    {% widthratio severity_agg.critical|add:severity_agg.high total_findings 100 %}<span class="stat-sub-suffix">%</span>
+                {% else %}
+                    <span class="stat-na">&mdash;</span>
+                {% endif %}
+            </div>
+            <div class="stat-label">Avg Risk Score</div>
+            <div class="stat-sub">
+                {% if total_findings > 0 %}
+                    {% with risk_pct=severity_agg.critical|add:severity_agg.high %}
+                    {% widthratio risk_pct total_findings 100 as risk_raw %}
+                    <span class="risk-indicator risk-indicator-{% if risk_raw|add:0 >= 70 %}critical{% elif risk_raw|add:0 >= 40 %}high{% elif risk_raw|add:0 >= 20 %}medium{% else %}low{% endif %}">
+                        {% if risk_raw|add:0 >= 70 %}Critical{% elif risk_raw|add:0 >= 40 %}High{% elif risk_raw|add:0 >= 20 %}Medium{% else %}Low{% endif %}
+                    </span>
+                    {% endwith %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-md-7">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY SEVERITY (ALL SCANS)</div>
-            <canvas id="severityChart"></canvas>
-        </div>
+<!-- Analytics -->
+<div class="analytics-section mb-4">
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-bar-chart-line me-2" style="color:var(--argus-accent);font-size:1.1rem;"></i>Analytics
+        </h5>
     </div>
-    <div class="col-md-5">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY ENGINE (ALL SCANS)</div>
-            <canvas id="sourceChart"></canvas>
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="argus-panel chart-card h-100">
+                <div class="chart-card-header">
+                    <div class="chart-card-header-left">
+                        <i class="bi bi-bar-chart-fill chart-card-icon"></i>
+                        <span class="chart-card-title">Severity Distribution</span>
+                    </div>
+                </div>
+                <div class="chart-card-desc">Breakdown of all findings by severity level across every completed scan.</div>
+                {% with total_severity=severity_agg.critical|add:severity_agg.high|add:severity_agg.medium|add:severity_agg.low|add:severity_agg.info %}
+                {% if total_severity > 0 %}
+                <div class="chart-canvas-wrapper">
+                    <canvas id="severityChart"></canvas>
+                </div>
+                {% else %}
+                <div class="chart-empty-state">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>No severity data available yet</span>
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="argus-panel chart-card h-100">
+                <div class="chart-card-header">
+                    <div class="chart-card-header-left">
+                        <i class="bi bi-pie-chart-fill chart-card-icon"></i>
+                        <span class="chart-card-title">Engine Usage</span>
+                    </div>
+                </div>
+                <div class="chart-card-desc">Distribution of findings detected by each scan engine.</div>
+                {% if source_agg.items|length > 0 %}
+                <div class="chart-canvas-wrapper">
+                    <canvas id="sourceChart"></canvas>
+                </div>
+                {% else %}
+                <div class="chart-empty-state">
+                    <i class="bi bi-pie-chart"></i>
+                    <span>No engine data available yet</span>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
-<div class="argus-card">
-    <h5 class="fw-bold mb-3">Highest Risk Projects</h5>
+<!-- Quick Actions -->
+<div class="quick-actions-section mb-4">
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-lightning-charge me-2" style="color:var(--argus-accent);font-size:1.1rem;"></i>Quick Actions
+        </h5>
+    </div>
+
+    <div class="quick-actions-grid">
+        <a href="{% url 'scanner:upload_file' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-plus-circle"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Start New Scan</span>
+                <span class="quick-action-desc">Upload a file or project</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:upload_zip' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-file-archive"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Upload Project</span>
+                <span class="quick-action-desc">Scan a .zip archive</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:scan_github' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-github"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Scan GitHub Repo</span>
+                <span class="quick-action-desc">Clone and scan a repository</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:paste_code' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-clipboard"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Paste Code</span>
+                <span class="quick-action-desc">Scan a code snippet</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:scan_list' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-list-checklist"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">View All Scans</span>
+                <span class="quick-action-desc">Browse scan history</span>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Activity Timeline -->
+<div class="activity-timeline-section argus-card mb-4">
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-activity me-2" style="color:var(--argus-accent);font-size:1.1rem;"></i>Activity Timeline
+        </h5>
+    </div>
+
+    {% if projects %}
+    <div class="timeline">
+        {% for p in projects %}
+            {% if forloop.counter <= 8 %}
+            {% with sc=p.severity_counts %}
+            <div class="timeline-item">
+                <div class="timeline-marker
+                    {% if p.status == 'completed' %}timeline-marker-success
+                    {% elif p.status == 'failed' %}timeline-marker-danger
+                    {% elif p.status == 'running' %}timeline-marker-info
+                    {% else %}timeline-marker-warning{% endif %}">
+                    <i class="bi
+                        {% if p.status == 'completed' %}bi-check-circle-fill
+                        {% elif p.status == 'failed' %}bi-x-circle-fill
+                        {% elif p.status == 'running' %}bi-arrow-repeat
+                        {% else %}bi-hourglass-split{% endif %}"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-content-header">
+                        <span class="timeline-event">
+                            {% if p.status == 'completed' %}Scan Completed
+                            {% elif p.status == 'failed' %}Scan Failed
+                            {% elif p.status == 'running' %}Scan In Progress
+                            {% else %}Scan Queued{% endif %}
+                        </span>
+                        <span class="timeline-time">{{ p.created_at|date:"M d, H:i" }}</span>
+                    </div>
+                    <div class="timeline-desc">
+                        <a href="{% url 'scanner:scan_detail' p.id %}" class="timeline-project-link">{{ p.name|truncatechars:50 }}</a>
+                        {% if p.status == 'completed' %}
+                            <span class="timeline-stat">{{ p.total_findings }} finding{{ p.total_findings|pluralize }}, score {{ p.risk_score }}</span>
+                        {% elif p.status == 'failed' and p.error_message %}
+                            <span class="timeline-stat text-muted">{{ p.error_message|truncatechars:60 }}</span>
+                        {% elif p.status == 'running' %}
+                            <span class="timeline-stat">Using {{ p.get_enabled_engines|truncatechars:30 }}</span>
+                        {% else %}
+                            <span class="timeline-stat">Awaiting execution</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if sc.critical > 0 and p.status == 'completed' %}
+            <div class="timeline-item">
+                <div class="timeline-marker timeline-marker-critical">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-content-header">
+                        <span class="timeline-event">Critical Vulnerability Detected</span>
+                        <span class="timeline-time">{{ p.created_at|date:"M d, H:i" }}</span>
+                    </div>
+                    <div class="timeline-desc">
+                        <span class="timeline-stat" style="color:var(--argus-critical);">
+                            {{ sc.critical }} critical finding{{ sc.critical|pluralize }} in
+                        </span>
+                        <a href="{% url 'scanner:scan_detail' p.id %}" class="timeline-project-link">{{ p.name|truncatechars:50 }}</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="timeline-empty">
+        <i class="bi bi-clock-history"></i>
+        <p>No recent activity to display.</p>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary btn-sm">
+            <i class="bi bi-plus-lg"></i> Start Your First Scan
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Recent Scans -->
+<div class="recent-scans-section argus-card">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-clock-history me-2" style="color:var(--argus-accent);font-size:1.1rem;"></i>Recent Scans
+        </h5>
+        {% if projects %}
+        <span class="text-muted small">{{ projects|length }} total</span>
+        {% endif %}
+    </div>
+
+    {% if projects %}
     <div class="table-responsive">
-        <table class="table align-middle mb-0">
+        <table class="table align-middle mb-0 recent-scans-table dashboard-table">
             <thead>
-                <tr style="color: var(--argus-text-muted); font-size:0.8rem; text-transform:uppercase;">
-                    <th>Name</th><th>Risk Score</th><th>Findings</th><th>Scanned</th><th></th>
+                <tr>
+                    <th>Project</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Risk Score</th>
+                    <th>Findings</th>
+                    <th>Engine</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in projects %}
+                {% if forloop.counter <= 10 %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if p.source_type == "github" %}
+                                <i class="bi bi-github source-icon text-muted"></i>
+                            {% elif p.source_type == "file" %}
+                                <i class="bi bi-file-earmark-code source-icon text-muted"></i>
+                            {% elif p.source_type == "zip" %}
+                                <i class="bi bi-file-archive source-icon text-muted"></i>
+                            {% elif p.source_type == "paste" %}
+                                <i class="bi bi-clipboard source-icon text-muted"></i>
+                            {% endif %}
+                            <div>
+                                <span class="fw-semibold project-name">{{ p.name|truncatechars:40 }}</span>
+                                {% if p.source_reference %}
+                                <span class="project-ref text-muted">{{ p.source_reference|truncatechars:30 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-nowrap">
+                        <span class="scan-date">{{ p.created_at|date:"M d, Y" }}</span>
+                        {% if p.created_at|date:"H:i" != "00:00" %}
+                        <span class="scan-time text-muted">{{ p.created_at|date:"H:i" }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if p.status == "completed" %}
+                        <span class="scan-status-badge scan-status-completed"><i class="bi bi-check-circle-fill me-1" style="font-size:0.55rem;"></i>Completed</span>
+                        {% elif p.status == "failed" %}
+                        <span class="scan-status-badge scan-status-failed"><i class="bi bi-x-circle-fill me-1" style="font-size:0.55rem;"></i>Failed</span>
+                        {% elif p.status == "running" %}
+                        <span class="scan-status-badge scan-status-running"><i class="bi bi-arrow-repeat me-1" style="font-size:0.55rem;"></i>Running</span>
+                        {% elif p.status == "pending" %}
+                        <span class="scan-status-badge scan-status-pending"><i class="bi bi-hourglass-split me-1" style="font-size:0.55rem;"></i>Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% with score=p.risk_score %}
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="risk-value font-monospace fw-bold" style="color:{% if score >= 70 %}var(--argus-critical){% elif score >= 40 %}var(--argus-high){% elif score >= 20 %}var(--argus-medium){% else %}var(--argus-success){% endif %};">{{ score }}</span>
+                            <div class="risk-minibar">
+                                <div class="risk-minibar-fill" style="width:{{ score }}%;background:{% if score >= 70 %}var(--argus-critical){% elif score >= 40 %}var(--argus-high){% elif score >= 20 %}var(--argus-medium){% else %}var(--argus-success){% endif %};"></div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <span class="findings-count">{{ p.total_findings }}</span>
+                    </td>
+                    <td>
+                        <span class="engine-tag" title="{{ p.get_enabled_engines }}">
+                            {{ p.get_enabled_engines|truncatechars:18 }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light view-btn" aria-label="View details for {{ p.name }}">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+            {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No scans yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="recent-scans-empty dashboard-empty">
+        <i class="bi bi-shield-plus"></i>
+        <p>No scans have been completed yet.</p>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary">
+            <i class="bi bi-plus-lg"></i> Start New Scan
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Highest Risk Projects -->
+<div class="highest-risk-section argus-card mt-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-fire me-2" style="color:var(--argus-critical);font-size:1.1rem;"></i>Highest Risk Projects
+        </h5>
+        {% if top_risk_projects %}
+        <span class="text-muted small">Top {{ top_risk_projects|length }}</span>
+        {% endif %}
+    </div>
+
+    {% if top_risk_projects %}
+    <div class="table-responsive">
+        <table class="table align-middle mb-0 highest-risk-table dashboard-table">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Risk Score</th>
+                    <th>Findings</th>
+                    <th>Last Scanned</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             {% for p in top_risk_projects %}
                 <tr>
-                    <td class="fw-semibold">{{ p.name|truncatechars:40 }}</td>
                     <td>
-                        <span class="font-monospace fw-bold" style="color: {% if p.risk_score >= 70 %}var(--argus-critical){% elif p.risk_score >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">{{ p.risk_score }}</span>/100
+                        <div class="d-flex align-items-center gap-2">
+                            {% if p.source_type == "github" %}
+                                <i class="bi bi-github source-icon text-muted"></i>
+                            {% elif p.source_type == "file" %}
+                                <i class="bi bi-file-earmark-code source-icon text-muted"></i>
+                            {% elif p.source_type == "zip" %}
+                                <i class="bi bi-file-archive source-icon text-muted"></i>
+                            {% elif p.source_type == "paste" %}
+                                <i class="bi bi-clipboard source-icon text-muted"></i>
+                            {% endif %}
+                            <div>
+                                <span class="fw-semibold project-name">{{ p.name|truncatechars:40 }}</span>
+                                {% if p.source_reference %}
+                                <span class="project-ref text-muted">{{ p.source_reference|truncatechars:30 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </td>
-                    <td>{{ p.total_findings }}</td>
-                    <td class="text-muted">{{ p.created_at|date:"M d, Y" }}</td>
-                    <td><a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light">View</a></td>
+                    <td>
+                        {% with score=p.risk_score %}
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="risk-value font-monospace fw-bold" style="color:{% if score >= 70 %}var(--argus-critical){% elif score >= 40 %}var(--argus-high){% elif score >= 20 %}var(--argus-medium){% else %}var(--argus-success){% endif %};">{{ score }}</span>
+                            <div class="risk-minibar">
+                                <div class="risk-minibar-fill" style="width:{{ score }}%;background:{% if score >= 70 %}var(--argus-critical){% elif score >= 40 %}var(--argus-high){% elif score >= 20 %}var(--argus-medium){% else %}var(--argus-success){% endif %};"></div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <span class="findings-count">{{ p.total_findings }}</span>
+                    </td>
+                    <td class="text-nowrap">
+                        <span class="scan-date">{{ p.created_at|date:"M d, Y" }}</span>
+                        {% if p.created_at|date:"H:i" != "00:00" %}
+                        <span class="scan-time text-muted">{{ p.created_at|date:"H:i" }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light view-btn" aria-label="View details for {{ p.name }}">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </td>
                 </tr>
-            {% empty %}
-                <tr><td colspan="5" class="text-center text-muted py-4">No completed scans yet.</td></tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+    {% else %}
+    <div class="highest-risk-empty dashboard-empty">
+        <i class="bi bi-shield-check"></i>
+        <p>No completed scans yet.</p>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary btn-sm">
+            <i class="bi bi-plus-lg"></i> Start New Scan
+        </a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 
