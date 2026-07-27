@@ -129,6 +129,53 @@
     </div>
 </div>
 
+<!-- Quick Actions -->
+<div class="quick-actions-section mb-4">
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-lightning-charge me-2" style="color:var(--argus-accent);font-size:1.1rem;"></i>Quick Actions
+        </h5>
+    </div>
+
+    <div class="quick-actions-grid">
+        <a href="{% url 'scanner:upload_file' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-plus-circle"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Start New Scan</span>
+                <span class="quick-action-desc">Upload a file or project</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:upload_zip' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-file-archive"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Upload Project</span>
+                <span class="quick-action-desc">Scan a .zip archive</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:scan_github' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-github"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Scan GitHub Repo</span>
+                <span class="quick-action-desc">Clone and scan a repository</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:paste_code' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-clipboard"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">Paste Code</span>
+                <span class="quick-action-desc">Scan a code snippet</span>
+            </div>
+        </a>
+        <a href="{% url 'scanner:scan_list' %}" class="quick-action-card">
+            <div class="quick-action-icon"><i class="bi bi-list-checklist"></i></div>
+            <div class="quick-action-content">
+                <span class="quick-action-title">View All Scans</span>
+                <span class="quick-action-desc">Browse scan history</span>
+            </div>
+        </a>
+    </div>
+</div>
+
 <!-- Recent Scans -->
 <div class="recent-scans-section argus-card">
     <div class="d-flex align-items-center justify-content-between mb-3">

@@ -534,6 +534,86 @@ a { color: var(--argus-accent); }
 }
 
 /* ================================================================
+   QUICK ACTIONS
+   ================================================================ */
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+}
+
+.quick-action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    padding: 1.25rem 0.75rem;
+    background: var(--argus-bg-card);
+    border: 1px solid var(--argus-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--argus-text);
+    transition: all 0.2s ease;
+}
+
+.quick-action-card:hover {
+    border-color: var(--argus-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.12);
+    color: var(--argus-text);
+    text-decoration: none;
+}
+.quick-action-card:focus-visible {
+    outline: 2px solid var(--argus-accent);
+    outline-offset: 2px;
+}
+
+.quick-action-icon i {
+    font-size: 1.5rem;
+    color: var(--argus-accent);
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+.quick-action-card:hover .quick-action-icon i {
+    opacity: 1;
+}
+
+.quick-action-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.quick-action-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--argus-text);
+    line-height: 1.3;
+}
+
+.quick-action-desc {
+    font-size: 0.65rem;
+    color: var(--argus-text-muted);
+    line-height: 1.3;
+    opacity: 0.7;
+}
+
+@media (max-width: 991.98px) {
+    .quick-actions-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ================================================================
    CHART CARD ENHANCEMENTS
    ================================================================ */
 
