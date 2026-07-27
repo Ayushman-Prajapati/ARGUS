@@ -464,20 +464,6 @@ a { color: var(--argus-accent); }
     color: var(--argus-text);
     letter-spacing: 0.25px;
 }
-.chart-card-badge {
-    display: inline-flex;
-    align-items: center;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-    background: var(--argus-bg-elevated);
-    color: var(--argus-text-muted);
-    border: 1px solid var(--argus-border);
-    flex-shrink: 0;
-}
 .chart-card-desc {
     font-size: 0.75rem;
     color: var(--argus-text-muted);
@@ -496,23 +482,6 @@ a { color: var(--argus-accent); }
     max-height: 240px;
     width: 100% !important;
 }
-.chart-card-footer {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.7rem;
-    color: var(--argus-text-muted);
-    font-family: var(--font-mono);
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--argus-border);
-    margin-top: 0.75rem;
-}
-.chart-card-footer i {
-    font-size: 0.65rem;
-    color: var(--argus-accent);
-}
-
-/* Empty state */
 .chart-empty-state {
     flex: 1;
     display: flex;

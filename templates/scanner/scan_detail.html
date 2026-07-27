@@ -121,7 +121,6 @@
                             <i class="bi bi-bar-chart-fill chart-card-icon"></i>
                             <span class="chart-card-title">Findings by Severity</span>
                         </div>
-                        <span class="chart-card-badge">BAR</span>
                     </div>
                     <p class="chart-card-desc">Distribution of findings categorized by severity level.</p>
                     {% if severity_counts_json == '{}' %}
@@ -134,9 +133,6 @@
                         <canvas id="severityChart"></canvas>
                     </div>
                     {% endif %}
-                    <div class="chart-card-footer mt-auto">
-                        <i class="bi bi-layers"></i> {{ project.total_findings }} total findings
-                    </div>
                 </div>
             </div>
             <div class="col-md-6 d-flex">
@@ -146,7 +142,6 @@
                             <i class="bi bi-pie-chart-fill chart-card-icon"></i>
                             <span class="chart-card-title">Findings by Engine</span>
                         </div>
-                        <span class="chart-card-badge">DOUGHNUT</span>
                     </div>
                     <p class="chart-card-desc">Breakdown of findings detected by each scanning engine.</p>
                     {% if source_counts_json == '{}' %}
@@ -159,9 +154,6 @@
                         <canvas id="sourceChart"></canvas>
                     </div>
                     {% endif %}
-                    <div class="chart-card-footer mt-auto">
-                        <i class="bi bi-gear"></i> {{ project.get_enabled_engines }} enabled
-                    </div>
                 </div>
             </div>
         </div>
