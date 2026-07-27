@@ -1241,10 +1241,163 @@ a { color: var(--argus-accent); }
 }
 
 /* ================================================================
-   RECENT SCANS TABLE
+   ACTIVITY TIMELINE
    ================================================================ */
 
-.recent-scans-section {
+.activity-timeline-section {
+    padding: 1.25rem;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 1.5rem;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    width: 2px;
+    background: var(--argus-border);
+    border-radius: 999px;
+}
+
+.timeline-item {
+    position: relative;
+    display: flex;
+    gap: 0.85rem;
+    padding-bottom: 1rem;
+}
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    margin-top: 0.1rem;
+    border: 2px solid var(--argus-border);
+}
+.timeline-marker i {
+    color: #fff;
+}
+.timeline-marker-success {
+    background: var(--argus-success);
+    border-color: var(--argus-success);
+}
+.timeline-marker-danger {
+    background: var(--argus-critical);
+    border-color: var(--argus-critical);
+}
+.timeline-marker-warning {
+    background: var(--argus-high);
+    border-color: var(--argus-high);
+}
+.timeline-marker-info {
+    background: var(--argus-accent);
+    border-color: var(--argus-accent);
+}
+.timeline-marker-critical {
+    background: var(--neon-pink);
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.35);
+}
+
+.timeline-content {
+    flex: 1;
+    min-width: 0;
+    padding-top: 0.15rem;
+}
+
+.timeline-content-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.15rem;
+}
+
+.timeline-event {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--argus-text);
+}
+
+.timeline-time {
+    font-size: 0.65rem;
+    color: var(--argus-text-muted);
+    white-space: nowrap;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.timeline-desc {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--argus-text-muted);
+    line-height: 1.4;
+}
+
+.timeline-project-link {
+    color: var(--argus-accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+.timeline-project-link:hover {
+    text-decoration: underline;
+}
+
+.timeline-stat {
+    color: var(--argus-text-muted);
+    opacity: 0.7;
+}
+
+/* Empty state */
+.timeline-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--argus-text-muted);
+}
+.timeline-empty i {
+    font-size: 1.75rem;
+    display: block;
+    margin-bottom: 0.6rem;
+    opacity: 0.3;
+}
+.timeline-empty p {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 575.98px) {
+    .timeline {
+        padding-left: 1.25rem;
+    }
+    .timeline::before {
+        left: 0.6rem;
+    }
+    .timeline-marker {
+        width: 24px;
+        height: 24px;
+        font-size: 0.6rem;
+    }
+}
+
+/* ================================================================
+   RECENT SCANS TABLE
+   ================================================================ */
     padding: 1.25rem;
 }
 
