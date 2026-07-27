@@ -1,82 +1,204 @@
 {% extends "base.html" %}
+{% load argus_tags %}
 {% block title %}{{ project.name }}{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap justify-content-between align-items-start mb-4 gap-2">
-    <div>
-        <h3 class="fw-bold mb-1">{{ project.name }}</h3>
-        <div class="text-muted small">
-            {{ project.get_source_type_display }} &middot;
-            {{ project.files_scanned }} file(s) scanned &middot;
-            {% if project.duration_seconds %}{{ project.duration_seconds }}s{% endif %} &middot;
-            {{ project.created_at|date:"M d, Y H:i" }}
-        </div>
-    </div>
-    <div class="d-flex gap-2">
-        <form method="post" action="{% url 'scanner:rescan' project.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-clockwise"></i> Re-scan</button>
-        </form>
-        <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus btn-sm">
-            <i class="bi bi-file-earmark-pdf"></i> Full PDF Report
-        </a>
-        <a href="{% url 'reports:generate_report' project.id %}?appendix=0" class="btn btn-outline-light btn-sm">
-            Summary Only
-        </a>
-    </div>
-</div>
-
-{% if project.status == 'failed' %}
-    <div class="alert alert-danger">Scan failed: {{ project.error_message }}</div>
-{% elif project.status != 'completed' %}
-    <div class="alert alert-warning">Scan is {{ project.get_status_display }}...</div>
-{% endif %}
-
-{% if project.error_message and project.status == 'completed' %}
-    <div class="alert alert-warning small"><i class="bi bi-exclamation-triangle"></i> {{ project.error_message|linebreaksbr }}</div>
-{% endif %}
-
-<div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="argus-panel text-center h-100 d-flex flex-column justify-content-center">
-            <div class="risk-gauge" style="border-color: {% if risk_score >= 70 %}var(--argus-critical){% elif risk_score >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">
-                <div class="risk-value">{{ risk_score }}</div>
-                <div class="risk-max">/ 100</div>
+<!-- Executive Summary Section -->
+<div class="argus-executive-summary mb-4">
+    <!-- Project Header Row -->
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div class="flex-grow-1 min-width-0">
+            <div class="d-flex flex-wrap align-items-baseline gap-2 mb-2">
+                <h2 class="fw-bold mb-0 text-truncate">{{ project.name }}</h2>
+                <!-- Security Grade Badge -->
+                <span class="security-grade-badge security-grade-{{ project.risk_score|security_grade }}" title="{{ project.risk_score|security_grade_label }}">{{ project.risk_score|security_grade }}</span>
+                <!-- Scan Status Badge -->
+                <span class="scan-status-badge scan-status-{{ project.status }}">{{ project.get_status_display }}</span>
             </div>
-            <div class="text-muted small mt-3">Overall Risk Score</div>
+            <!-- Source Reference Subtitle -->
+            {% if project.source_reference %}
+            <div class="scan-subtitle">
+                <i class="bi bi-link-45deg me-1"></i> {{ project.source_reference }}
+            </div>
+            {% endif %}
+            <!-- Scan Metadata Grid -->
+            <div class="scan-metadata-grid">
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-box-seam me-1"></i> Source Type</span>
+                    <span class="scan-meta-value">{{ project.get_source_type_display }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-files me-1"></i> Files Scanned</span>
+                    <span class="scan-meta-value">{{ project.files_scanned }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-clock me-1"></i> Scan Duration</span>
+                    <span class="scan-meta-value">{{ project.duration_seconds|format_duration }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-calendar me-1"></i> Scan Date</span>
+                    <span class="scan-meta-value">{{ project.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                <div class="scan-meta-item">
+                    <span class="scan-meta-label"><i class="bi bi-gear me-1"></i> Enabled Engines</span>
+                    <span class="scan-meta-value">
+                        {% with engines=project.get_enabled_engines %}{{ engines }}{% endwith %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- Action Buttons -->
+        <div class="d-flex flex-wrap gap-2 ms-3">
+            <form method="post" action="{% url 'scanner:rescan' project.id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-argus-neon btn-sm" aria-label="Rescan project">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Re-scan
+                </button>
+            </form>
+            <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus-primary btn-sm" aria-label="Generate full PDF report">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Full PDF Report
+            </a>
+            <a href="{% url 'reports:generate_report' project.id %}?appendix=0" class="btn btn-argus-neon btn-sm" aria-label="Generate summary-only PDF report">
+                <i class="bi bi-file-text me-1"></i> Summary Only
+            </a>
         </div>
     </div>
-    <div class="col-md-5">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY SEVERITY</div>
-            <canvas id="severityChart"></canvas>
+
+    <!-- Error/Warning Alerts (preserved) -->
+    {% if project.status == 'failed' %}
+        <div class="alert alert-danger alert-custom mb-3">Scan failed: {{ project.error_message }}</div>
+    {% elif project.status != 'completed' %}
+        <div class="alert alert-warning alert-custom mb-3">Scan is {{ project.get_status_display }}...</div>
+    {% endif %}
+
+    {% if project.error_message and project.status == 'completed' %}
+        <div class="alert alert-warning alert-custom alert-custom-small mb-3"><i class="bi bi-exclamation-triangle me-2"></i> {{ project.error_message|linebreaksbr }}</div>
+    {% endif %}
+
+    <!-- Risk Score & Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="argus-panel cyber-panel text-center h-100 d-flex flex-column justify-content-between py-4">
+                <!-- Gauge -->
+                <div class="risk-gauge risk-gauge-enhanced mx-auto" style="--risk-percent: {{ risk_score }}; border-color: {% if risk_score >= 70 %}var(--argus-critical){% elif risk_score >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">
+                    <div class="risk-value">{{ risk_score }}</div>
+                    <div class="risk-max">/ 100</div>
+                </div>
+                <!-- Risk Level Badge -->
+                <div class="mt-3">
+                    <span class="risk-level-badge risk-level-{% if risk_score >= 70 %}critical{% elif risk_score >= 40 %}high{% else %}low{% endif %}">
+                        {% if risk_score >= 70 %}Critical{% elif risk_score >= 40 %}High{% else %}Low{% endif %}
+                    </span>
+                </div>
+                <!-- Progress bar -->
+                <div class="mt-3 px-3">
+                    <div class="risk-progress">
+                        <div class="risk-progress-bar risk-progress-{% if risk_score >= 70 %}critical{% elif risk_score >= 40 %}high{% else %}low{% endif %}" style="width: {{ risk_score }}%;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <span class="risk-progress-label">Safe</span>
+                        <span class="risk-progress-label">Critical</span>
+                    </div>
+                </div>
+                <!-- Summary -->
+                <div class="mt-3 px-2">
+                    <p class="risk-summary mb-0">
+                        Overall project risk is <strong>{% if risk_score >= 70 %}Critical{% elif risk_score >= 40 %}High{% else %}Low{% endif %}</strong> based on the current findings.
+                    </p>
+                </div>
+                <!-- Security Grade inline -->
+                <div class="mt-2">
+                    <span class="risk-grade-label">Security Grade <span class="grade-badge-inline">{{ project.risk_score|security_grade }}</span> <span class="text-muted">· {{ project.risk_score|security_grade_label }}</span></span>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY ENGINE</div>
-            <canvas id="sourceChart"></canvas>
+    <div class="col-md-9">
+        <div class="row g-4 h-100">
+            <div class="col-md-6 d-flex">
+                <div class="argus-panel chart-card w-100 d-flex flex-column">
+                    <div class="chart-card-header">
+                        <div class="chart-card-header-left">
+                            <i class="bi bi-bar-chart-fill chart-card-icon"></i>
+                            <span class="chart-card-title">Findings by Severity</span>
+                        </div>
+                    </div>
+                    <p class="chart-card-desc">Distribution of findings by severity.</p>
+                    {% if severity_counts_json == '{}' %}
+                    <div class="chart-empty-state">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>No data available</span>
+                    </div>
+                    {% else %}
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="severityChart"></canvas>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6 d-flex">
+                <div class="argus-panel chart-card w-100 d-flex flex-column">
+                    <div class="chart-card-header">
+                        <div class="chart-card-header-left">
+                            <i class="bi bi-pie-chart-fill chart-card-icon"></i>
+                            <span class="chart-card-title">Findings by Engine</span>
+                        </div>
+                    </div>
+                    <p class="chart-card-desc">Distribution of findings by scanning engine.</p>
+                    {% if source_counts_json == '{}' %}
+                    <div class="chart-empty-state">
+                        <i class="bi bi-pie-chart"></i>
+                        <span>No data available</span>
+                    </div>
+                    {% else %}
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="sourceChart"></canvas>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="argus-card">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 class="fw-bold mb-0">
-            Findings ({{ filtered_count }}{% if filtered_count != project.total_findings %} of {{ project.total_findings }}{% endif %})
-        </h5>
-        <div>
-            <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill {% if not active_severity %}active{% endif %}">All severities</a>
-            {% for sev, label in project.findings.model.SEVERITY_CHOICES %}
-                <a href="?severity={{ sev }}{% if active_source %}&source={{ active_source }}{% endif %}" class="filter-pill {% if active_severity == sev %}active{% endif %}">{{ label }}</a>
-            {% endfor %}
+    <!-- Filter Toolbar -->
+    <div class="argus-filter-toolbar mb-4">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <!-- Severity Filter Group -->
+            <div class="filter-group d-flex align-items-center gap-2">
+                <span class="filter-label">Severity</span>
+                <div class="filter-pills">
+                    <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill-sm {% if not active_severity %}active{% endif %}" aria-label="Filter by all severities">All</a>
+                    {% for sev, label in project.findings.model.SEVERITY_CHOICES %}
+                        <a href="?severity={{ sev }}{% if active_source %}&source={{ active_source }}{% endif %}" class="filter-pill-sm {% if active_severity == sev %}active-{{ sev }}{% endif %}" aria-label="Filter by {{ label }} severity">{{ label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Engine Filter Group -->
+            <div class="filter-group d-flex align-items-center gap-2 border-start ps-3 border-secondary border-opacity-25">
+                <span class="filter-label">Engine</span>
+                <div class="filter-pills">
+                    <a href="?{% if active_severity %}severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if not active_source %}active{% endif %}" aria-label="Filter by all engines">All</a>
+                    {% for src, label in project.findings.model.SOURCE_CHOICES %}
+                        <a href="?source={{ src }}{% if active_severity %}&severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if active_source == src %}active{% endif %}" aria-label="Filter by {{ label }}">{{ label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Clear & Count -->
+            <div class="ms-auto d-flex align-items-center gap-3">
+                {% if active_severity or active_source %}
+                    <a href="?" class="btn-clear-filters" aria-label="Clear all filters">
+                        <i class="bi bi-x-circle me-1"></i> Clear
+                    </a>
+                {% endif %}
+                <div class="findings-count-pill">
+                    <span class="count-value">{{ filtered_count }}</span>
+                    <span class="count-label">findings{% if filtered_count != project.total_findings %} of {{ project.total_findings }}{% endif %}</span>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="mb-3">
-        <a href="?{% if active_severity %}severity={{ active_severity }}{% endif %}" class="filter-pill {% if not active_source %}active{% endif %}">All engines</a>
-        {% for src, label in project.findings.model.SOURCE_CHOICES %}
-            <a href="?source={{ src }}{% if active_severity %}&severity={{ active_severity }}{% endif %}" class="filter-pill {% if active_source == src %}active{% endif %}">{{ label }}</a>
-        {% endfor %}
     </div>
 
     {% if filtered_count > 25 %}
@@ -94,14 +216,40 @@
                     <span class="badge bg-secondary severity-badge">{{ f.get_source_display }}</span>
                     {% if f.cwe_id %}<span class="badge bg-dark severity-badge">{{ f.cwe_id }}</span>{% endif %}
                     <div class="fw-semibold mt-2">{{ f.title }}</div>
-                    <div class="text-muted small font-monospace">{{ f.file_path }}:{{ f.line_number }}</div>
+                    <div class="text-muted small font-monospace finding-filepath">{{ f.file_path }}:{{ f.line_number }}</div>
                 </div>
             </div>
             {% if f.description %}<p class="mt-2 mb-2 small">{{ f.description|truncatechars:400 }}</p>{% endif %}
             {% if f.code_snippet %}
                 <details class="mb-2">
-                    <summary class="small text-muted" style="cursor:pointer;">View code snippet</summary>
-                    <div class="finding-code mt-2">{{ f.code_snippet|truncatechars:800 }}</div>
+                    <summary class="small text-muted code-toggle">
+                        <i class="bi bi-code-slash me-1"></i> View code snippet
+                    </summary>
+                    <!-- Code Viewer -->
+                    <div class="code-viewer mt-2">
+                        <!-- Header Bar -->
+                        <div class="code-viewer-header">
+                            <div class="d-flex align-items-center gap-2 min-width-0">
+                                <i class="bi bi-file-earmark-code"></i>
+                                <span class="code-viewer-filename text-truncate">{{ f.file_path }}</span>
+                                <span class="code-viewer-badge">:{{ f.line_number }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="code-viewer-engine-badge">{{ f.get_source_display }}</span>
+                                <button type="button" class="code-viewer-copy-btn" aria-label="Copy code">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Code Block -->
+                        <div class="code-viewer-body">
+                            <pre class="code-viewer-pre">{{ f.code_snippet|truncatechars:800 }}</pre>
+                            <div class="code-viewer-line-marker">
+                                <span class="code-viewer-line-badge">L{{ f.line_number }}</span>
+                                <span class="code-viewer-line-dot"></span>
+                            </div>
+                        </div>
+                    </div>
                 </details>
             {% endif %}
             {% if f.remediation %}
@@ -116,13 +264,13 @@
         <nav class="mt-4" aria-label="Findings pagination">
             <ul class="pagination pagination-sm justify-content-center flex-wrap">
                 {% if findings_page.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page=1{% if filter_qs %}&{{ filter_qs }}{% endif %}">First</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.previous_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Prev</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=1{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="First page">First</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.previous_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="Previous page">Prev</a></li>
                 {% endif %}
                 <li class="page-item disabled"><span class="page-link">Page {{ findings_page.number }} of {{ findings_page.paginator.num_pages }}</span></li>
                 {% if findings_page.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.next_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Next</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.paginator.num_pages }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Last</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.next_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="Next page">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.paginator.num_pages }}{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="Last page">Last</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -136,37 +284,41 @@
 const severityCounts = {{ severity_counts_json|safe }};
 const sourceCounts = {{ source_counts_json|safe }};
 
-new Chart(document.getElementById('severityChart'), {
-    type: 'bar',
-    data: {
-        labels: Object.keys(severityCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
-        datasets: [{
-            data: Object.values(severityCounts),
-            backgroundColor: ['#ef4444', '#f97316', '#06b6d4', '#6b7280', '#94a3b8'],
-            borderRadius: 6,
-        }]
-    },
-    options: {
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { ticks: { color: '#8b96ad' }, grid: { display: false } },
-            y: { ticks: { color: '#8b96ad', precision: 0 }, grid: { color: '#232d45' } }
+if (Object.keys(severityCounts).length > 0) {
+    new Chart(document.getElementById('severityChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(severityCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+            datasets: [{
+                data: Object.values(severityCounts),
+                backgroundColor: ['#ef4444', '#f97316', '#06b6d4', '#6b7280', '#94a3b8'],
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#8b96ad' }, grid: { display: false } },
+                y: { ticks: { color: '#8b96ad', precision: 0 }, grid: { color: '#232d45' } }
+            }
         }
-    }
-});
+    });
+}
 
-new Chart(document.getElementById('sourceChart'), {
-    type: 'doughnut',
-    data: {
-        labels: Object.keys(sourceCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
-        datasets: [{
-            data: Object.values(sourceCounts),
-            backgroundColor: ['#4c6ef5', '#37b24d', '#f59f00', '#adb5bd'],
-        }]
-    },
-    options: {
-        plugins: { legend: { position: 'bottom', labels: { color: '#8b96ad' } } }
-    }
-});
+if (Object.keys(sourceCounts).length > 0) {
+    new Chart(document.getElementById('sourceChart'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(sourceCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
+            datasets: [{
+                data: Object.values(sourceCounts),
+                backgroundColor: ['#4c6ef5', '#37b24d', '#f59f00', '#adb5bd'],
+            }]
+        },
+        options: {
+            plugins: { legend: { position: 'bottom', labels: { color: '#8b96ad' } } }
+        }
+    });
+}
 </script>
 {% endblock %}
