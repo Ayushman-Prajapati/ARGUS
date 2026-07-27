@@ -73,17 +73,58 @@
     </div>
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-md-7">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY SEVERITY (ALL SCANS)</div>
-            <canvas id="severityChart"></canvas>
-        </div>
+<!-- Analytics -->
+<div class="analytics-section mb-4">
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-bar-chart-line me-2" style="color:var(--argus-accent);font-size:1.1rem;"></i>Analytics
+        </h5>
     </div>
-    <div class="col-md-5">
-        <div class="argus-panel chart-card h-100">
-            <div class="text-muted small mb-2 fw-semibold">FINDINGS BY ENGINE (ALL SCANS)</div>
-            <canvas id="sourceChart"></canvas>
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="argus-panel chart-card h-100">
+                <div class="chart-card-header">
+                    <div class="chart-card-header-left">
+                        <i class="bi bi-bar-chart-fill chart-card-icon"></i>
+                        <span class="chart-card-title">Severity Distribution</span>
+                    </div>
+                </div>
+                <div class="chart-card-desc">Breakdown of all findings by severity level across every completed scan.</div>
+                {% with total_severity=severity_agg.critical|add:severity_agg.high|add:severity_agg.medium|add:severity_agg.low|add:severity_agg.info %}
+                {% if total_severity > 0 %}
+                <div class="chart-canvas-wrapper">
+                    <canvas id="severityChart"></canvas>
+                </div>
+                {% else %}
+                <div class="chart-empty-state">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>No severity data available yet</span>
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="argus-panel chart-card h-100">
+                <div class="chart-card-header">
+                    <div class="chart-card-header-left">
+                        <i class="bi bi-pie-chart-fill chart-card-icon"></i>
+                        <span class="chart-card-title">Engine Usage</span>
+                    </div>
+                </div>
+                <div class="chart-card-desc">Distribution of findings detected by each scan engine.</div>
+                {% if source_agg.items|length > 0 %}
+                <div class="chart-canvas-wrapper">
+                    <canvas id="sourceChart"></canvas>
+                </div>
+                {% else %}
+                <div class="chart-empty-state">
+                    <i class="bi bi-pie-chart"></i>
+                    <span>No engine data available yet</span>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
