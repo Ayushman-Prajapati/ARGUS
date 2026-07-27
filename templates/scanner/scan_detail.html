@@ -216,7 +216,7 @@
                     <span class="badge bg-secondary severity-badge">{{ f.get_source_display }}</span>
                     {% if f.cwe_id %}<span class="badge bg-dark severity-badge">{{ f.cwe_id }}</span>{% endif %}
                     <div class="fw-semibold mt-2">{{ f.title }}</div>
-                    <div class="text-muted small font-monospace">{{ f.file_path }}:{{ f.line_number }}</div>
+                    <div class="text-muted small font-monospace finding-filepath">{{ f.file_path }}:{{ f.line_number }}</div>
                 </div>
             </div>
             {% if f.description %}<p class="mt-2 mb-2 small">{{ f.description|truncatechars:400 }}</p>{% endif %}

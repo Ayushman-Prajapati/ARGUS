@@ -1056,3 +1056,36 @@ body {
     }
 }
 
+/* ================================================================
+   RESPONSIVE OPTIMIZATIONS
+   ================================================================ */
+
+/* Wrap long file paths to prevent overflow */
+.finding-filepath {
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+/* Code viewer header: wrap on narrow screens */
+@media (max-width: 575.98px) {
+    .code-viewer-header {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    /* Make filter pills more compact on very small screens */
+    .filter-pill-sm {
+        font-size: 0.68rem;
+        padding: 0.15rem 0.45rem;
+    }
+    .argus-filter-toolbar {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* Tablet: metadata grid in 3 columns */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .scan-metadata-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
