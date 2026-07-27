@@ -1151,6 +1151,168 @@ a { color: var(--argus-accent); }
     padding: 0.75rem 1rem;
 }
 
+/* ================================================================
+   RECENT SCANS TABLE
+   ================================================================ */
+
+.recent-scans-section {
+    padding: 1.25rem;
+}
+
+.recent-scans-table {
+    font-size: 0.82rem;
+}
+.recent-scans-table thead th {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    color: var(--argus-text-muted);
+    opacity: 0.55;
+    border-bottom: 1px solid var(--argus-border);
+    padding: 0.5rem 0.5rem;
+    white-space: nowrap;
+}
+.recent-scans-table tbody td {
+    padding: 0.65rem 0.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(35, 45, 69, 0.4);
+}
+.recent-scans-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.recent-scans-table tbody tr:hover {
+    background: rgba(59, 130, 246, 0.03);
+}
+
+.recent-scans-table .project-name {
+    font-size: 0.82rem;
+    color: var(--argus-text);
+    white-space: nowrap;
+}
+.recent-scans-table .project-ref {
+    font-size: 0.68rem;
+    display: block;
+    line-height: 1.2;
+    margin-top: 0.05rem;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.scan-date {
+    font-size: 0.78rem;
+    color: var(--argus-text);
+    font-weight: 500;
+}
+.scan-time {
+    font-size: 0.65rem;
+    display: block;
+    line-height: 1.2;
+    margin-top: 0.05rem;
+}
+
+/* Small inline risk minibar in table rows */
+.risk-minibar {
+    width: 44px;
+    height: 4px;
+    background: var(--argus-bg-elevated);
+    border-radius: 999px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.risk-minibar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.recent-scans-table .risk-value {
+    font-size: 0.85rem;
+    min-width: 1.5rem;
+}
+
+.recent-scans-table .findings-count {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--argus-text);
+}
+
+.engine-tag {
+    font-size: 0.68rem;
+    color: var(--argus-text-muted);
+    background: rgba(19, 27, 46, 0.6);
+    border: 1px solid var(--argus-border);
+    border-radius: 6px;
+    padding: 0.15rem 0.45rem;
+    white-space: nowrap;
+}
+
+.recent-scans-table .view-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border-color: var(--argus-border);
+    color: var(--argus-text-muted);
+    transition: all 0.2s ease;
+}
+.recent-scans-table .view-btn:hover {
+    background: var(--argus-accent);
+    border-color: var(--argus-accent);
+    color: #fff;
+}
+
+.recent-scans-table .scan-status-badge {
+    font-size: 0.62rem;
+    padding: 0.15rem 0.5rem;
+}
+
+/* Empty state */
+.recent-scans-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--argus-text-muted);
+}
+.recent-scans-empty i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.75rem;
+    opacity: 0.35;
+}
+.recent-scans-empty p {
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+}
+
+/* Responsive: hide lower-priority columns on small screens */
+@media (max-width: 767.98px) {
+    .recent-scans-table thead th:nth-child(5),
+    .recent-scans-table tbody td:nth-child(5),
+    .recent-scans-table thead th:nth-child(6),
+    .recent-scans-table tbody td:nth-child(6) {
+        display: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .recent-scans-section .argus-card {
+        padding: 1rem;
+    }
+    .recent-scans-table thead th:nth-child(2),
+    .recent-scans-table tbody td:nth-child(2) {
+        display: none;
+    }
+    .recent-scans-table .project-ref {
+        max-width: 100px;
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 767.98px) {
     .argus-executive-summary .d-flex.justify-content-between {
