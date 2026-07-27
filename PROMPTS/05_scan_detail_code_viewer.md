@@ -1,4 +1,4 @@
-# ARGUS - Sprint 5
+# ARGUS – Sprint 5
 
 ## Feature
 
@@ -10,13 +10,10 @@ Improve Code Viewer
 
 Read these files before making changes.
 
-.claude.md
-
-PROJECT.md
-
-ROADMAP.md
-
-TODO.md
+- .claude.md
+- PROJECT.md
+- ROADMAP.md
+- TODO.md
 
 Understand the project before writing code.
 
@@ -30,112 +27,134 @@ Do NOT redesign the page.
 
 Do NOT modify backend logic.
 
-The objective is to make code snippets easier to read while preserving all existing functionality.
+The objective is to make code snippets significantly easier to read while preserving all existing functionality.
 
 ---
 
 # Allowed Files
 
-templates/scanner/scan_detail.html
-
-static/css/custom.css
+- templates/scanner/scan_detail.html
+- static/css/custom.css
 
 ---
 
 # Forbidden Files
 
-scanner/views.py
-
-scanner/models.py
-
-scanner/forms.py
-
-settings.py
-
-urls.py
-
-static/js/
-
-reports/
+- scanner/views.py
+- scanner/models.py
+- scanner/forms.py
+- settings.py
+- urls.py
+- static/js/
+- reports/
 
 Do not modify any forbidden files.
 
 ---
 
+# Missing Data Policy
+
+Use ONLY existing Django template variables.
+
+If any of the following are unavailable:
+
+- language
+- filename
+- full file path
+- vulnerable line
+- line numbers
+
+DO NOT
+
+- create new template variables
+- modify Python files
+- create template filters
+- add context variables
+
+Instead
+
+- display placeholders
+- omit the element if necessary
+- explain the limitation in the final report
+
+---
+
 # Preserve
 
-Keep existing
+Keep existing:
 
 - Django template variables
-- Code snippets
 - Findings
+- Code snippets
 - Filters
 - Charts
 - Buttons
 - Pagination
+- Collapse behavior
 
 Do not rename template variables.
 
-Do not change backend logic.
+Do not modify backend logic.
 
 ---
 
 # Required Improvements
 
-Improve the code snippet display.
+Improve ONLY the Code Viewer UI.
 
-Include
+Include:
 
-• Monospace font
+- Monospace font
+- Scrollable code container
+- Rounded borders
+- Better spacing
+- Better typography
+- Dark theme code panel
+- File path header
+- Language badge
+- Copy Code button (visual only)
 
-• Line numbers
+Optional:
 
-• Highlight vulnerable line
+- Line numbers ONLY if existing template data already supports them.
+- Vulnerable line highlight ONLY if existing template data already identifies the vulnerable line.
 
-• Scrollable code container
+Do NOT implement:
 
-• Copy Code button (UI only)
-
-• File path header
-
-• Language badge
-
-• Rounded borders
-
-• Better spacing
-
-• Better typography
-
-Do not implement syntax highlighting.
-
-Do not implement copy functionality.
-
-Only improve the UI.
+- Syntax highlighting
+- Clipboard functionality
+- JavaScript
+- Backend logic
 
 ---
 
-# Layout
+# Code Viewer Layout
 
---------------------------------
+------------------------------------------------
 
-File Path
+File Name
+
+Full File Path
 
 Language Badge
 
-Copy Button
+Copy Code Button
 
--------------------------------
+------------------------------------------------
 
 Code Block
 
---------------------------------
+------------------------------------------------
 
-The code block should
+Requirements
 
-- scroll horizontally
-- preserve indentation
-- wrap only when appropriate
-- remain readable on small screens
+- Preserve indentation
+- Horizontal scrolling
+- No unnecessary wrapping
+- Readable on smaller screens
+- Consistent padding
+- Rounded corners
+- Compact spacing
 
 ---
 
@@ -143,41 +162,57 @@ The code block should
 
 Use
 
-- dark background
-- subtle border
-- monospace font
-- consistent padding
-- line spacing
-- rounded corners
-
-Highlight the vulnerable line with a subtle background color.
+- Dark background
+- Subtle border
+- Monospace font
+- Comfortable line height
+- Consistent padding
+- Rounded corners
 
 ---
 
-# File Header
+# HTML Rules
 
-Display
+Modify ONLY the Code Viewer section.
 
-- File name
-- Full file path
-- Language
-- Line number
+Leave every other section untouched.
 
-Reuse existing template variables.
+Use semantic HTML.
 
-If unavailable, display placeholders.
+Preserve existing template logic.
 
-Do not modify backend.
+Use exactly ONE `<summary>` element inside each `<details>`.
+
+Do NOT:
+
+- create nested `<details>`
+- duplicate "View code snippet" controls
+- change collapse behavior
+
+---
+
+# Copy Button Rules
+
+The Copy Code button is visual only.
+
+Do NOT add:
+
+- JavaScript
+- onclick handlers
+- clipboard logic
+- data attributes
+
+It should only be a styled UI element.
 
 ---
 
 # CSS Rules
 
-Reuse existing CSS.
+Reuse existing CSS whenever possible.
 
 Avoid duplicate styles.
 
-Maintain dark cyber theme.
+Maintain the existing dark cyber theme.
 
 Keep spacing compact.
 
@@ -185,45 +220,46 @@ Maintain responsiveness.
 
 ---
 
-# HTML Rules
-
-Modify only the Code Viewer section.
-
-Leave the rest of the page untouched.
-
-Use semantic HTML.
-
-Preserve existing template logic.
-
----
-
 # Before Editing
 
 Inspect the existing Code Viewer.
 
-Explain
+Explain:
 
-1. What will change.
+1. Current implementation
+2. Existing template variables available
+3. Files to modify
+4. Which requested features can be implemented using existing data
+5. Which requested features cannot be implemented without backend changes
 
-2. Files to modify.
+Wait for approval.
 
-3. Why these improvements improve readability.
-
-Do not write code yet.
+Do NOT edit any files.
 
 ---
 
 # Implementation
 
-Implement only the Code Viewer improvements.
+After approval,
+
+Implement ONLY the Code Viewer improvements.
+
+Modify ONLY:
+
+- templates/scanner/scan_detail.html
+- static/css/custom.css
 
 Do not continue to another feature.
+
+Do not perform opportunistic UI improvements.
+
+Stop immediately after the Code Viewer is complete.
 
 ---
 
 # Verification
 
-Verify
+Verify:
 
 ✓ Code still displays correctly
 
@@ -239,18 +275,22 @@ Verify
 
 ✓ Long lines remain readable
 
+✓ Exactly one `<summary>` inside every `<details>`
+
+✓ No duplicate Code Viewer controls
+
+✓ Existing collapse behavior preserved
+
 ---
 
 # Final Report
 
-Provide
+Provide:
 
 1. Files modified
-
 2. Summary of improvements
-
 3. Visual enhancements
-
-4. Remaining limitations
+4. Features intentionally skipped due to missing backend data
+5. Confirmation that no backend files were modified
 
 Then STOP.

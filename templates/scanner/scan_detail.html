@@ -188,8 +188,34 @@
             {% if f.description %}<p class="mt-2 mb-2 small">{{ f.description|truncatechars:400 }}</p>{% endif %}
             {% if f.code_snippet %}
                 <details class="mb-2">
-                    <summary class="small text-muted" style="cursor:pointer;">View code snippet</summary>
-                    <div class="finding-code mt-2">{{ f.code_snippet|truncatechars:800 }}</div>
+                    <summary class="small text-muted code-toggle" style="cursor:pointer;">
+                        <i class="bi bi-code-slash me-1"></i> View code snippet
+                    </summary>
+                    <!-- Code Viewer -->
+                    <div class="code-viewer mt-2">
+                        <!-- Header Bar -->
+                        <div class="code-viewer-header">
+                            <div class="d-flex align-items-center gap-2 min-width-0">
+                                <i class="bi bi-file-earmark-code"></i>
+                                <span class="code-viewer-filename text-truncate">{{ f.file_path }}</span>
+                                <span class="code-viewer-badge">:{{ f.line_number }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="code-viewer-engine-badge">{{ f.get_source_display }}</span>
+                                <button type="button" class="code-viewer-copy-btn">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Code Block -->
+                        <div class="code-viewer-body">
+                            <pre class="code-viewer-pre">{{ f.code_snippet|truncatechars:800 }}</pre>
+                            <div class="code-viewer-line-marker">
+                                <span class="code-viewer-line-badge">L{{ f.line_number }}</span>
+                                <span class="code-viewer-line-dot"></span>
+                            </div>
+                        </div>
+                    </div>
                 </details>
             {% endif %}
             {% if f.remediation %}
