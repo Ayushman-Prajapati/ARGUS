@@ -13,16 +13,32 @@
     --argus-low: #6b7280;
     --argus-info: #94a3b8;
     --argus-success: #22c55e;
+    --neon-purple: #d946ef;
+    --neon-blue: #3b82f6;
+    --neon-cyan: #06b6d4;
+    --neon-green: #10b981;
+    --neon-pink: #f43f5e;
+    --neon-glow: rgba(59, 130, 246, 0.15);
+    --glass-bg: rgba(19, 27, 46, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.08);
     --font-display: "Inter", system-ui, sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
+/* ================================================================
+   BASE / BODY
+   ================================================================ */
+
 body {
-    background: radial-gradient(circle at 15% 0%, #0f1830 0%, var(--argus-bg) 45%);
+    background: radial-gradient(circle at 10% 20%, #111827 0%, #070a13 50%, #020408 100%);
     color: var(--argus-text);
     font-family: var(--font-display);
     min-height: 100vh;
 }
+
+/* ================================================================
+   NAVBAR
+   ================================================================ */
 
 .argus-navbar {
     background: rgba(10, 14, 26, 0.85);
@@ -56,6 +72,10 @@ body {
 }
 .navbar-nav .nav-link:hover { color: var(--argus-text) !important; }
 
+/* ================================================================
+   LAYOUT & CARDS
+   ================================================================ */
+
 .argus-main { max-width: 1320px; margin: 0 auto; }
 
 .argus-card {
@@ -69,24 +89,12 @@ body {
     padding: 3.5rem 0 2.5rem;
     text-align: center;
 }
-.argus-hero h1 {
-    font-weight: 800;
-    font-size: 2.75rem;
-    background: linear-gradient(135deg, #ffffff, var(--argus-accent));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: -1px;
-}
 .argus-hero p { color: var(--argus-text-muted); font-size: 1.1rem; max-width: 640px; margin: 0.75rem auto 0; }
 
-.argus-stat-card {
-    background: var(--argus-bg-card);
-    border: 1px solid var(--argus-border);
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
-    text-align: center;
-}
+/* ================================================================
+   HOMEPAGE CARDS (not used on Scan Detail)
+   ================================================================ */
+
 .argus-stat-card .stat-value { font-size: 2.1rem; font-weight: 800; font-family: var(--font-mono); }
 .argus-stat-card .stat-label { color: var(--argus-text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
 
@@ -183,6 +191,7 @@ label { color: var(--argus-text-muted); font-weight: 500; font-size: 0.9rem; }
     font-size: 0.78rem;
     color: var(--argus-accent) !important;
     opacity: 0.8;
+    cursor: pointer;
     transition: opacity 0.15s ease;
 }
 .code-toggle:hover { opacity: 1; }
@@ -436,11 +445,11 @@ a { color: var(--argus-accent); }
     }
 }
 
-.chart-card canvas { max-height: 280px; }
-
 /* ================================================================
    CHART CARD ENHANCEMENTS
    ================================================================ */
+
+.chart-card canvas { max-height: 280px; }
 
 .chart-card-header {
     display: flex;
@@ -501,37 +510,9 @@ a { color: var(--argus-accent); }
     font-weight: 500;
 }
 
-/* Responsive: ensure chart cards stack properly */
-@media (max-width: 767.98px) {
-    .chart-card {
-        padding: 1.25rem;
-    }
-    .chart-card-header {
-        flex-wrap: wrap;
-        gap: 0.35rem;
-    }
-    .chart-canvas-wrapper canvas {
-        max-height: 200px;
-    }
-}
-
-/* --- CYBER ANIMATION & INTERACTIVE GRID SYSTEMS --- */
-
-:root {
-    --neon-purple: #d946ef;
-    --neon-blue: #3b82f6;
-    --neon-cyan: #06b6d4;
-    --neon-green: #10b981;
-    --neon-pink: #f43f5e;
-    --neon-glow: rgba(59, 130, 246, 0.15);
-    --glass-bg: rgba(19, 27, 46, 0.45);
-    --glass-border: rgba(255, 255, 255, 0.08);
-}
-
-/* Redefined body gradient for higher premium feel */
-body {
-    background: radial-gradient(circle at 10% 20%, #111827 0%, #070a13 50%, #020408 100%);
-}
+/* ================================================================
+   GLASSMORPHIC PANELS & CYBER EFFECTS
+   ================================================================ */
 
 /* Glassmorphic Cyber Panels */
 .cyber-panel {
@@ -547,7 +528,7 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), 0 0 15px rgba(59, 130, 246, 0.1);
 }
 
-/* Custom header typography glow */
+/* Homepage hero section (not used on Scan Detail) */
 .argus-hero h1 {
     font-weight: 800;
     font-size: 3.25rem;
@@ -717,6 +698,10 @@ body {
     transform: scaleX(1);
 }
 
+/* ================================================================
+   STAT CARDS & COUNTERS (Dashboard)
+   ================================================================ */
+
 .stat-value {
     font-size: 2.5rem;
     font-weight: 800;
@@ -727,7 +712,9 @@ body {
     margin-bottom: 0.25rem;
 }
 
-/* Neon buttons */
+/* ================================================================
+   ACTION BUTTONS
+   ================================================================ */
 .btn-argus-neon {
     background: transparent;
     border: 1px solid var(--neon-cyan);
@@ -1017,7 +1004,7 @@ body {
     padding: 0.75rem 1rem;
 }
 
-/* Responsive adjustments for Executive Summary */
+/* Responsive adjustments */
 @media (max-width: 767.98px) {
     .argus-executive-summary .d-flex.justify-content-between {
         flex-direction: column;
@@ -1038,6 +1025,30 @@ body {
     .scan-metadata-grid {
         grid-template-columns: repeat(2, 1fr) !important;
     }
+
+    .chart-card {
+        padding: 1.25rem;
+    }
+    .chart-card-header {
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+    .chart-canvas-wrapper canvas {
+        max-height: 200px;
+    }
+}
+
+/* Wrap long file paths to prevent overflow */
+.finding-filepath {
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+/* Tablet: metadata grid in 3 columns */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .scan-metadata-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -1054,38 +1065,19 @@ body {
         height: 1.5rem;
         font-size: 0.7rem;
     }
-}
 
-/* ================================================================
-   RESPONSIVE OPTIMIZATIONS
-   ================================================================ */
-
-/* Wrap long file paths to prevent overflow */
-.finding-filepath {
-    overflow-wrap: break-word;
-    word-break: break-all;
-}
-
-/* Code viewer header: wrap on narrow screens */
-@media (max-width: 575.98px) {
     .code-viewer-header {
         flex-wrap: wrap;
         gap: 0.4rem;
     }
-    /* Make filter pills more compact on very small screens */
+
     .filter-pill-sm {
         font-size: 0.68rem;
         padding: 0.15rem 0.45rem;
     }
+
     .argus-filter-toolbar {
         padding: 0.5rem 0.75rem;
-    }
-}
-
-/* Tablet: metadata grid in 3 columns */
-@media (min-width: 576px) and (max-width: 991.98px) {
-    .scan-metadata-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
     }
 }
 

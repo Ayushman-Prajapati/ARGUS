@@ -9,7 +9,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div class="flex-grow-1 min-width-0">
             <div class="d-flex flex-wrap align-items-baseline gap-2 mb-2">
-                <h2 class="fw-bold mb-0 text-truncate" style="max-width: 100%;">{{ project.name }}</h2>
+                <h2 class="fw-bold mb-0 text-truncate">{{ project.name }}</h2>
                 <!-- Security Grade Badge -->
                 <span class="security-grade-badge security-grade-{{ project.risk_score|security_grade }}" title="{{ project.risk_score|security_grade_label }}">{{ project.risk_score|security_grade }}</span>
                 <!-- Scan Status Badge -->
@@ -51,14 +51,14 @@
         <div class="d-flex flex-wrap gap-2 ms-3">
             <form method="post" action="{% url 'scanner:rescan' project.id %}" class="d-inline">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-argus-neon btn-sm">
+                <button type="submit" class="btn btn-argus-neon btn-sm" aria-label="Rescan project">
                     <i class="bi bi-arrow-clockwise me-1"></i> Re-scan
                 </button>
             </form>
-            <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus-primary btn-sm">
+            <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus-primary btn-sm" aria-label="Generate full PDF report">
                 <i class="bi bi-file-earmark-pdf me-1"></i> Full PDF Report
             </a>
-            <a href="{% url 'reports:generate_report' project.id %}?appendix=0" class="btn btn-argus-neon btn-sm">
+            <a href="{% url 'reports:generate_report' project.id %}?appendix=0" class="btn btn-argus-neon btn-sm" aria-label="Generate summary-only PDF report">
                 <i class="bi bi-file-text me-1"></i> Summary Only
             </a>
         </div>
@@ -168,9 +168,9 @@
             <div class="filter-group d-flex align-items-center gap-2">
                 <span class="filter-label">Severity</span>
                 <div class="filter-pills">
-                    <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill-sm {% if not active_severity %}active{% endif %}">All</a>
+                    <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill-sm {% if not active_severity %}active{% endif %}" aria-label="Filter by all severities">All</a>
                     {% for sev, label in project.findings.model.SEVERITY_CHOICES %}
-                        <a href="?severity={{ sev }}{% if active_source %}&source={{ active_source }}{% endif %}" class="filter-pill-sm {% if active_severity == sev %}active-{{ sev }}{% endif %}">{{ label }}</a>
+                        <a href="?severity={{ sev }}{% if active_source %}&source={{ active_source }}{% endif %}" class="filter-pill-sm {% if active_severity == sev %}active-{{ sev }}{% endif %}" aria-label="Filter by {{ label }} severity">{{ label }}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -179,9 +179,9 @@
             <div class="filter-group d-flex align-items-center gap-2 border-start ps-3 border-secondary border-opacity-25">
                 <span class="filter-label">Engine</span>
                 <div class="filter-pills">
-                    <a href="?{% if active_severity %}severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if not active_source %}active{% endif %}">All</a>
+                    <a href="?{% if active_severity %}severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if not active_source %}active{% endif %}" aria-label="Filter by all engines">All</a>
                     {% for src, label in project.findings.model.SOURCE_CHOICES %}
-                        <a href="?source={{ src }}{% if active_severity %}&severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if active_source == src %}active{% endif %}">{{ label }}</a>
+                        <a href="?source={{ src }}{% if active_severity %}&severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if active_source == src %}active{% endif %}" aria-label="Filter by {{ label }}">{{ label }}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -189,7 +189,7 @@
             <!-- Clear & Count -->
             <div class="ms-auto d-flex align-items-center gap-3">
                 {% if active_severity or active_source %}
-                    <a href="?" class="btn-clear-filters">
+                    <a href="?" class="btn-clear-filters" aria-label="Clear all filters">
                         <i class="bi bi-x-circle me-1"></i> Clear
                     </a>
                 {% endif %}
@@ -222,7 +222,7 @@
             {% if f.description %}<p class="mt-2 mb-2 small">{{ f.description|truncatechars:400 }}</p>{% endif %}
             {% if f.code_snippet %}
                 <details class="mb-2">
-                    <summary class="small text-muted code-toggle" style="cursor:pointer;">
+                    <summary class="small text-muted code-toggle">
                         <i class="bi bi-code-slash me-1"></i> View code snippet
                     </summary>
                     <!-- Code Viewer -->
@@ -236,7 +236,7 @@
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="code-viewer-engine-badge">{{ f.get_source_display }}</span>
-                                <button type="button" class="code-viewer-copy-btn">
+                                <button type="button" class="code-viewer-copy-btn" aria-label="Copy code">
                                     <i class="bi bi-clipboard"></i>
                                 </button>
                             </div>
@@ -264,13 +264,13 @@
         <nav class="mt-4" aria-label="Findings pagination">
             <ul class="pagination pagination-sm justify-content-center flex-wrap">
                 {% if findings_page.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page=1{% if filter_qs %}&{{ filter_qs }}{% endif %}">First</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.previous_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Prev</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=1{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="First page">First</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.previous_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="Previous page">Prev</a></li>
                 {% endif %}
                 <li class="page-item disabled"><span class="page-link">Page {{ findings_page.number }} of {{ findings_page.paginator.num_pages }}</span></li>
                 {% if findings_page.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.next_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Next</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.paginator.num_pages }}{% if filter_qs %}&{{ filter_qs }}{% endif %}">Last</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.next_page_number }}{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="Next page">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ findings_page.paginator.num_pages }}{% if filter_qs %}&{{ filter_qs }}{% endif %}" aria-label="Last page">Last</a></li>
                 {% endif %}
             </ul>
         </nav>
