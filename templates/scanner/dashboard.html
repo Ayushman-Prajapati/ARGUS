@@ -2,34 +2,73 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold mb-0">Dashboard</h3>
-    <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus"><i class="bi bi-plus-lg"></i> New Scan</a>
+<!-- Dashboard Hero -->
+<div class="dashboard-hero">
+    <div class="dashboard-hero-header">
+        <div class="dashboard-hero-text">
+            <h1 class="dashboard-hero-title">Security Dashboard</h1>
+            <p class="dashboard-hero-subtitle">Real-time security posture overview across all scanned projects.</p>
+            <div class="dashboard-hero-meta">
+                <span class="hero-badge"><i class="bi bi-shield-check"></i> {{ total_scans }} scans</span>
+                <span class="hero-badge"><i class="bi bi-bug"></i> {{ total_findings }} findings</span>
+                {% if projects %}
+                <span class="hero-badge"><i class="bi bi-clock-history"></i> Last scan {{ projects.0.created_at|date:"M d, Y" }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary btn-lg">
+            <i class="bi bi-plus-lg"></i> Start New Scan
+        </a>
+    </div>
 </div>
 
+<!-- Security Overview Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-xl-3">
         <div class="argus-stat-card">
+            <i class="bi bi-shield-check stat-icon"></i>
             <div class="stat-value">{{ total_scans }}</div>
-            <div class="stat-label">Completed Scans</div>
+            <div class="stat-label">Total Scans</div>
+            <div class="stat-sub">Projects analyzed</div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-xl-3">
         <div class="argus-stat-card">
+            <i class="bi bi-bug stat-icon"></i>
             <div class="stat-value">{{ total_findings }}</div>
             <div class="stat-label">Total Findings</div>
+            <div class="stat-sub">Issues detected</div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-xl-3">
         <div class="argus-stat-card">
-            <div class="stat-value" style="color:var(--argus-critical)">{{ severity_agg.critical }}</div>
-            <div class="stat-label">Critical</div>
+            <i class="bi bi-exclamation-triangle stat-icon text-critical"></i>
+            <div class="stat-value text-critical">{{ severity_agg.critical }}</div>
+            <div class="stat-label">Critical Findings</div>
+            <div class="stat-sub">Need immediate attention</div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-xl-3">
         <div class="argus-stat-card">
-            <div class="stat-value" style="color:var(--argus-high)">{{ severity_agg.high }}</div>
-            <div class="stat-label">High</div>
+            <i class="bi bi-speedometer2 stat-icon"></i>
+            <div class="stat-value">
+                {% if total_findings > 0 %}
+                    {% widthratio severity_agg.critical|add:severity_agg.high total_findings 100 %}<span class="stat-sub-suffix">%</span>
+                {% else %}
+                    <span class="stat-na">&mdash;</span>
+                {% endif %}
+            </div>
+            <div class="stat-label">Avg Risk Score</div>
+            <div class="stat-sub">
+                {% if total_findings > 0 %}
+                    {% with risk_pct=severity_agg.critical|add:severity_agg.high %}
+                    {% widthratio risk_pct total_findings 100 as risk_raw %}
+                    <span class="risk-indicator risk-indicator-{% if risk_raw|add:0 >= 70 %}critical{% elif risk_raw|add:0 >= 40 %}high{% elif risk_raw|add:0 >= 20 %}medium{% else %}low{% endif %}">
+                        {% if risk_raw|add:0 >= 70 %}Critical{% elif risk_raw|add:0 >= 40 %}High{% elif risk_raw|add:0 >= 20 %}Medium{% else %}Low{% endif %}
+                    </span>
+                    {% endwith %}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

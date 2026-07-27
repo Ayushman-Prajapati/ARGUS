@@ -1,62 +1,112 @@
 # ARGUS ROADMAP
 
-Version: 2.0
-Status: In Development
+Version: 3.0
+
+Status: Active Development
 
 ---
 
 # Vision
 
-Argus will become a modern Secure Code Review Platform capable of analyzing source code, detecting vulnerabilities, explaining security risks, and producing professional reports.
+Argus is a modern Secure Code Review Platform built with Django.
 
-The project should evolve gradually without sacrificing code quality.
+Its long-term goal is to provide enterprise-grade static application security testing (SAST), secret detection, dependency analysis, repository exploration, AI-assisted remediation, and professional reporting.
+
+The platform should evolve incrementally while maintaining:
+
+- Clean Architecture
+- Modular Design
+- Professional UI/UX
+- Stable Functionality
+- Maintainable Code
 
 ---
 
 # Development Strategy
 
-Development follows incremental feature releases.
+Development is feature-driven.
 
-Every release must leave the application fully functional.
+Every feature:
 
-Each feature is developed on its own Git branch.
+- Is implemented on its own Git branch
+- Is independently testable
+- Must not break existing functionality
+- Is completed before starting the next major feature
 
-No feature should require redesigning the entire application.
+Each phase represents a major milestone.
 
 ---
 
-# Phase 1
-## Professional UI
+# Phase 1 — Scan Detail Experience
 
-Status:
-IN PROGRESS
+Status
+
+✅ Completed
 
 Objectives
 
-- Improve Scan Detail page
-- Improve Dashboard
-- Improve Homepage
-- Better typography
-- Better spacing
-- Better responsiveness
-- Better findings cards
-- Better charts
-- Better code viewer
+- Executive Summary
+- Metadata Grid
+- Findings Section
+- Findings Filters
+- Risk Score Card
+- Code Viewer
+- Charts
+- Responsive Design
+- Cleanup
+
+Deliverables
+
+- Professional Scan Detail page
+- Responsive layout
+- Modern cybersecurity UI
+- Improved usability
+
+---
+
+# Phase 2 — Dashboard
+
+Status
+
+🚧 In Progress
+
+Objectives
+
+Build a professional security dashboard.
+
+Components
+
+- Dashboard Hero
+- Security Overview
+- Statistics Cards
+- Recent Scans
+- Security Analytics
+- Quick Actions
+- Activity Timeline
+- Empty States
+- Responsive Design
+
+Future
+
+- Risk Trends
+- Historical Analytics
+- Scan Metrics
+- Team Activity
 
 Success Criteria
 
-- No layout regressions
-- Mobile responsive
-- Existing functionality preserved
+- Responsive
+- Fast
+- Clean layout
+- Consistent with Scan Detail
 
 ---
 
-# Phase 2
-## Better Static Analysis
+# Phase 3 — Static Analysis Engine
 
 Objectives
 
-Improve ARGUS AST Engine.
+Expand the ARGUS AST Engine.
 
 Detect
 
@@ -82,17 +132,17 @@ Each finding should include
 - CWE
 - OWASP
 - Description
+- Evidence
 - Remediation
 - References
 
 ---
 
-# Phase 3
-## Secret Detection
+# Phase 4 — Secret Scanner
 
 Objectives
 
-Create a dedicated Secret Scanner.
+Create a dedicated Secret Detection Engine.
 
 Detect
 
@@ -103,7 +153,7 @@ Detect
 - GitLab Tokens
 - Slack Tokens
 - Discord Tokens
-- JWT
+- JWT Tokens
 - RSA Keys
 - SSH Keys
 - OpenAI Keys
@@ -111,284 +161,227 @@ Detect
 - Gemini Keys
 - Stripe Keys
 - Twilio Keys
-- Passwords
+- Hardcoded Passwords
 
 Future
 
-Entropy analysis
-
-Custom regex rules
+- Entropy Analysis
+- Custom Regex Rules
+- User-defined Patterns
 
 ---
 
-# Phase 4
-## Dependency Scanning
+# Phase 5 — Dependency Scanner
 
 Objectives
 
 Support
 
-requirements.txt
-
-poetry.lock
-
-Pipfile.lock
-
-package.json
-
-Cargo.toml
-
-composer.json
+- requirements.txt
+- poetry.lock
+- Pipfile.lock
+- package.json
+- Cargo.toml
+- composer.json
 
 Future
 
-OSV integration
-
-Package risk scoring
-
-CVSS
-
-Upgrade recommendations
+- OSV Integration
+- CVE Database
+- CVSS Scoring
+- Upgrade Recommendations
+- License Detection
 
 ---
 
-# Phase 5
-## Repository Explorer
+# Phase 6 — Repository Explorer
 
 Objectives
 
-VSCode-style file explorer.
+Build a VS Code–style repository browser.
 
 Features
 
-- Folder tree
-- File preview
-- Syntax highlighting
-- Jump to vulnerability
-- Search files
+- Folder Tree
+- File Preview
+- Syntax Highlighting
+- Search Files
+- Jump to Vulnerability
+- File Metadata
 
 ---
 
-# Phase 6
-## AI Security Assistant
+# Phase 7 — Reports
 
 Objectives
 
-Each finding should provide
-
-Explain
-
-Why vulnerable
-
-Attack example
-
-Secure alternative
-
-OWASP explanation
-
-CWE explanation
-
-Secure code example
-
-Future
-
-LLM integration
-
-Caching
-
-Offline explanations
-
----
-
-# Phase 7
-## Reports
-
-Objectives
-
-Improve PDF reports.
+Professional reporting.
 
 Include
 
-Executive Summary
+- Executive Summary
+- Findings
+- Charts
+- Risk Score
+- CWE Mapping
+- OWASP Mapping
+- Evidence
+- Remediation
+- Appendix
 
-Charts
+Exports
 
-Risk Score
+- PDF
+- HTML
+- SARIF
+- JSON
+- CSV
 
-OWASP Mapping
+---
 
-CWE
+# Phase 8 — AI Security Assistant
 
-Evidence
+Objectives
 
-Remediation
+Provide AI-assisted vulnerability explanations.
 
-Appendix
+Each finding should include
+
+- Why it is vulnerable
+- Possible attack scenario
+- Secure alternative
+- OWASP explanation
+- CWE explanation
+- Secure code example
 
 Future
 
-HTML Reports
-
-SARIF Export
-
-JSON Export
-
-CSV Export
+- LLM Integration
+- Offline Explanations
+- AI Risk Prioritization
+- AI Secure Refactoring
 
 ---
 
-# Phase 8
-## Dashboard
+# Phase 9 — Background Processing
 
 Objectives
 
-Executive Dashboard
+Introduce asynchronous scanning.
 
-Recent Scans
+Technology
 
-Recent Findings
+- Celery
+- Redis
 
-Risk Trends
+Features
 
-Top Vulnerabilities
-
-Most Vulnerable Projects
-
-Engine Statistics
-
-Future
-
-Historical analytics
-
-Trend charts
+- Scan Queue
+- Progress Tracking
+- Live Updates
+- Cancellation
+- Retry
+- Worker Monitoring
 
 ---
 
-# Phase 9
-## Background Processing
+# Phase 10 — REST API
 
 Objectives
 
-Use
+Expose platform functionality through APIs.
 
-Celery
+Modules
 
-Redis
+- Projects API
+- Findings API
+- Reports API
+- Dashboard API
 
-Queue
+Features
 
-Progress tracking
-
-Live updates
-
-Cancellation
-
-Retry
-
-Worker monitoring
+- Authentication
+- Pagination
+- Filtering
+- Swagger
+- OpenAPI
 
 ---
 
-# Phase 10
-## REST API
+# Phase 11 — Authentication & Organizations
 
 Objectives
 
-Projects API
+Support multi-user collaboration.
 
-Findings API
+Features
 
-Reports API
-
-Dashboard API
-
-Authentication
-
-Pagination
-
-Filtering
-
-Swagger
-
-OpenAPI
-
----
-
-# Phase 11
-## Authentication
-
-Objectives
-
-Organizations
-
-Projects
-
-Teams
+- Authentication
+- Organizations
+- Projects
+- Teams
+- Roles
+- Permissions
 
 Roles
 
-Permissions
-
-Admin
-
-Member
-
-Viewer
+- Administrator
+- Member
+- Viewer
 
 Future
 
-SSO
-
-GitHub Login
-
-Google Login
+- GitHub Login
+- Google Login
+- Microsoft Login
+- SSO
 
 ---
 
-# Phase 12
-## DevOps
+# Phase 12 — DevOps & Deployment
 
 Objectives
 
-Docker
+Production deployment.
 
-Docker Compose
+Technology
 
-PostgreSQL
+- Docker
+- Docker Compose
+- PostgreSQL
+- Gunicorn
+- Nginx
 
-Gunicorn
+Infrastructure
 
-Nginx
-
-Environment Variables
-
-Logging
-
-Production Settings
-
-CI/CD
-
-GitHub Actions
+- Environment Variables
+- Logging
+- Production Settings
+- GitHub Actions
+- CI/CD
 
 ---
 
 # Future Integrations
 
-GitHub
+Source Control
 
-GitLab
+- GitHub
+- GitLab
+- Bitbucket
+- Azure DevOps
 
-Bitbucket
+Developer Tools
 
-Azure DevOps
+- VS Code Extension
+- CLI
+- Desktop Client
 
-Jenkins
+CI/CD
 
-VS Code Extension
-
-CLI
-
-Desktop Client
+- Jenkins
+- GitHub Actions
+- GitLab CI
 
 ---
 
@@ -396,46 +389,33 @@ Desktop Client
 
 Always prefer
 
-Small improvements
-
-Clean architecture
-
-Modular code
-
-Readable code
-
-Reusable components
+- Small incremental improvements
+- Modular architecture
+- Readable code
+- Reusable components
+- Clean UI
+- Stable functionality
 
 Avoid
 
-Large rewrites
-
-Breaking existing features
-
-Duplicate code
-
-Premature optimization
+- Large rewrites
+- Breaking changes
+- Duplicate code
+- Premature optimization
 
 ---
 
 # Definition of Done
 
-Every completed feature must satisfy
+A feature is complete only when:
 
-✓ Application starts successfully
-
-✓ No template errors
-
-✓ No Python errors
-
-✓ No layout regressions
-
-✓ Responsive
-
-✓ Existing functionality preserved
-
-✓ Code reviewed
-
-✓ Committed to feature branch
-
-✓ Ready for merge
+- ✅ Application starts successfully
+- ✅ No Python errors
+- ✅ No template errors
+- ✅ No CSS regressions
+- ✅ Responsive on desktop, tablet, and mobile
+- ✅ Existing functionality preserved
+- ✅ Code reviewed
+- ✅ Committed to feature branch
+- ✅ Merged into `main`
+- ✅ Documentation updated

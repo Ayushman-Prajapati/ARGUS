@@ -1,19 +1,24 @@
 # ARGUS - CURRENT SPRINT
 
-Status:
+Status
+
 🚧 Active Development
 
-Current Branch:
+Current Phase
 
-feature/scan-detail
+Phase 2 — Dashboard
+
+Current Branch
+
+feature/dashboard
 
 ---
 
-# Current Goal
+# Sprint Goal
 
-Upgrade the Scan Detail page without breaking existing functionality.
+Design and implement a modern Dashboard that provides users with an overview of their application security posture.
 
-This sprint focuses ONLY on improving the existing page.
+This sprint focuses ONLY on the Dashboard.
 
 No backend architecture changes.
 
@@ -21,9 +26,9 @@ No database changes.
 
 No authentication work.
 
-No dashboard work.
+No scan engine work.
 
-No homepage work.
+No report generation work.
 
 ---
 
@@ -33,10 +38,10 @@ One feature at a time.
 
 Each completed feature must be
 
-- implemented
-- tested
-- reviewed
-- committed
+- Implemented
+- Tested
+- Reviewed
+- Committed
 
 before starting the next feature.
 
@@ -44,7 +49,7 @@ before starting the next feature.
 
 # Sprint Checklist
 
-## Executive Summary
+## Dashboard Hero
 
 Status
 
@@ -52,21 +57,21 @@ Status
 
 Requirements
 
-- Better project header
-- Security grade
-- Better risk score presentation
-- Better scan metadata
-- Better action buttons
+- Welcome heading
+- Dashboard subtitle
+- "Start New Scan" button
+- Clean hero section
+- Responsive layout
 
 Files
 
-templates/scanner/scan_detail.html
+templates/scanner/dashboard.html
 
 static/css/custom.css
 
 ---
 
-## Severity Cards
+## Security Overview Cards
 
 Status
 
@@ -74,29 +79,25 @@ Status
 
 Requirements
 
+Display
+
+- Total Scans
+- Total Findings
+- Critical Findings
+- Average Risk Score
+
 Improve
 
-Critical
-
-High
-
-Medium
-
-Low
-
-Info
-
-Cards
-
-Hover effects
-
-Responsive layout
+- Typography
+- Card layout
+- Icons
+- Hover effects
 
 No backend changes.
 
 ---
 
-## Risk Score Card
+## Recent Scans
 
 Status
 
@@ -104,19 +105,44 @@ Status
 
 Requirements
 
-Improve appearance
+Display
 
-Better typography
+- Repository
+- Scan Date
+- Status
+- Risk Score
+- Findings Count
+- View Report button
 
-Better spacing
+Improve table responsiveness.
 
-Animated counter
+Do not modify backend variables.
+
+---
+
+## Dashboard Analytics
+
+Status
+
+⬜ Pending
+
+Requirements
+
+Improve analytics section.
+
+Include
+
+- Severity Distribution
+- Scan Trend
+- Engine Usage
+
+Reuse existing Chart.js implementation.
 
 No backend changes.
 
 ---
 
-## Findings Cards
+## Quick Actions
 
 Status
 
@@ -124,23 +150,21 @@ Status
 
 Requirements
 
-Improve
+Create action cards for
 
-Spacing
+- New Scan
+- Upload Project
+- GitHub Scan
+- Reports
+- Settings
 
-Badges
+Responsive layout.
 
-Typography
-
-Icons
-
-Expandable details
-
-Do not change backend variables.
+No backend changes.
 
 ---
 
-## Code Snippet Viewer
+## Activity Timeline
 
 Status
 
@@ -148,39 +172,16 @@ Status
 
 Requirements
 
-Line numbers
+Display recent events
 
-Copy button
+- Scan Started
+- Scan Completed
+- Critical Finding
+- Report Exported
 
-Highlighted vulnerable line
+Newest events first.
 
-Scrollable
-
-Dark theme
-
-No syntax highlighting yet.
-
----
-
-## Filters
-
-Status
-
-⬜ Pending
-
-Requirements
-
-Improve
-
-Severity filter
-
-Engine filter
-
-Search
-
-Responsive behavior
-
-Do not rewrite filtering logic.
+Responsive design.
 
 ---
 
@@ -192,11 +193,15 @@ Status
 
 Requirements
 
-Professional empty state
+Professional empty state.
 
-No oversized whitespace
+Include
 
-Responsive
+- Helpful message
+- Illustration or icon
+- Call-to-action button
+
+Avoid excessive whitespace.
 
 ---
 
@@ -208,11 +213,13 @@ Status
 
 Requirements
 
-Phones
+Verify
 
-Tablets
+- Desktop
+- Tablet
+- Mobile
 
-Desktop
+No layout regressions.
 
 ---
 
@@ -224,13 +231,13 @@ Status
 
 Requirements
 
-Remove duplicate CSS
+- Remove duplicate CSS
+- Remove inline styles
+- Improve spacing
+- Improve accessibility
+- Remove unnecessary wrappers
 
-Improve spacing
-
-Remove unnecessary wrappers
-
-No functionality changes
+No functionality changes.
 
 ---
 
@@ -238,27 +245,19 @@ No functionality changes
 
 Do NOT work on
 
-Dashboard
+- Scan Detail
+- Homepage
+- Reports
+- Authentication
+- REST API
+- Docker
+- Repository Explorer
+- Secret Scanner
+- Dependency Scanner
+- AST Engine
+- AI Explanations
 
-Homepage
-
-Reports
-
-Authentication
-
-REST API
-
-Docker
-
-Repository Explorer
-
-Secret Scanner
-
-Dependency Scanner
-
-AI Explanations
-
-These belong to future sprints.
+These belong to future phases.
 
 ---
 
@@ -266,25 +265,25 @@ These belong to future sprints.
 
 Every completed feature must satisfy
 
-☐ Django starts
+☐ Django starts successfully
 
 ☐ No template errors
 
+☐ No Python errors
+
 ☐ No console errors
 
-☐ Charts render
+☐ Charts render correctly
 
 ☐ Buttons work
 
-☐ Filters work
-
-☐ Pagination works
+☐ Existing navigation works
 
 ☐ Responsive layout
 
-☐ No extra scrolling
+☐ No excessive scrolling
 
-☐ No huge whitespace
+☐ No unnecessary whitespace
 
 ☐ Existing functionality preserved
 
@@ -296,13 +295,19 @@ One feature = One commit
 
 Examples
 
-feat(scan-detail): improve executive summary
+feat(dashboard): add dashboard hero
 
-feat(scan-detail): redesign findings cards
+feat(dashboard): add security overview cards
 
-feat(scan-detail): improve risk score card
+feat(dashboard): improve recent scans
 
-feat(scan-detail): improve filters
+feat(dashboard): add analytics section
+
+feat(dashboard): implement quick actions
+
+feat(dashboard): add activity timeline
+
+feat(dashboard): improve responsive layout
 
 Never combine multiple unrelated features into one commit.
 
@@ -312,16 +317,17 @@ Never combine multiple unrelated features into one commit.
 
 Before editing
 
-1. Inspect existing implementation.
-2. Explain intended changes.
-3. List files to modify.
+1. Inspect the existing implementation.
+2. Explain the intended changes.
+3. List every file that will be modified.
 4. Wait if changes affect more than two files.
 
 After editing
 
-1. Verify application runs.
-2. Verify layout.
-3. Verify functionality.
-4. Stop.
+1. Verify Django runs successfully.
+2. Verify the dashboard layout.
+3. Verify responsiveness.
+4. Verify existing functionality.
+5. Stop.
 
 Never continue to another feature automatically.
