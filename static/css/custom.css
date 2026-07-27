@@ -737,6 +737,64 @@ body {
     vertical-align: middle;
 }
 
+/* ================================================================
+   RISK SCORE CARD
+   ================================================================ */
+
+/* Risk Level Badge */
+.risk-level-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+.risk-level-critical { background: rgba(239, 68, 68, 0.15); color: var(--argus-critical); border: 1px solid rgba(239, 68, 68, 0.3); }
+.risk-level-high { background: rgba(249, 115, 22, 0.15); color: var(--argus-high); border: 1px solid rgba(249, 115, 22, 0.3); }
+.risk-level-low { background: rgba(34, 197, 94, 0.15); color: var(--argus-success); border: 1px solid rgba(34, 197, 94, 0.3); }
+
+/* Progress Bar */
+.risk-progress {
+    width: 100%;
+    height: 6px;
+    background: var(--argus-bg-elevated);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--argus-border);
+}
+.risk-progress-bar {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.6s ease;
+}
+.risk-progress-critical { background: var(--argus-critical); }
+.risk-progress-high { background: var(--argus-high); }
+.risk-progress-low { background: var(--argus-success); }
+
+.risk-progress-label {
+    font-size: 0.58rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--argus-text-muted);
+    opacity: 0.6;
+    font-family: var(--font-mono);
+}
+
+/* Risk Summary Text */
+.risk-summary {
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--argus-text-muted);
+}
+.risk-summary strong {
+    color: var(--argus-text);
+}
+
 /* Alert Custom Styling */
 .alert-custom {
     border-radius: 10px;
