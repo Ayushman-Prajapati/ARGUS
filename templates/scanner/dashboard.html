@@ -272,7 +272,7 @@
 
     {% if projects %}
     <div class="table-responsive">
-        <table class="table align-middle mb-0 recent-scans-table">
+        <table class="table align-middle mb-0 recent-scans-table dashboard-table">
             <thead>
                 <tr>
                     <th>Project</th>
@@ -291,13 +291,13 @@
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             {% if p.source_type == "github" %}
-                                <i class="bi bi-github text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-github source-icon text-muted"></i>
                             {% elif p.source_type == "file" %}
-                                <i class="bi bi-file-earmark-code text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-file-earmark-code source-icon text-muted"></i>
                             {% elif p.source_type == "zip" %}
-                                <i class="bi bi-file-archive text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-file-archive source-icon text-muted"></i>
                             {% elif p.source_type == "paste" %}
-                                <i class="bi bi-clipboard text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-clipboard source-icon text-muted"></i>
                             {% endif %}
                             <div>
                                 <span class="fw-semibold project-name">{{ p.name|truncatechars:40 }}</span>
@@ -343,7 +343,7 @@
                         </span>
                     </td>
                     <td class="text-end">
-                        <a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light view-btn">
+                        <a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light view-btn" aria-label="View details for {{ p.name }}">
                             <i class="bi bi-arrow-right"></i>
                         </a>
                     </td>
@@ -356,7 +356,7 @@
         </table>
     </div>
     {% else %}
-    <div class="recent-scans-empty">
+    <div class="recent-scans-empty dashboard-empty">
         <i class="bi bi-shield-plus"></i>
         <p>No scans have been completed yet.</p>
         <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary">
@@ -379,7 +379,7 @@
 
     {% if top_risk_projects %}
     <div class="table-responsive">
-        <table class="table align-middle mb-0 highest-risk-table">
+        <table class="table align-middle mb-0 highest-risk-table dashboard-table">
             <thead>
                 <tr>
                     <th>Project</th>
@@ -395,13 +395,13 @@
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             {% if p.source_type == "github" %}
-                                <i class="bi bi-github text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-github source-icon text-muted"></i>
                             {% elif p.source_type == "file" %}
-                                <i class="bi bi-file-earmark-code text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-file-earmark-code source-icon text-muted"></i>
                             {% elif p.source_type == "zip" %}
-                                <i class="bi bi-file-archive text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-file-archive source-icon text-muted"></i>
                             {% elif p.source_type == "paste" %}
-                                <i class="bi bi-clipboard text-muted" style="font-size:0.9rem;"></i>
+                                <i class="bi bi-clipboard source-icon text-muted"></i>
                             {% endif %}
                             <div>
                                 <span class="fw-semibold project-name">{{ p.name|truncatechars:40 }}</span>
@@ -431,7 +431,7 @@
                         {% endif %}
                     </td>
                     <td class="text-end">
-                        <a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light view-btn">
+                        <a href="{% url 'scanner:scan_detail' p.id %}" class="btn btn-sm btn-outline-light view-btn" aria-label="View details for {{ p.name }}">
                             <i class="bi bi-arrow-right"></i>
                         </a>
                     </td>
@@ -441,7 +441,7 @@
         </table>
     </div>
     {% else %}
-    <div class="highest-risk-empty">
+    <div class="highest-risk-empty dashboard-empty">
         <i class="bi bi-shield-check"></i>
         <p>No completed scans yet.</p>
         <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary btn-sm">

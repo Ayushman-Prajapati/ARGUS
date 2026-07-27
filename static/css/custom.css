@@ -601,18 +601,6 @@ a { color: var(--argus-accent); }
     opacity: 0.7;
 }
 
-@media (max-width: 991.98px) {
-    .quick-actions-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 575.98px) {
-    .quick-actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 /* ================================================================
    CHART CARD ENHANCEMENTS
    ================================================================ */
@@ -1381,30 +1369,19 @@ a { color: var(--argus-accent); }
     margin-bottom: 1rem;
 }
 
-@media (max-width: 575.98px) {
-    .timeline {
-        padding-left: 1.25rem;
-    }
-    .timeline::before {
-        left: 0.6rem;
-    }
-    .timeline-marker {
-        width: 24px;
-        height: 24px;
-        font-size: 0.6rem;
-    }
-}
-
 /* ================================================================
-   RECENT SCANS TABLE
+   DASHBOARD TABLES (Recent Scans & Highest Risk)
    ================================================================ */
-    padding: 1.25rem;
-}
 
-.recent-scans-table {
+/* Section layout */
+.recent-scans-section { padding: 1.25rem; }
+.highest-risk-section { padding: 1.25rem; }
+
+/* Shared table base */
+.dashboard-table {
     font-size: 0.82rem;
 }
-.recent-scans-table thead th {
+.dashboard-table thead th {
     font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -1415,24 +1392,28 @@ a { color: var(--argus-accent); }
     padding: 0.5rem 0.5rem;
     white-space: nowrap;
 }
-.recent-scans-table tbody td {
+.dashboard-table tbody td {
     padding: 0.65rem 0.5rem;
     vertical-align: middle;
     border-bottom: 1px solid rgba(35, 45, 69, 0.4);
 }
-.recent-scans-table tbody tr:last-child td {
+.dashboard-table tbody tr:last-child td {
     border-bottom: none;
 }
 .recent-scans-table tbody tr:hover {
     background: rgba(59, 130, 246, 0.03);
 }
+.highest-risk-table tbody tr:hover {
+    background: rgba(239, 68, 68, 0.03);
+}
 
-.recent-scans-table .project-name {
+/* Project name + ref (shared) */
+.dashboard-table .project-name {
     font-size: 0.82rem;
     color: var(--argus-text);
     white-space: nowrap;
 }
-.recent-scans-table .project-ref {
+.dashboard-table .project-ref {
     font-size: 0.68rem;
     display: block;
     line-height: 1.2;
@@ -1443,56 +1424,22 @@ a { color: var(--argus-accent); }
     white-space: nowrap;
 }
 
-.scan-date {
-    font-size: 0.78rem;
-    color: var(--argus-text);
-    font-weight: 500;
-}
-.scan-time {
-    font-size: 0.65rem;
-    display: block;
-    line-height: 1.2;
-    margin-top: 0.05rem;
-}
-
-/* Small inline risk minibar in table rows */
-.risk-minibar {
-    width: 44px;
-    height: 4px;
-    background: var(--argus-bg-elevated);
-    border-radius: 999px;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-.risk-minibar-fill {
-    height: 100%;
-    border-radius: 999px;
-    transition: width 0.4s ease;
-}
-
-.recent-scans-table .risk-value {
+/* Risk score cell */
+.dashboard-table .risk-value {
     font-size: 0.85rem;
     min-width: 1.5rem;
 }
 
-.recent-scans-table .findings-count {
+/* Findings count cell */
+.dashboard-table .findings-count {
     font-family: var(--font-mono);
     font-size: 0.82rem;
     font-weight: 600;
     color: var(--argus-text);
 }
 
-.engine-tag {
-    font-size: 0.68rem;
-    color: var(--argus-text-muted);
-    background: rgba(19, 27, 46, 0.6);
-    border: 1px solid var(--argus-border);
-    border-radius: 6px;
-    padding: 0.15rem 0.45rem;
-    white-space: nowrap;
-}
-
-.recent-scans-table .view-btn {
+/* View button (shared base, scoped hover) */
+.dashboard-table .view-btn {
     width: 30px;
     height: 30px;
     padding: 0;
@@ -1509,134 +1456,84 @@ a { color: var(--argus-accent); }
     border-color: var(--argus-accent);
     color: #fff;
 }
-
-.recent-scans-table .scan-status-badge {
-    font-size: 0.62rem;
-    padding: 0.15rem 0.5rem;
-}
-
-/* ================================================================
-   HIGHEST RISK PROJECTS TABLE
-   ================================================================ */
-
-.highest-risk-section {
-    padding: 1.25rem;
-}
-
-.highest-risk-table {
-    font-size: 0.82rem;
-}
-.highest-risk-table thead th {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.75px;
-    color: var(--argus-text-muted);
-    opacity: 0.55;
-    border-bottom: 1px solid var(--argus-border);
-    padding: 0.5rem 0.5rem;
-    white-space: nowrap;
-}
-.highest-risk-table tbody td {
-    padding: 0.65rem 0.5rem;
-    vertical-align: middle;
-    border-bottom: 1px solid rgba(35, 45, 69, 0.4);
-}
-.highest-risk-table tbody tr:last-child td {
-    border-bottom: none;
-}
-.highest-risk-table tbody tr:hover {
-    background: rgba(239, 68, 68, 0.03);
-}
-
-.highest-risk-table .project-name {
-    font-size: 0.82rem;
-    color: var(--argus-text);
-    white-space: nowrap;
-}
-.highest-risk-table .project-ref {
-    font-size: 0.68rem;
-    display: block;
-    line-height: 1.2;
-    margin-top: 0.05rem;
-    max-width: 180px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.highest-risk-table .risk-value {
-    font-size: 0.85rem;
-    min-width: 1.5rem;
-}
-
-.highest-risk-table .findings-count {
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--argus-text);
-}
-
-.highest-risk-table .view-btn {
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    border-color: var(--argus-border);
-    color: var(--argus-text-muted);
-    transition: all 0.2s ease;
-}
 .highest-risk-table .view-btn:hover {
     background: var(--argus-critical);
     border-color: var(--argus-critical);
     color: #fff;
 }
+.dashboard-table .view-btn:focus-visible {
+    background: var(--argus-accent);
+    color: #fff;
+}
 
-/* Highest Risk empty state */
-.highest-risk-empty {
+/* Date + time (shared) */
+.scan-date {
+    font-size: 0.78rem;
+    color: var(--argus-text);
+    font-weight: 500;
+}
+.scan-time {
+    font-size: 0.65rem;
+    display: block;
+    line-height: 1.2;
+    margin-top: 0.05rem;
+}
+
+/* Risk minibar (shared) */
+.risk-minibar {
+    width: 44px;
+    height: 4px;
+    background: var(--argus-bg-elevated);
+    border-radius: 999px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.risk-minibar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+/* Engine tag (shared) */
+.engine-tag {
+    font-size: 0.68rem;
+    color: var(--argus-text-muted);
+    background: rgba(19, 27, 46, 0.6);
+    border: 1px solid var(--argus-border);
+    border-radius: 6px;
+    padding: 0.15rem 0.45rem;
+    white-space: nowrap;
+}
+
+/* Source-type icon in tables */
+.source-icon {
+    font-size: 0.9rem;
+}
+
+/* Status badge size inside tables */
+.dashboard-table .scan-status-badge {
+    font-size: 0.62rem;
+    padding: 0.15rem 0.5rem;
+}
+
+/* Empty states (shared) */
+.dashboard-empty {
     text-align: center;
     padding: 2.5rem 1rem;
     color: var(--argus-text-muted);
 }
-.highest-risk-empty i {
+.dashboard-empty i {
     font-size: 2rem;
     display: block;
     margin-bottom: 0.75rem;
     opacity: 0.35;
 }
-.highest-risk-empty p {
+.dashboard-empty p {
     font-size: 0.88rem;
     margin-bottom: 1rem;
 }
 
-@media (max-width: 575.98px) {
-    .highest-risk-table thead th:nth-child(3),
-    .highest-risk-table tbody td:nth-child(3) {
-        display: none;
-    }
-}
-
-/* Empty state */
-.recent-scans-empty {
-    text-align: center;
-    padding: 2.5rem 1rem;
-    color: var(--argus-text-muted);
-}
-.recent-scans-empty i {
-    font-size: 2rem;
-    display: block;
-    margin-bottom: 0.75rem;
-    opacity: 0.35;
-}
-.recent-scans-empty p {
-    font-size: 0.88rem;
-    margin-bottom: 1rem;
-}
-
-/* Responsive: hide lower-priority columns on small screens */
+/* Table mobile column hiding */
 @media (max-width: 767.98px) {
     .recent-scans-table thead th:nth-child(5),
     .recent-scans-table tbody td:nth-child(5),
@@ -1647,14 +1544,23 @@ a { color: var(--argus-accent); }
 }
 
 @media (max-width: 575.98px) {
-    .recent-scans-section .argus-card {
-        padding: 1rem;
-    }
     .recent-scans-table thead th:nth-child(2),
     .recent-scans-table tbody td:nth-child(2) {
         display: none;
     }
-    .recent-scans-table .project-ref {
+    .recent-scans-table thead th:nth-child(3),
+    .recent-scans-table tbody td:nth-child(3) {
+        display: none;
+    }
+    .highest-risk-table thead th:nth-child(4),
+    .highest-risk-table tbody td:nth-child(4) {
+        display: none;
+    }
+    .highest-risk-table thead th:nth-child(3),
+    .highest-risk-table tbody td:nth-child(3) {
+        display: none;
+    }
+    .dashboard-table .project-ref {
         max-width: 100px;
     }
 }
