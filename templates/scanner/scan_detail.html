@@ -105,22 +105,44 @@
 </div>
 
 <div class="argus-card">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 class="fw-bold mb-0">
-            Findings ({{ filtered_count }}{% if filtered_count != project.total_findings %} of {{ project.total_findings }}{% endif %})
-        </h5>
-        <div>
-            <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill {% if not active_severity %}active{% endif %}">All severities</a>
-            {% for sev, label in project.findings.model.SEVERITY_CHOICES %}
-                <a href="?severity={{ sev }}{% if active_source %}&source={{ active_source }}{% endif %}" class="filter-pill {% if active_severity == sev %}active{% endif %}">{{ label }}</a>
-            {% endfor %}
+    <!-- Filter Toolbar -->
+    <div class="argus-filter-toolbar mb-4">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <!-- Severity Filter Group -->
+            <div class="filter-group d-flex align-items-center gap-2">
+                <span class="filter-label">Severity</span>
+                <div class="filter-pills">
+                    <a href="?{% if active_source %}source={{ active_source }}{% endif %}" class="filter-pill-sm {% if not active_severity %}active{% endif %}">All</a>
+                    {% for sev, label in project.findings.model.SEVERITY_CHOICES %}
+                        <a href="?severity={{ sev }}{% if active_source %}&source={{ active_source }}{% endif %}" class="filter-pill-sm {% if active_severity == sev %}active-{{ sev }}{% endif %}">{{ label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Engine Filter Group -->
+            <div class="filter-group d-flex align-items-center gap-2 border-start ps-3 border-secondary border-opacity-25">
+                <span class="filter-label">Engine</span>
+                <div class="filter-pills">
+                    <a href="?{% if active_severity %}severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if not active_source %}active{% endif %}">All</a>
+                    {% for src, label in project.findings.model.SOURCE_CHOICES %}
+                        <a href="?source={{ src }}{% if active_severity %}&severity={{ active_severity }}{% endif %}" class="filter-pill-sm {% if active_source == src %}active{% endif %}">{{ label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Clear & Count -->
+            <div class="ms-auto d-flex align-items-center gap-3">
+                {% if active_severity or active_source %}
+                    <a href="?" class="btn-clear-filters">
+                        <i class="bi bi-x-circle me-1"></i> Clear
+                    </a>
+                {% endif %}
+                <div class="findings-count-pill">
+                    <span class="count-value">{{ filtered_count }}</span>
+                    <span class="count-label">findings{% if filtered_count != project.total_findings %} of {{ project.total_findings }}{% endif %}</span>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="mb-3">
-        <a href="?{% if active_severity %}severity={{ active_severity }}{% endif %}" class="filter-pill {% if not active_source %}active{% endif %}">All engines</a>
-        {% for src, label in project.findings.model.SOURCE_CHOICES %}
-            <a href="?source={{ src }}{% if active_severity %}&severity={{ active_severity }}{% endif %}" class="filter-pill {% if active_source == src %}active{% endif %}">{{ label }}</a>
-        {% endfor %}
     </div>
 
     {% if filtered_count > 25 %}

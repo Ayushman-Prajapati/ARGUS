@@ -204,6 +204,110 @@ a { color: var(--argus-accent); }
 .filter-pill.active { background: var(--argus-accent); color: white; border-color: var(--argus-accent); }
 .filter-pill:hover { color: var(--argus-text); text-decoration: none; }
 
+/* --- FINDINGS FILTER TOOLBAR --- */
+
+/* Small compact pill used inside filter groups */
+.filter-pill-sm {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--argus-border);
+    color: var(--argus-text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+.filter-pill-sm.active { background: var(--argus-accent); color: #fff; border-color: var(--argus-accent); }
+.filter-pill-sm:hover { color: var(--argus-text); border-color: var(--argus-text-muted); text-decoration: none; }
+
+/* Severity-colored active state */
+.filter-pill-sm.active-critical { background: var(--argus-critical); color: #fff; border-color: var(--argus-critical); }
+.filter-pill-sm.active-high { background: var(--argus-high); color: #1a1200; border-color: var(--argus-high); }
+.filter-pill-sm.active-medium { background: var(--argus-medium); color: #041a1e; border-color: var(--argus-medium); }
+.filter-pill-sm.active-low { background: var(--argus-low); color: #fff; border-color: var(--argus-low); }
+.filter-pill-sm.active-info { background: var(--argus-info); color: #0a0e1a; border-color: var(--argus-info); }
+
+/* Filter group label */
+.filter-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    color: var(--argus-text-muted);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+/* Pills container wraps cleanly */
+.filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Filter toolbar main row */
+.argus-filter-toolbar {
+    background: var(--argus-bg-elevated);
+    border: 1px solid var(--argus-border);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+}
+
+/* Responsive: stack filter groups on small screens */
+.findings-count-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    background: var(--argus-bg-card);
+    border: 1px solid var(--argus-border);
+    border-radius: 8px;
+    padding: 0.25rem 0.75rem;
+    white-space: nowrap;
+}
+.findings-count-pill .count-value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--argus-accent);
+}
+.findings-count-pill .count-label {
+    font-size: 0.72rem;
+    color: var(--argus-text-muted);
+}
+
+/* Clear filters button */
+.btn-clear-filters {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    color: var(--argus-text-muted);
+    text-decoration: none;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+}
+.btn-clear-filters:hover {
+    color: var(--argus-critical);
+    text-decoration: none;
+}
+
+/* Responsive: stack filter groups on small screens */
+@media (max-width: 991.98px) {
+    .argus-filter-toolbar .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    .argus-filter-toolbar .ms-auto {
+        margin-left: 0 !important;
+        justify-content: space-between;
+    }
+}
+
 .chart-card canvas { max-height: 280px; }
 
 /* --- CYBER ANIMATION & INTERACTIVE GRID SYSTEMS --- */
