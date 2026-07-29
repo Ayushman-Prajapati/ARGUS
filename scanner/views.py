@@ -1,6 +1,7 @@
 import json
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
@@ -10,12 +11,13 @@ from .forms import FileUploadForm, GithubRepoForm, PasteCodeForm, ZipUploadForm
 from .models import Finding, ScanProject
 
 
+@login_required
 def home(request):
-    recent_scans = ScanProject.objects.all()[:8]
+    recent_scans = ScanProject.objects.filter(user=request.user)[:8]
     stats = {
-        "total_scans": ScanProject.objects.count(),
-        "total_findings": Finding.objects.count(),
-        "critical_findings": Finding.objects.filter(severity="critical").count(),
+        "total_scans": ScanProject.objects.filter(user=request.user).count(),
+        "total_findings": Finding.objects.filter(project__user=request.user).count(),
+        "critical_findings": Finding.objects.filter(project__user=request.user, severity="critical").count(),
     }
     return render(request, "scanner/home.html", {"recent_scans": recent_scans, "stats": stats})
 
@@ -37,12 +39,14 @@ def _run_and_redirect(request, project: ScanProject):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def upload_file(request):
     if request.method == "POST":
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded = form.cleaned_data["file"]
             project = ScanProject.objects.create(
+                user=request.user,
                 name=uploaded.name,
                 source_type="file",
                 source_reference=uploaded.name,
@@ -65,12 +69,14 @@ def upload_file(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def upload_zip(request):
     if request.method == "POST":
         form = ZipUploadForm(request.POST, request.FILES)
         if form.is_valid():
             archive = form.cleaned_data["archive"]
             project = ScanProject.objects.create(
+                user=request.user,
                 name=archive.name,
                 source_type="zip",
                 source_reference=archive.name,
@@ -93,12 +99,14 @@ def upload_zip(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def paste_code(request):
     if request.method == "POST":
         form = PasteCodeForm(request.POST)
         if form.is_valid():
             filename = form.cleaned_data["filename"] or "snippet.py"
             project = ScanProject.objects.create(
+                user=request.user,
                 name=filename,
                 source_type="paste",
                 source_reference="pasted snippet",
@@ -116,6 +124,7 @@ def paste_code(request):
 
 
 @require_http_methods(["GET", "POST"])
+@login_required
 def scan_github(request):
     if request.method == "POST":
         form = GithubRepoForm(request.POST)
@@ -123,6 +132,7 @@ def scan_github(request):
             repo_url = form.cleaned_data["repo_url"]
             name = repo_url.rstrip("/").split("/")[-1]
             project = ScanProject.objects.create(
+                user=request.user,
                 name=name,
                 source_type="github",
                 source_reference=repo_url,
@@ -144,13 +154,15 @@ def scan_github(request):
     return render(request, "scanner/scan_github.html", {"form": form})
 
 
+@login_required
 def scan_list(request):
-    projects = ScanProject.objects.all()
+    projects = ScanProject.objects.filter(user=request.user)
     return render(request, "scanner/scan_list.html", {"projects": projects})
 
 
+@login_required
 def scan_detail(request, project_id):
-    project = get_object_or_404(ScanProject, id=project_id)
+    project = get_object_or_404(ScanProject, id=project_id, user=request.user)
     findings = project.findings.all()
 
     severity_filter = request.GET.get("severity")
@@ -185,8 +197,9 @@ def scan_detail(request, project_id):
     return render(request, "scanner/scan_detail.html", context)
 
 
+@login_required
 def dashboard(request):
-    projects = ScanProject.objects.filter(status="completed")
+    projects = ScanProject.objects.filter(user=request.user, status="completed")
     total_findings = Finding.objects.filter(project__in=projects)
 
     severity_agg = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
@@ -210,16 +223,18 @@ def dashboard(request):
     return render(request, "scanner/dashboard.html", context)
 
 
+@login_required
 @require_http_methods(["POST"])
 def rescan(request, project_id):
-    project = get_object_or_404(ScanProject, id=project_id)
+    project = get_object_or_404(ScanProject, id=project_id, user=request.user)
     project.findings.all().delete()
     return _run_and_redirect(request, project)
 
 
+@login_required
 @require_http_methods(["POST"])
 def delete_scan(request, project_id):
-    project = get_object_or_404(ScanProject, id=project_id)
+    project = get_object_or_404(ScanProject, id=project_id, user=request.user)
     project.delete()
     messages.info(request, "Scan deleted.")
     return redirect("scanner:scan_list")

@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_http_methods
@@ -8,9 +9,10 @@ from .models import GeneratedReport
 from .pdf_generator import generate_report_pdf
 
 
+@login_required
 @require_http_methods(["POST", "GET"])
 def generate_report(request, project_id):
-    project = get_object_or_404(ScanProject, id=project_id)
+    project = get_object_or_404(ScanProject, id=project_id, user=request.user)
     include_appendix = request.GET.get("appendix", "1") != "0"
 
     pdf_path = generate_report_pdf(project, include_technical_appendix=include_appendix)
@@ -23,8 +25,9 @@ def generate_report(request, project_id):
     return redirect("reports:download_report", report_id=report.id)
 
 
+@login_required
 def download_report(request, report_id):
-    report = get_object_or_404(GeneratedReport, id=report_id)
+    report = get_object_or_404(GeneratedReport, id=report_id, project__user=request.user)
     if not report.file or not report.file.storage.exists(report.file.name):
         raise Http404("Report file not found.")
     return FileResponse(
