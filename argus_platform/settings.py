@@ -14,7 +14,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("ARGUS_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.environ.get("ARGUS_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.environ.get("ARGUS_ALLOWED_HOSTS", "127.0.0.1,localhost,testserver").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",

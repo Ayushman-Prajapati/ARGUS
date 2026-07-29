@@ -1,5 +1,5 @@
 import uuid
-
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
@@ -22,6 +22,7 @@ class ScanProject(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="projects")
     name = models.CharField(max_length=255)
     source_type = models.CharField(max_length=10, choices=SOURCE_CHOICES)
     source_reference = models.CharField(
