@@ -1,0 +1,3 @@
+"""
+SQL Injection Detection Rule
+"""

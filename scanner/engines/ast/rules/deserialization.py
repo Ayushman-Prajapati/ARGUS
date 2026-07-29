@@ -1,0 +1,3 @@
+"""
+Unsafe Deserialization Detection Rule
+"""

@@ -4,52 +4,66 @@ Status
 
 🚧 Active Development
 
+Current Version
+
+v0.2.0
+
 Current Phase
 
-Phase 2 — Dashboard
+Phase 3 — Custom AST Engine
 
 Current Branch
 
-feature/dashboard
+feature/ast-engine
 
 ---
 
 # Sprint Goal
 
-Design and implement a modern Dashboard that provides users with an overview of their application security posture.
+Build the foundation of the ARGUS AST Engine.
 
-This sprint focuses ONLY on the Dashboard.
+This sprint focuses ONLY on the AST engine architecture.
 
-No backend architecture changes.
+Objectives
 
-No database changes.
+- Design a modular AST analysis framework.
+- Build an extensible rule execution system.
+- Integrate AST findings with the existing Finding model.
+- Preserve compatibility with Bandit and Semgrep.
 
-No authentication work.
+No UI redesigns.
 
-No scan engine work.
+No CSS changes.
 
-No report generation work.
+No JavaScript changes.
+
+No dashboard improvements.
+
+No authentication changes.
+
+No report redesign.
 
 ---
 
 # Sprint Rules
 
-One feature at a time.
+One sprint at a time.
 
-Each completed feature must be
+Each completed sprint must be
 
 - Implemented
 - Tested
 - Reviewed
 - Committed
+- Verified
 
-before starting the next feature.
+before beginning the next sprint.
+
+One prompt = One sprint = One commit.
 
 ---
 
-# Sprint Checklist
-
-## Dashboard Hero
+# Sprint 1 — AST Engine Architecture
 
 Status
 
@@ -57,21 +71,133 @@ Status
 
 Requirements
 
-- Welcome heading
-- Dashboard subtitle
-- "Start New Scan" button
-- Clean hero section
-- Responsive layout
+Create the AST engine foundation.
 
-Files
+Implement
 
-templates/scanner/dashboard.html
+- AST Parser
+- Engine Entry Point
+- Rule Registry
+- Base Rule
+- Finding Generator
+- Rule Loader
 
-static/css/custom.css
+Architecture should support adding future rules without modifying the engine.
+
+Files (expected)
+
+scanner/scanners/ast_engine/
 
 ---
 
-## Security Overview Cards
+# Sprint 2 — Dangerous Function Detection
+
+Status
+
+⬜ Pending
+
+Detect
+
+- eval()
+- exec()
+- compile()
+- globals()
+- locals()
+
+Each finding should include
+
+- Severity
+- Confidence
+- CWE
+- OWASP
+- Evidence
+- Remediation
+
+---
+
+# Sprint 3 — Command Injection
+
+Status
+
+⬜ Pending
+
+Detect
+
+- os.system()
+- os.popen()
+- subprocess.run(shell=True)
+- subprocess.Popen(shell=True)
+- subprocess.call(shell=True)
+
+---
+
+# Sprint 4 — SQL Injection
+
+Status
+
+⬜ Pending
+
+Detect insecure SQL execution
+
+Examples
+
+- execute(f"...")
+- execute("%s" % ...)
+- execute("..." + user_input)
+- .format()
+
+---
+
+# Sprint 5 — Unsafe Deserialization
+
+Status
+
+⬜ Pending
+
+Detect
+
+- pickle.loads()
+- yaml.load()
+- marshal.loads()
+- dill.loads()
+
+---
+
+# Sprint 6 — Secret Detection
+
+Status
+
+⬜ Pending
+
+Detect
+
+- Hardcoded Passwords
+- AWS Keys
+- GitHub Tokens
+- JWT Secrets
+- API Keys
+- Private Keys
+
+---
+
+# Sprint 7 — Weak Cryptography
+
+Status
+
+⬜ Pending
+
+Detect
+
+- MD5
+- SHA1
+- DES
+- ECB Mode
+- Weak Random
+- Predictable Tokens
+
+---
+
+# Sprint 8 — Optimization & Testing
 
 Status
 
@@ -79,237 +205,86 @@ Status
 
 Requirements
 
-Display
-
-- Total Scans
-- Total Findings
-- Critical Findings
-- Average Risk Score
-
-Improve
-
-- Typography
-- Card layout
-- Icons
-- Hover effects
-
-No backend changes.
-
----
-
-## Recent Scans
-
-Status
-
-⬜ Pending
-
-Requirements
-
-Display
-
-- Repository
-- Scan Date
-- Status
-- Risk Score
-- Findings Count
-- View Report button
-
-Improve table responsiveness.
-
-Do not modify backend variables.
-
----
-
-## Dashboard Analytics
-
-Status
-
-⬜ Pending
-
-Requirements
-
-Improve analytics section.
-
-Include
-
-- Severity Distribution
-- Scan Trend
-- Engine Usage
-
-Reuse existing Chart.js implementation.
-
-No backend changes.
-
----
-
-## Quick Actions
-
-Status
-
-⬜ Pending
-
-Requirements
-
-Create action cards for
-
-- New Scan
-- Upload Project
-- GitHub Scan
-- Reports
-- Settings
-
-Responsive layout.
-
-No backend changes.
-
----
-
-## Activity Timeline
-
-Status
-
-⬜ Pending
-
-Requirements
-
-Display recent events
-
-- Scan Started
-- Scan Completed
-- Critical Finding
-- Report Exported
-
-Newest events first.
-
-Responsive design.
-
----
-
-## Empty State
-
-Status
-
-⬜ Pending
-
-Requirements
-
-Professional empty state.
-
-Include
-
-- Helpful message
-- Illustration or icon
-- Call-to-action button
-
-Avoid excessive whitespace.
-
----
-
-## Mobile Responsiveness
-
-Status
-
-⬜ Pending
-
-Requirements
-
-Verify
-
-- Desktop
-- Tablet
-- Mobile
-
-No layout regressions.
-
----
-
-## Cleanup
-
-Status
-
-⬜ Pending
-
-Requirements
-
-- Remove duplicate CSS
-- Remove inline styles
-- Improve spacing
-- Improve accessibility
-- Remove unnecessary wrappers
-
-No functionality changes.
+- Improve performance
+- Reduce duplicate traversals
+- Optimize rule execution
+- Documentation
+- Unit Tests
+- Integration Tests
 
 ---
 
 # Out of Scope
 
-Do NOT work on
+Do NOT modify
 
-- Scan Detail
+- Dashboard
+- Scan Detail UI
 - Homepage
-- Reports
+- CSS
+- JavaScript
 - Authentication
+- Reports
 - REST API
 - Docker
 - Repository Explorer
-- Secret Scanner
-- Dependency Scanner
-- AST Engine
-- AI Explanations
+- AI Features
 
-These belong to future phases.
+Unless explicitly requested.
 
 ---
 
 # Testing Checklist
 
-Every completed feature must satisfy
+Every completed sprint must satisfy
 
 ☐ Django starts successfully
 
-☐ No template errors
-
 ☐ No Python errors
 
-☐ No console errors
+☐ Existing scans still work
 
-☐ Charts render correctly
+☐ Existing reports still generate
 
-☐ Buttons work
+☐ Existing dashboard remains functional
 
-☐ Existing navigation works
+☐ Bandit integration still works
 
-☐ Responsive layout
+☐ Semgrep integration still works
 
-☐ No excessive scrolling
+☐ AST findings integrate correctly
 
-☐ No unnecessary whitespace
+☐ No performance regressions
 
-☐ Existing functionality preserved
+☐ Code follows PEP 8
 
 ---
 
 # Commit Strategy
 
-One feature = One commit
+One sprint = One commit
 
 Examples
 
-feat(dashboard): add dashboard hero
+feat(ast): create engine architecture
 
-feat(dashboard): add security overview cards
+feat(ast): implement rule registry
 
-feat(dashboard): improve recent scans
+feat(ast): detect dangerous functions
 
-feat(dashboard): add analytics section
+feat(ast): detect command injection
 
-feat(dashboard): implement quick actions
+feat(ast): detect SQL injection
 
-feat(dashboard): add activity timeline
+feat(ast): detect unsafe deserialization
 
-feat(dashboard): improve responsive layout
+feat(ast): implement secret detection
 
-Never combine multiple unrelated features into one commit.
+feat(ast): implement weak crypto detection
+
+feat(ast): optimize engine
+
+Never combine multiple unrelated sprints into a single commit.
 
 ---
 
@@ -318,16 +293,19 @@ Never combine multiple unrelated features into one commit.
 Before editing
 
 1. Inspect the existing implementation.
-2. Explain the intended changes.
+2. Explain the implementation strategy.
 3. List every file that will be modified.
-4. Wait if changes affect more than two files.
+4. Wait for approval if more than two files require modification.
 
 After editing
 
-1. Verify Django runs successfully.
-2. Verify the dashboard layout.
-3. Verify responsiveness.
-4. Verify existing functionality.
-5. Stop.
+1. Verify Django starts successfully.
+2. Verify existing scans still work.
+3. Verify Bandit integration.
+4. Verify Semgrep integration.
+5. Verify AST engine integration.
+6. Stop.
 
-Never continue to another feature automatically.
+Never automatically continue to the next sprint.
+
+Wait for the next prompt.

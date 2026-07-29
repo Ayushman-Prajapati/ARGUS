@@ -1,6 +1,6 @@
 # ARGUS ROADMAP
 
-Version: 3.1
+Version: 4.0
 
 Status: Active Development
 
@@ -8,24 +8,41 @@ Status: Active Development
 
 # Vision
 
-Argus is a modern Secure Code Review Platform built with Django.
+ARGUS is a modular Secure Code Review Platform built with Django.
 
-Its long-term goal is to become an enterprise-grade Application Security (AppSec) platform capable of performing:
+Its long-term objective is to become a production-ready Application Security (AppSec) platform capable of performing:
 
 - Static Application Security Testing (SAST)
 - Secret Detection
 - Dependency Analysis
 - Repository Exploration
 - AI-assisted Security Explanations
-- Professional Reporting
+- Professional Security Reporting
 
 The platform should evolve incrementally while maintaining:
 
 - Clean Architecture
 - Modular Design
-- Professional UI/UX
-- Stable Functionality
-- Maintainable Code
+- Security
+- Performance
+- Extensibility
+- Professional User Experience
+
+---
+
+# Current Status
+
+Current Version
+
+**v0.2.0**
+
+Current Phase
+
+**Phase 3 — Custom AST Engine**
+
+Current Development Branch
+
+`feature/ast-engine`
 
 ---
 
@@ -33,14 +50,15 @@ The platform should evolve incrementally while maintaining:
 
 Development is feature-driven.
 
-Every feature:
+Each feature:
 
 - Lives on its own Git feature branch
 - Is independently testable
+- Is fully documented
 - Preserves existing functionality
-- Is completed before beginning the next major feature
+- Is completed before another major feature begins
 
-Each phase represents a significant milestone in the evolution of Argus.
+Every phase represents a major milestone.
 
 ---
 
@@ -50,117 +68,154 @@ Status
 
 ✅ Completed
 
-Completed Sprints
+Deliverables
 
 - Executive Summary
 - Metadata Grid
-- Findings Section
-- Findings Filters
-- Risk Score Card
+- Findings
+- Filters
+- Risk Score
 - Code Viewer
 - Charts
-- Responsive Design
-- Final Cleanup
-
-Deliverables
-
-- Professional Scan Detail page
-- Modern cybersecurity UI
-- Responsive layout
-- Improved usability
-- Maintainable frontend
+- Responsive Layout
+- Accessibility
+- UI Cleanup
 
 ---
 
-# Phase 2 — Dashboard
+# Phase 2 — Dashboard & User Isolation
 
 Status
 
 ✅ Completed
 
-Completed Sprints
-
-- ✅ Dashboard Hero
-- ✅ Recent Scans
-- ✅ Dashboard Analytics
-- ✅ Quick Actions
-- ✅ Activity Timeline
-- ✅ Highest Risk Projects
-- ✅ Responsive & Empty States
-- ✅ Final Cleanup & Accessibility
-
 Deliverables
 
-- Professional Security Dashboard
-- Consistent design language across all components
-- Responsive on desktop, tablet, and mobile
-- Accessible keyboard navigation
-- Clean, maintainable CSS with minimal duplication
-- Responsive Layout
+- Dashboard
+- Analytics
+- Activity Timeline
+- Recent Scans
+- Highest Risk Projects
+- Quick Actions
+- Responsive Design
 - Empty States
-- Accessibility Improvements
+- Authentication
+- User Data Isolation
+- Report Authorization
 
-Future Enhancements
+Security Improvements
 
-- Risk Trends
-- Historical Analytics
-- Scan Velocity
-- Team Activity
-- Project Health Metrics
-
-Success Criteria
-
-- Responsive on all devices
-- Fast rendering
-- Consistent design language
-- Professional AppSec appearance
-- Matches Scan Detail quality
+- Per-user scan ownership
+- Protected reports
+- User-scoped dashboards
+- Broken Access Control mitigation
 
 ---
 
-# Phase 3 — Static Analysis Engine
+# Phase 3 — Custom AST Engine
 
 Status
 
-📅 Planned
+🚧 In Progress
 
-Objectives
+Objective
 
-Expand the ARGUS AST Engine.
+Build ARGUS's own modular static analysis framework.
+
+---
+
+## Sprint 1 — Engine Architecture
+
+- AST Engine
+- Rule Registry
+- Base Rule
+- Rule Discovery
+- Finding Generator
+- Engine Integration
+
+---
+
+## Sprint 2 — Dangerous Functions
 
 Detect
 
 - eval()
 - exec()
+- compile()
+- input() misuse
+- globals()
+- locals()
+
+---
+
+## Sprint 3 — Command Injection
+
+Detect
+
 - os.system()
-- subprocess(shell=True)
+- os.popen()
+- subprocess.run(shell=True)
+- subprocess.Popen(shell=True)
+- subprocess.call(shell=True)
+
+---
+
+## Sprint 4 — SQL Injection
+
+Detect
+
+- f-strings
+- string concatenation
+- .format()
+- %-formatting
+- execute() misuse
+
+---
+
+## Sprint 5 — Unsafe Deserialization
+
+Detect
+
 - pickle.loads()
+- marshal.loads()
 - yaml.load()
-- weak hashing
-- insecure randomness
-- DEBUG=True
-- hardcoded secrets
-- SQL Injection
-- Command Injection
-- Path Traversal
-- Unsafe Deserialization
+- dill.loads()
 
-Each finding should include
+---
 
-- Severity
-- Confidence
-- CWE
-- OWASP
-- Description
-- Evidence
-- Remediation
-- References
+## Sprint 6 — Secret Detection
 
-Future
+Detect
 
-- Rule engine
-- Plugin architecture
-- Custom detection rules
+- Hardcoded Passwords
+- API Keys
+- JWT Secrets
+- AWS Keys
+- GitHub Tokens
+- Environment Secrets
+
+---
+
+## Sprint 7 — Weak Cryptography
+
+Detect
+
+- MD5
+- SHA1
+- DES
+- ECB Mode
+- Weak Random
+- Predictable Tokens
+
+---
+
+## Sprint 8 — Optimization
+
+- Performance
+- Caching
+- Parallel Rule Execution
+- Documentation
+- Test Suite
 
 ---
 
@@ -170,34 +225,13 @@ Status
 
 📅 Planned
 
-Objectives
-
-Create a dedicated Secret Detection Engine.
-
-Detect
-
-- AWS Keys
-- Azure Keys
-- GCP Keys
-- GitHub Tokens
-- GitLab Tokens
-- Slack Tokens
-- Discord Tokens
-- JWT Tokens
-- RSA Keys
-- SSH Keys
-- OpenAI Keys
-- Anthropic Keys
-- Gemini Keys
-- Stripe Keys
-- Twilio Keys
-- Hardcoded Passwords
-
-Future
+Features
 
 - Entropy Analysis
-- Custom Regex Rules
-- User-defined Secret Patterns
+- Regex Engine
+- Custom Rules
+- Ignore Lists
+- User-defined Patterns
 
 ---
 
@@ -206,8 +240,6 @@ Future
 Status
 
 📅 Planned
-
-Objectives
 
 Support
 
@@ -220,11 +252,11 @@ Support
 
 Future
 
-- OSV Integration
+- OSV
 - CVE Database
-- CVSS Scoring
-- Upgrade Recommendations
-- License Detection
+- CVSS
+- License Analysis
+- Upgrade Suggestions
 
 ---
 
@@ -234,19 +266,15 @@ Status
 
 📅 Planned
 
-Objectives
-
-Build a VS Code–style repository browser.
-
 Features
 
 - Folder Tree
 - File Preview
 - Syntax Highlighting
-- Search Files
-- Jump to Vulnerability
+- Breadcrumbs
+- Search
+- Jump to Finding
 - File Metadata
-- Breadcrumb Navigation
 
 ---
 
@@ -256,57 +284,42 @@ Status
 
 📅 Planned
 
-Objectives
+Features
 
-Provide AI-assisted vulnerability explanations.
-
-Each finding should include
-
-- Why it is vulnerable
-- Attack scenario
-- Secure alternative
-- OWASP explanation
-- CWE explanation
-- Secure code example
-
-Future
-
-- LLM Integration
-- Offline Explanations
+- Vulnerability Explanation
+- Attack Scenario
+- Remediation
+- Secure Code Example
+- CWE Explanation
+- OWASP Explanation
 - AI Risk Prioritization
-- AI Secure Refactoring
 
 ---
 
-# Phase 8 — Reports
+# Phase 8 — Reporting
 
 Status
 
 📅 Planned
 
-Objectives
-
-Professional reporting.
-
-Include
-
-- Executive Summary
-- Findings
-- Charts
-- Risk Score
-- CWE Mapping
-- OWASP Mapping
-- Evidence
-- Remediation
-- Appendix
-
-Export Formats
+Exports
 
 - PDF
 - HTML
 - SARIF
 - JSON
 - CSV
+
+Include
+
+- Executive Summary
+- Risk Score
+- Findings
+- Charts
+- CWE Mapping
+- OWASP Mapping
+- Evidence
+- Remediation
 
 ---
 
@@ -315,10 +328,6 @@ Export Formats
 Status
 
 📅 Planned
-
-Objectives
-
-Introduce asynchronous scanning.
 
 Technology
 
@@ -329,9 +338,8 @@ Features
 
 - Scan Queue
 - Progress Tracking
-- Live Updates
-- Cancellation
 - Retry
+- Cancellation
 - Worker Monitoring
 
 ---
@@ -342,70 +350,48 @@ Status
 
 📅 Planned
 
-Objectives
-
-Expose platform functionality through REST APIs.
-
 Modules
 
-- Projects API
-- Findings API
-- Reports API
-- Dashboard API
+- Projects
+- Scans
+- Findings
+- Reports
+- Dashboard
 
 Features
 
 - Authentication
-- Pagination
 - Filtering
-- Swagger UI
-- OpenAPI Specification
+- Pagination
+- Swagger
+- OpenAPI
 
 ---
 
-# Phase 11 — Authentication & Organizations
+# Phase 11 — Enterprise Features
 
 Status
 
 📅 Planned
 
-Objectives
-
-Support enterprise collaboration.
-
 Features
 
-- Authentication
 - Organizations
-- Projects
 - Teams
-- Roles
-- Permissions
-
-Roles
-
-- Administrator
-- Member
-- Viewer
-
-Future
-
+- Projects
+- RBAC
+- SSO
 - GitHub Login
 - Google Login
 - Microsoft Login
-- Single Sign-On (SSO)
 
 ---
 
-# Phase 12 — DevOps & Deployment
+# Phase 12 — Production Deployment
 
 Status
 
 📅 Planned
-
-Objectives
-
-Production-ready deployment.
 
 Technology
 
@@ -418,84 +404,62 @@ Technology
 Infrastructure
 
 - Environment Variables
-- Structured Logging
-- Production Settings
+- Logging
 - GitHub Actions
-- CI/CD Pipeline
+- CI/CD
+- Monitoring
 
 ---
 
 # Future Integrations
 
-## Source Control
+Source Control
 
 - GitHub
 - GitLab
 - Bitbucket
 - Azure DevOps
 
-## Developer Tools
+Developer Tools
 
 - VS Code Extension
-- Command Line Interface (CLI)
+- CLI
 - Desktop Client
 
-## CI/CD
+CI/CD
 
-- Jenkins
 - GitHub Actions
 - GitLab CI
+- Jenkins
 
 ---
 
-# Long-Term Vision
+# Long-Term Goal
 
-Argus should evolve into a complete Application Security platform capable of helping developers identify, understand, prioritize, and remediate security vulnerabilities throughout the software development lifecycle.
+ARGUS should become a complete Application Security platform capable of helping developers discover, understand, prioritize, and remediate security vulnerabilities throughout the software development lifecycle.
 
-The emphasis should always remain on:
+The project should always prioritize:
 
+- Security
 - Accuracy
 - Performance
 - Scalability
 - Developer Experience
-- Professional User Interface
-
----
-
-# Coding Principles
-
-Always prefer
-
-- Small incremental improvements
-- Clean architecture
-- Modular components
-- Readable code
-- Reusable code
-- Stable functionality
-- Professional UI consistency
-
-Avoid
-
-- Large rewrites
-- Breaking existing functionality
-- Duplicate code
-- Premature optimization
-- Unnecessary complexity
+- Maintainability
 
 ---
 
 # Definition of Done
 
-A feature is complete only when:
+A sprint is complete only when:
 
-- ✅ Application starts successfully
+- ✅ Django starts successfully
 - ✅ No Python errors
-- ✅ No template errors
-- ✅ No CSS regressions
+- ✅ No template regressions
 - ✅ No JavaScript regressions
-- ✅ Responsive on desktop, tablet, and mobile
+- ✅ No CSS regressions
 - ✅ Existing functionality preserved
-- ✅ Code reviewed
-- ✅ Committed to its feature branch
+- ✅ Tests pass
+- ✅ Feature committed
 - ✅ Merged into `main`
 - ✅ Documentation updated

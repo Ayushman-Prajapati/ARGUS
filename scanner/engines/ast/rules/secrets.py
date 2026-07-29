@@ -1,0 +1,3 @@
+"""
+Secret Detection Rule
+"""

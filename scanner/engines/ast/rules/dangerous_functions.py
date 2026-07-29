@@ -1,0 +1,3 @@
+"""
+Dangerous Function Detection Rule
+"""

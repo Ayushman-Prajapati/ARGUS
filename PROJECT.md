@@ -1,58 +1,65 @@
 # ARGUS
 
-## Project Overview
+## Secure Code Review Platform
 
-Argus is a Secure Code Review Platform built with Django.
+---
 
-Its primary objective is to analyze source code, identify security vulnerabilities, and generate actionable security reports using multiple static analysis engines.
+# Overview
 
-Argus is designed as a modular Application Security (AppSec) platform capable of growing into a production-ready secure code analysis solution.
+ARGUS is a modular Secure Code Review Platform built with Django that helps developers and security teams identify vulnerabilities through automated static analysis.
 
-The platform is inspired by:
+The platform analyzes source code using multiple security engines, aggregates findings into a unified format, calculates project risk, and generates professional security reports.
+
+ARGUS is designed with extensibility in mind, allowing new security scanners and analysis engines to be integrated without major architectural changes.
+
+The long-term vision is to evolve ARGUS into a production-ready Application Security (AppSec) platform.
+
+---
+
+# Inspiration
+
+ARGUS is inspired by industry-leading security platforms including:
 
 - GitHub Advanced Security
 - SonarQube
 - Snyk
 - Semgrep
 
-The project emphasizes:
-
-- Clean Architecture
-- Modularity
-- Maintainability
-- Extensibility
-- Professional UI/UX
-- Secure Development Practices
+The goal is **not** to copy these platforms, but to adopt the architectural principles that make them scalable, maintainable, and effective.
 
 ---
 
-# Current Development Phase
+# Development Status
 
-## Phase 2 — Dashboard
+Current Version
 
-Current focus:
+**v0.2.0**
 
-Design and implement a modern security dashboard that provides users with an overview of their application security posture.
+Current Phase
 
-Current dashboard objectives include:
+**Phase 3 — Custom AST Engine**
 
-- Security overview
-- Recent scans
-- Statistics & analytics
-- Quick actions
-- Activity timeline
-- Responsive layout
-- Empty state experience
+Current Objective
 
-Only the Dashboard should be modified during this phase unless explicitly requested.
+Build ARGUS's own extensible Python static analysis engine capable of detecting security vulnerabilities beyond third-party scanners.
 
 ---
 
-# Current Features
+# Core Features
+
+## Authentication & Authorization
+
+- Secure user authentication
+- Per-user project isolation
+- Protected scan reports
+- User-specific dashboards
+- Broken Access Control mitigation
+
+---
 
 ## Scan Methods
 
-Supported scan methods:
+Supported scan sources:
 
 - Upload Python File
 - Upload ZIP Project
@@ -61,46 +68,75 @@ Supported scan methods:
 
 ---
 
-## Security Engines
+## Security Analysis Engines
 
 ### Bandit
 
-Python security linter for detecting common security vulnerabilities.
+Python security linter for common security vulnerabilities.
 
 ### Semgrep
 
 Rule-based static analysis engine supporting multiple programming languages.
 
-### ARGUS AST Engine
+### Safety
 
-Custom Python Abstract Syntax Tree (AST) analyzer for project-specific security checks.
+Dependency vulnerability analysis.
+
+### pip-audit
+
+Python package vulnerability auditing.
+
+### ARGUS AST Engine (In Development)
+
+A custom Python Abstract Syntax Tree (AST) analysis engine developed specifically for ARGUS.
+
+The AST engine is intended to become the platform's primary differentiating feature.
 
 ---
 
 # Existing Functionality
 
-The following functionality already exists and should remain stable:
+The following modules are considered stable:
 
-- Dashboard
+## Dashboard
+
+- Security Overview
+- Dashboard Analytics
+- Severity Distribution
+- Engine Distribution
+- Activity Timeline
+- Recent Scans
+- Highest Risk Projects
+- Quick Actions
+
+---
+
+## Scan Management
+
 - Scan History
 - Scan Detail
 - Risk Score
 - Executive Summary
-- Findings List
+- Findings
+- Code Viewer
 - Severity Filters
 - Engine Filters
-- Code Viewer
-- Severity Charts
-- Engine Charts
-- PDF Report Generation
 - Re-scan Support
-- Remediation Suggestions
-
-Unless explicitly requested, these features must not be redesigned or broken.
 
 ---
 
-# Project Structure
+## Reporting
+
+- PDF Report Generation
+- Executive Summary
+- Vulnerability Details
+- Risk Metrics
+
+---
+
+# Architecture
+
+ARGUS follows a modular architecture.
 
 ```
 argus_platform/
@@ -113,19 +149,22 @@ scanner/
     views.py
     forms.py
     services.py
+
     scanners/
-    templatetags/
+        bandit/
+        semgrep/
+        safety/
+        pip_audit/
+        ast_engine/
+
     templates/
+    templatetags/
 
 reports/
 
 templates/
-    scanner/
 
 static/
-    css/
-    js/
-    images/
 
 PROMPTS/
 
@@ -142,6 +181,7 @@ TODO.md
 ## Backend
 
 - Django
+- Python
 
 ## Frontend
 
@@ -155,112 +195,114 @@ Current
 
 - SQLite
 
-Planned
+Future
 
 - PostgreSQL
 
 ---
 
-# Design Language
+# Design Philosophy
 
-Argus follows a modern cybersecurity design system.
+ARGUS follows a professional cybersecurity design language.
 
 Characteristics:
 
 - Dark Theme
-- Cyber Security Aesthetic
 - Professional
+- Modern
+- Responsive
 - Minimal
-- Glassmorphism (subtle)
-- Rounded Cards
-- Soft Shadows
-- Responsive Layout
-- Consistent Spacing
-- Compact Scrolling
+- Information Dense
+- Accessible
 
-Pages should be improved incrementally.
-
-Entire page redesigns should be avoided.
+The interface should prioritize usability over visual effects.
 
 ---
 
-# Development Philosophy
+# Engineering Principles
 
-Argus follows a feature-driven development workflow.
+The project emphasizes:
 
-Each feature should be:
+- Clean Architecture
+- Modularity
+- Extensibility
+- Security
+- Maintainability
+- Performance
+- Reusability
 
-- Independently developed
-- Incrementally improved
-- Fully tested
-- Completed before beginning another major feature
+Prefer:
+
+- Small incremental improvements
+- Independent modules
+- Reusable components
+- Service-oriented design
 
 Avoid:
 
 - Large rewrites
+- Tight coupling
+- Duplicate logic
 - Breaking existing functionality
-- Unrelated refactoring
-- Duplicate code
-
-Prefer:
-
-- Small improvements
-- Reusable components
-- Modular architecture
-- Maintainable code
 
 ---
 
-# Stability Requirements
+# Current Development Focus
 
-The following components should remain compatible unless explicitly modified:
+Phase 3 focuses exclusively on the custom AST engine.
 
-- URLs
-- Views
-- Models
-- Forms
-- Context Variables
-- Reports
-- PDF Generation
-- Charts
-- Filters
-- Pagination
-- Navigation
-- Bootstrap Responsiveness
+Planned milestones:
 
----
+### Sprint 1
 
-# UI Principles
+- AST Architecture
+- Rule Registry
+- Base Rule
+- Engine Integration
 
-Argus should resemble a professional enterprise security platform.
+### Sprint 2
 
-The interface should prioritize:
+- Dangerous Function Detection
 
-- Readability
-- Usability
-- Consistency
-- Accessibility
-- Performance
+### Sprint 3
 
-Visual effects should support the user experience without becoming distracting.
+- Command Injection Detection
 
-Animations should remain subtle.
+### Sprint 4
 
-Whitespace should be intentional.
+- SQL Injection Detection
 
-Layouts should remain compact and information-dense.
+### Sprint 5
+
+- Unsafe Deserialization
+
+### Sprint 6
+
+- Secret Detection
+
+### Sprint 7
+
+- Weak Cryptography Detection
+
+### Sprint 8
+
+- Performance Optimization
+- Testing
+- Documentation
+
+No UI redesigns should occur during this phase unless required for integration.
 
 ---
 
 # Long-Term Roadmap
 
-Argus will gradually evolve into a complete Secure Code Review Platform with:
-
 ## Static Analysis
 
 - Bandit
 - Semgrep
-- AST Engine
+- Safety
+- pip-audit
+- ARGUS AST Engine
 
 ## Security Scanners
 
@@ -280,28 +322,27 @@ Argus will gradually evolve into a complete Secure Code Review Platform with:
 - PDF Reports
 - HTML Reports
 - SARIF Export
-- CSV / JSON Export
+- CSV Export
+- JSON Export
 
 ## AI Features
 
-- AI Vulnerability Explanation
+- AI Vulnerability Explanations
 - AI Remediation Suggestions
-- Secure Code Recommendations
+- Secure Coding Recommendations
 - Risk Prioritization
 
-## Platform Features
+## Enterprise Features
 
-- Authentication
 - Organizations
+- Teams
 - Projects
+- RBAC
 - Scan Scheduling
 - Notifications
 - REST API
 - Docker Deployment
 - CI/CD Integration
 - Background Workers
-- Role-Based Access Control (RBAC)
 
-Every future feature should integrate naturally into the existing architecture.
-
-Avoid shortcuts that make future expansion difficult.
+Every new feature should integrate naturally into the existing architecture without requiring major refactoring.

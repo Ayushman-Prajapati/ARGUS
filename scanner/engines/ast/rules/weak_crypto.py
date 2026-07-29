@@ -1,0 +1,3 @@
+"""
+Weak Cryptography Detection Rule
+"""

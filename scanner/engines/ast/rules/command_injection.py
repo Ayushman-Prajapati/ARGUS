@@ -1,0 +1,3 @@
+"""
+Command Injection Detection Rule
+"""
