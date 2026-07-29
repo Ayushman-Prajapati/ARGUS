@@ -2,8 +2,12 @@
 AST Rule Registry
 """
 
-from collections.abc import Iterable
+import logging
 from typing import Any
+
+from scanner.engines.ast.base_rule import BaseRule
+
+logger = logging.getLogger(__name__)
 
 
 class RuleRegistry:
@@ -18,20 +22,32 @@ class RuleRegistry:
 
     def __init__(self) -> None:
         """Initialize an empty rule registry."""
-        self._rules: list[Any] = []
+        self._rules: list[BaseRule] = []
 
-    def register(self, rule: Any) -> None:
+    def register(self, rule: BaseRule) -> None:
         """
         Register a rule instance.
 
         Args:
-            rule: A rule instance that implements a check method
-                  accepting an AST tree and returning findings.
+            rule: A rule instance implementing the BaseRule interface.
+
+        Raises:
+            TypeError: If rule is not a BaseRule instance.
+            ValueError: If rule metadata is invalid or missing.
         """
+        if not isinstance(rule, BaseRule):
+            raise TypeError(f"Expected BaseRule instance, got {type(rule).__name__}")
+
+        # Validate required metadata
+        if not rule.id:
+            raise ValueError(f"Rule {rule.__class__.__name__} must define an 'id'")
+        if not rule.name:
+            raise ValueError(f"Rule {rule.__class__.__name__} must define a 'name'")
+
         if rule not in self._rules:
             self._rules.append(rule)
 
-    def unregister(self, rule: Any) -> None:
+    def unregister(self, rule: BaseRule) -> None:
         """
         Unregister a rule instance.
 
@@ -41,7 +57,7 @@ class RuleRegistry:
         if rule in self._rules:
             self._rules.remove(rule)
 
-    def list_rules(self) -> list[Any]:
+    def list_rules(self) -> list[BaseRule]:
         """
         List all registered rule instances.
 
@@ -63,15 +79,9 @@ class RuleRegistry:
         """
         findings: list[Any] = []
         for rule in self._rules:
-            if hasattr(rule, "check") and callable(rule.check):
-                try:
-                    rule_findings = rule.check(tree)
-                    if rule_findings:
-                        if isinstance(rule_findings, Iterable):
-                            findings.extend(rule_findings)
-                        else:
-                            findings.append(rule_findings)
-                except Exception:
-                    # Rules should handle their own errors; continue with other rules
-                    continue
+            try:
+                findings.extend(rule.visit(tree))
+            except Exception:
+                logger.exception("Rule %s failed during execution", rule.id)
+                continue
         return findings

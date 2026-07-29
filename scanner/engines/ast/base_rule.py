@@ -25,15 +25,6 @@ class BaseRule(ABC):
     cwe: str = ""
     owasp: str = ""
 
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        """Validate subclass metadata on creation."""
-        super().__init_subclass__(**kwargs)
-        if cls is not BaseRule:
-            if not cls.id:
-                raise ValueError(f"Rule {cls.__name__} must define an 'id'")
-            if not cls.name:
-                raise ValueError(f"Rule {cls.__name__} must define a 'name'")
-
     @abstractmethod
     def visit(self, tree: Any) -> list[Any]:
         """
@@ -49,23 +40,6 @@ class BaseRule(ABC):
             A list of finding objects (structure defined by subclasses).
         """
         ...
-
-    def get_metadata(self) -> dict[str, Any]:
-        """
-        Return the rule's metadata as a dictionary.
-
-        Returns:
-            Dictionary containing rule metadata.
-        """
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "severity": self.severity,
-            "confidence": self.confidence,
-            "cwe": self.cwe,
-            "owasp": self.owasp,
-        }
 
     def __repr__(self) -> str:
         """Return a string representation of the rule."""

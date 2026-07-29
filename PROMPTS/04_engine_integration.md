@@ -8,13 +8,13 @@ Follow the instructions in `.claude.md` before reading this prompt.
 
 # Objective
 
-Refactor the existing AST engine so that it becomes an orchestrator rather than containing all future scanning logic.
+Refactor the existing AST engine so that it becomes a lightweight orchestrator.
 
-The AST engine should coordinate the analysis process without embedding rule implementations.
+The AST engine should coordinate the analysis process without containing any vulnerability detection logic.
 
-This sprint focuses on architecture only.
+This sprint is architecture only.
 
-Do NOT implement any vulnerability detection.
+Do NOT implement any detection rules.
 
 ---
 
@@ -32,9 +32,9 @@ scanner/
         ├── utils.py
         └── rules/
 
-The registry and BaseRule have already been implemented.
+The Rule Registry and BaseRule have already been implemented.
 
-No rule implementations currently exist.
+The rule modules currently exist only as empty placeholders.
 
 ---
 
@@ -44,26 +44,26 @@ Refactor
 
 scanner/engines/ast_engine.py
 
-to become the central orchestrator.
+into a pure orchestrator.
 
-The engine should be responsible for:
+Its responsibilities are limited to:
 
-1. Reading Python source files.
-2. Parsing source code into a Python AST.
-3. Initializing the Rule Registry.
-4. Executing every registered rule.
-5. Collecting findings returned by the registry.
-6. Returning findings in a consistent format.
+1. Parse Python source into an AST.
+2. Create a RuleRegistry instance.
+3. Register available rules.
+4. Execute all registered rules.
+5. Collect findings.
+6. Return findings.
 
-The engine should not contain any detection logic.
+The engine must not contain any vulnerability-specific logic.
 
 ---
 
-# Desired Flow
+# Execution Flow
 
-The engine should approximately follow this sequence:
+The engine should approximately follow this sequence.
 
-Read File
+Read Source
 
 ↓
 
@@ -71,11 +71,11 @@ Parse Python AST
 
 ↓
 
-Initialize Registry
+Create RuleRegistry
 
 ↓
 
-Load Registered Rules
+Register Rules
 
 ↓
 
@@ -89,88 +89,115 @@ Collect Findings
 
 Return Findings
 
-Even when no rules are registered, the engine should execute successfully and return an empty collection.
+If no rules are registered, the engine should return an empty collection without errors.
+
+---
+
+# Rule Execution Contract
+
+Use the existing BaseRule interface.
+
+Every rule is executed through
+
+```python
+rule.visit(tree)
+```
+
+The Rule Registry should execute rules using **visit(tree)**.
+
+Do NOT introduce:
+
+- check()
+- execute()
+- run()
+
+Do NOT add compatibility wrappers.
+
+The BaseRule interface must remain unchanged.
+
+---
+
+# Rule Registration
+
+For this sprint, register rules explicitly.
+
+Do NOT implement:
+
+- automatic rule discovery
+- plugin loading
+- dynamic imports
+- reflection-based registration
+
+Those belong to a future enhancement.
 
 ---
 
 # Responsibilities
 
-The AST engine should only coordinate execution.
+AST Engine
 
-It should not:
+- parsing
+- orchestration
+- execution
+- error handling
 
-- detect SQL Injection
-- detect Command Injection
-- detect Secrets
-- detect Weak Crypto
-- detect Dangerous Functions
+Rule Registry
 
-Detection belongs exclusively to rule modules.
+- stores rule instances
+- executes rule.visit(tree)
+- aggregates findings
+
+BaseRule
+
+- defines the rule interface
+
+Rule Modules
+
+- perform vulnerability detection
+
+Findings
+
+- normalize rule output
+
+Every component must have a single responsibility.
 
 ---
 
 # Error Handling
 
-The engine should gracefully handle:
+Handle gracefully:
 
 - invalid Python syntax
 - empty files
 - missing files
 
-Errors should not crash the scanning process.
+The engine must never crash because of malformed input.
 
-Instead, return an appropriate empty result or controlled error according to the existing engine conventions.
-
----
-
-# Design Principles
-
-Maintain separation of responsibilities.
-
-AST Engine
-
-- orchestration
-- parsing
-- execution
-
-Rule Registry
-
-- manages rules
-
-BaseRule
-
-- defines rule contract
-
-Rule Modules
-
-- perform detection
-
-Findings
-
-- normalize output
-
-No component should perform another component's responsibility.
+Return an empty collection or a controlled error consistent with the existing engine behavior.
 
 ---
 
 # Do NOT
 
-Do NOT implement
+Do NOT implement:
 
 - Dangerous Function Detection
-- SQL Injection Detection
 - Command Injection Detection
+- SQL Injection Detection
 - Secret Detection
 - Weak Crypto Detection
+- Unsafe Deserialization Detection
 
-Do NOT hardcode rule logic inside ast_engine.py.
+Do NOT hardcode any detection logic inside ast_engine.py.
 
-Do NOT modify:
+Do NOT change:
 
-- bandit_engine.py
-- semgrep_engine.py
+- BaseRule
+- RuleRegistry public API
 - scanner/views.py
 - scanner/models.py
+- bandit_engine.py
+- semgrep_engine.py
 - reports/
 - templates/
 - CSS
@@ -184,7 +211,7 @@ Only
 
 scanner/engines/ast_engine.py
 
-If absolutely necessary,
+Optionally
 
 scanner/engines/ast/__init__.py
 
@@ -194,48 +221,54 @@ No other files.
 
 # Verification
 
-Verify
-
-✓ Existing scans continue working
-
-✓ Existing Bandit integration works
-
-✓ Existing Semgrep integration works
-
-✓ AST engine parses Python successfully
-
-✓ Engine executes successfully with zero registered rules
-
-✓ Empty findings are returned when no rules exist
+Verify:
 
 ✓ Django starts successfully
 
-✓ No regressions
+✓ Existing Bandit engine works
+
+✓ Existing Semgrep engine works
+
+✓ Python source parses successfully
+
+✓ Engine executes with zero registered rules
+
+✓ Empty findings are returned when no rules exist
+
+✓ Existing scan workflow remains unchanged
+
+✓ No regressions are introduced
 
 ---
 
 # Deliverables
 
-At the end of this sprint the AST engine should be fully prepared for future rule implementations.
+At the end of this sprint:
 
-The engine should execute successfully even though no detection rules have been implemented.
+- ast_engine.py is a lightweight orchestrator.
+- Rule execution is delegated entirely to RuleRegistry.
+- Rules are executed using BaseRule.visit(tree).
+- No vulnerability detection exists inside ast_engine.py.
+- The engine successfully returns an empty finding list when no rules are registered.
 
 ---
 
 # Commit Message
 
-feat(ast): refactor engine into modular orchestrator
+feat(ast): refactor AST engine into orchestrator
 
 ---
 
 # Stop
 
-After verification
+After verification:
 
 STOP.
 
 Do not implement any detection rules.
 
-Do not begin Dangerous Function Detection.
+Do not modify BaseRule or RuleRegistry.
+
+Do not implement automatic rule discovery.
 
 Wait for the next sprint.
