@@ -4,6 +4,7 @@ ARGUS AST Engine
 from scanner.engines.ast.rules import (
     CommandInjectionRule,
     DangerousFunctionRule,
+    DeserializationRule,
     SQLInjectionRule,
 )
 
@@ -14,6 +15,7 @@ available_rules = [
     DangerousFunctionRule(),
     CommandInjectionRule(),
     SQLInjectionRule(),
+    DeserializationRule(),
 ]
 
 __all__ = ["available_rules"]

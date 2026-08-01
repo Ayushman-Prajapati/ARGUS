@@ -8,28 +8,33 @@ Follow the instructions in `.claude.md` before reading this prompt.
 
 # Objective
 
-Implement an Unsafe Deserialization detection rule for the ARGUS AST Framework.
+Implement the fourth AST detection rule:
 
-This rule should identify Python APIs that deserialize untrusted data and may lead to arbitrary code execution.
+Unsafe Deserialization Detection.
 
-The implementation must integrate with the existing AST framework.
+The AST framework is already complete.
 
-Do not modify the engine architecture.
+This sprint adds **one new rule only**.
+
+No framework changes.
+
+No architecture changes.
 
 ---
 
 # Background
 
-The AST framework already contains:
+The following components are already complete and must remain unchanged:
 
 - AST Engine
 - Rule Registry
 - BaseRule
-- Dangerous Functions Rule
+- Finding Normalization
+- Dangerous Function Rule
 - Command Injection Rule
 - SQL Injection Rule
 
-This sprint introduces a new independent rule.
+This sprint extends the framework with one additional independent rule.
 
 ---
 
@@ -39,39 +44,55 @@ Implement
 
 scanner/engines/ast/rules/deserialization.py
 
-Create a rule that inherits from BaseRule.
+The rule must inherit from BaseRule.
 
-The rule should analyze Python AST nodes and detect unsafe deserialization APIs.
+Follow the same coding style, metadata structure, and finding format used by the existing AST rules.
 
 ---
 
-# Detect
+# Detection Scope
 
-Detect usage of unsafe deserialization APIs including:
+Detect unsafe deserialization APIs using Python AST.
 
-pickle.load()
+Supported APIs include:
 
-pickle.loads()
+## pickle
 
-cPickle.load()
+- pickle.load()
+- pickle.loads()
 
-cPickle.loads()
+## cPickle
 
-dill.load()
+- cPickle.load()
+- cPickle.loads()
 
-dill.loads()
+## dill
 
-marshal.load()
+- dill.load()
+- dill.loads()
 
-marshal.loads()
+## marshal
 
-shelve.open()
+- marshal.load()
+- marshal.loads()
 
-yaml.load()
+## shelve
 
-Use AST analysis to identify fully-qualified function calls.
+- shelve.open()
 
-Do not rely solely on string matching.
+## yaml
+
+- yaml.load()
+
+Use AST node analysis.
+
+Do not use:
+
+- regular expressions
+- plain text searching
+- string matching alone
+
+Resolve fully-qualified function calls in the same manner as the existing Command Injection rule.
 
 ---
 
@@ -79,7 +100,7 @@ Do not rely solely on string matching.
 
 Do NOT report:
 
-yaml.safe_load()
+- yaml.safe_load()
 
 or other explicitly safe deserialization APIs.
 
@@ -87,9 +108,28 @@ Only report APIs that are considered unsafe by default.
 
 ---
 
+# Detection Rules
+
+This sprint detects unsafe API usage only.
+
+Do NOT implement:
+
+- taint analysis
+- trust-boundary analysis
+- user-input tracking
+- data-flow analysis
+- symbolic execution
+- runtime validation
+
+Simply report usage of the unsafe APIs.
+
+---
+
 # Metadata
 
-Provide appropriate rule metadata including:
+Provide metadata consistent with existing AST rules.
+
+Include:
 
 - id
 - name
@@ -99,64 +139,48 @@ Provide appropriate rule metadata including:
 - cwe
 - owasp
 
-Follow the same structure used by existing AST rules.
+Use:
+
+- CWE-502 (Deserialization of Untrusted Data)
+
+Use the appropriate OWASP category consistent with the existing rules.
 
 ---
 
 # Findings
 
-For every detected API call, generate a finding containing information such as:
+Return findings using the existing normalized format.
 
-- rule id
+Each finding should include:
+
+- rule_id
 - title
 - description
 - severity
-- line number
-- code snippet (if supported)
-- CWE
-- OWASP
-
-Return findings through the existing framework.
+- confidence
+- cwe_id
+- owasp_category
+- line_number
+- end_line_number
+- code_snippet
+- remediation
 
 Do not write directly to the database.
 
 ---
 
-# Registry
+# Registration
 
-Register the Unsafe Deserialization rule using the Rule Registry.
+Register the rule using the existing registration mechanism.
 
-The AST engine should execute it automatically without requiring changes to ast_engine.py.
+Do not redesign or modify the framework.
 
----
+Do not modify:
 
-# Scope
-
-This sprint detects usage of unsafe deserialization APIs only.
-
-Do not perform:
-
-- Taint analysis
-- Trust boundary analysis
-- User input tracking
-- Runtime validation
-
-Those belong to future enhancements.
-
----
-
-# Do NOT
-
-Do NOT implement
-
-- Secret Detection
-- Weak Crypto Detection
-- Data Flow Analysis
-- Taint Tracking
-
-Do not modify BaseRule.
-
-Do not modify the AST engine architecture.
+- ast_engine.py
+- registry.py
+- base_rule.py
+- findings.py
 
 ---
 
@@ -166,49 +190,76 @@ Primary
 
 scanner/engines/ast/rules/deserialization.py
 
-If required
+If required by the existing registration mechanism
 
-scanner/engines/ast/registry.py
+scanner/engines/ast/__init__.py
 
-No unrelated files.
+scanner/engines/ast/rules/__init__.py
+
+No other files.
+
+Specifically do NOT modify
+
+- ast_engine.py
+- registry.py
+- base_rule.py
+- findings.py
+- services.py
+- scanner/views.py
+- scanner/models.py
 
 ---
 
 # Verification
 
-Verify
+Verify:
 
-✓ pickle.load() is detected
+✓ pickle.load()
 
-✓ pickle.loads() is detected
+✓ pickle.loads()
 
-✓ dill.load() is detected
+✓ cPickle.load()
 
-✓ dill.loads() is detected
+✓ cPickle.loads()
 
-✓ marshal.load() is detected
+✓ dill.load()
 
-✓ marshal.loads() is detected
+✓ dill.loads()
 
-✓ yaml.load() is detected
+✓ marshal.load()
+
+✓ marshal.loads()
+
+✓ shelve.open()
+
+✓ yaml.load()
 
 ✓ yaml.safe_load() is NOT reported
 
 ✓ Multiple unsafe deserialization calls generate multiple findings
 
-✓ Safe code produces zero findings
+✓ Safe Python code generates zero findings
 
-✓ Existing scans continue working
+✓ Existing Dangerous Function detection still works
+
+✓ Existing Command Injection detection still works
+
+✓ Existing SQL Injection detection still works
 
 ✓ Django starts successfully
+
+✓ No regressions
 
 ---
 
 # Deliverables
 
-The AST engine should successfully detect unsafe deserialization APIs and report findings through the existing framework.
+At the end of this sprint:
 
-No engine architecture changes should be introduced.
+- One new independent Unsafe Deserialization rule exists.
+- The rule integrates with the existing AST framework.
+- No framework architecture has changed.
+- Existing rules continue working unchanged.
 
 ---
 
@@ -224,4 +275,8 @@ After verification
 
 STOP.
 
-Do not begin Secret Detection.
+Do not refactor the AST framework.
+
+Do not modify existing rules.
+
+Do not begin Weak Cryptography Detection.

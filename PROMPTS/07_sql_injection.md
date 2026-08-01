@@ -8,27 +8,32 @@ Follow the instructions in `.claude.md` before reading this prompt.
 
 # Objective
 
-Implement a SQL Injection detection rule for the ARGUS AST Framework.
+Implement the third AST detection rule:
 
-This rule should identify Python code that constructs and executes SQL queries using potentially unsafe patterns.
+SQL Injection Detection.
 
-The implementation must integrate with the existing AST framework.
+The AST framework is already complete.
 
-Do not modify the engine architecture.
+This sprint adds **one new rule only**.
+
+No framework changes.
+
+No architecture changes.
 
 ---
 
 # Background
 
-The AST framework already contains:
+The following components are already complete and must remain unchanged:
 
 - AST Engine
 - Rule Registry
 - BaseRule
-- Dangerous Functions Rule
+- Finding Normalization
+- Dangerous Function Rule
 - Command Injection Rule
 
-This sprint introduces a new independent rule for SQL Injection detection.
+This sprint extends the framework with one additional independent rule.
 
 ---
 
@@ -38,56 +43,86 @@ Implement
 
 scanner/engines/ast/rules/sql_injection.py
 
-Create a rule that inherits from BaseRule.
+The rule must inherit from BaseRule.
 
-The rule should analyze Python AST nodes and detect unsafe SQL query construction patterns.
+Follow the same coding style, metadata structure, and finding format used by the existing AST rules.
 
 ---
 
-# Detect
+# Detection Scope
 
-Detect common SQL execution APIs such as:
+Detect SQL execution through common database APIs.
 
-cursor.execute()
+Supported execution methods include:
 
-cursor.executemany()
+- cursor.execute(...)
+- cursor.executemany(...)
+- connection.execute(...)
+- session.execute(...)
 
-connection.execute()
+Detect unsafe SQL query construction patterns including:
 
-session.execute()
-
-and identify unsafe query construction patterns including:
-
-- String concatenation
-- "%" string formatting
+- String concatenation (+)
+- Percent (%) string formatting
 - str.format()
-- f-strings used to build SQL
-- Other dynamically constructed SQL strings
+- f-strings
+- Dynamically constructed SQL strings passed directly into execution APIs
 
-Use AST analysis to inspect how the SQL query argument is built.
+Use Python AST analysis.
 
-Do not rely on plain text or regular expression matching.
+Do not use:
+
+- regular expressions
+- plain text searching
+- string matching alone
 
 ---
 
 # Safe Patterns
 
-Do not report parameterized queries, including examples such as:
+Do NOT report parameterized queries.
 
+Examples that should NOT produce findings:
+
+```python
 cursor.execute(
     "SELECT * FROM users WHERE id = %s",
     (user_id,)
 )
 
-or equivalent parameterized APIs supported by common Python database libraries.
+cursor.execute(
+    "SELECT * FROM users WHERE id = ?",
+    (user_id,)
+)
+```
 
-The focus is on identifying unsafe query construction rather than all SQL execution.
+Equivalent parameterized APIs should also be treated as safe.
+
+---
+
+# Detection Rules
+
+This sprint performs syntax-based detection only.
+
+Do NOT implement:
+
+- taint analysis
+- user-input tracking
+- variable propagation
+- alias propagation
+- interprocedural analysis
+- symbolic execution
+- ORM-specific analysis
+
+Only inspect the AST of the SQL expression supplied to supported execution methods.
 
 ---
 
 # Metadata
 
-Provide appropriate rule metadata including:
+Provide metadata consistent with existing AST rules.
+
+Include:
 
 - id
 - name
@@ -97,66 +132,44 @@ Provide appropriate rule metadata including:
 - cwe
 - owasp
 
-Use the same format as existing AST rules.
+Use CWE-89 and the appropriate OWASP category.
 
 ---
 
 # Findings
 
-For each detected issue, generate a finding containing information such as:
+Return findings using the existing normalized format.
 
-- rule id
+Each finding should include:
+
+- rule_id
 - title
 - description
 - severity
-- line number
-- code snippet (if supported)
-- CWE
-- OWASP
-
-Return findings through the existing framework.
+- confidence
+- cwe_id
+- owasp_category
+- line_number
+- end_line_number
+- code_snippet
+- remediation
 
 Do not write directly to the database.
 
 ---
 
-# Registry
+# Registration
 
-Register the SQL Injection rule using the Rule Registry.
+Register the rule using the existing registration mechanism.
 
-The AST engine should execute it automatically without requiring modifications to ast_engine.py.
+Do not redesign or modify the framework.
 
----
+Do not modify:
 
-# Scope
-
-This sprint is limited to syntax-based SQL Injection detection.
-
-Do not perform:
-
-- Taint analysis
-- User input tracking
-- Variable propagation
-- Interprocedural analysis
-- Database-specific query validation
-
-Those belong to future enhancements.
-
----
-
-# Do NOT
-
-Do NOT implement
-
-- Secret Detection
-- Weak Crypto Detection
-- Unsafe Deserialization
-- Data Flow Analysis
-- Taint Tracking
-
-Do not modify BaseRule.
-
-Do not modify the AST engine architecture.
+- ast_engine.py
+- registry.py
+- base_rule.py
+- findings.py
 
 ---
 
@@ -166,43 +179,62 @@ Primary
 
 scanner/engines/ast/rules/sql_injection.py
 
-If required
+If required by the existing registration mechanism
 
-scanner/engines/ast/registry.py
+scanner/engines/ast/__init__.py
 
-No unrelated files.
+scanner/engines/ast/rules/__init__.py
+
+No other files.
+
+Specifically do NOT modify
+
+- ast_engine.py
+- registry.py
+- base_rule.py
+- findings.py
+- services.py
+- scanner/views.py
+- scanner/models.py
 
 ---
 
 # Verification
 
-Verify
+Verify:
 
-✓ String concatenation used in SQL is detected
+✓ String concatenation SQL queries are detected
 
 ✓ f-string SQL queries are detected
 
 ✓ str.format() SQL queries are detected
 
-✓ "%" formatted SQL queries are detected
+✓ Percent-formatted SQL queries are detected
 
-✓ Parameterized queries are not reported
+✓ Parameterized queries are NOT reported
 
-✓ Multiple SQL issues generate multiple findings
+✓ Multiple SQL Injection issues generate multiple findings
 
-✓ Safe code produces zero findings
+✓ Safe Python code generates zero findings
 
-✓ Existing scans continue working
+✓ Existing Dangerous Function detection still works
+
+✓ Existing Command Injection detection still works
 
 ✓ Django starts successfully
+
+✓ No regressions
 
 ---
 
 # Deliverables
 
-The AST engine should successfully detect common unsafe SQL query construction patterns and report findings through the existing framework.
+At the end of this sprint:
 
-No engine architecture changes should be introduced.
+- One new independent SQL Injection rule exists.
+- The rule integrates with the existing AST framework.
+- No framework architecture has changed.
+- Existing rules continue working unchanged.
 
 ---
 
@@ -218,4 +250,8 @@ After verification
 
 STOP.
 
-Do not begin Unsafe Deserialization detection.
+Do not refactor the AST framework.
+
+Do not modify existing rules.
+
+Do not begin Unsafe Deserialization Detection.
