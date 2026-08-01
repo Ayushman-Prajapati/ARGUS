@@ -5,6 +5,7 @@ from scanner.engines.ast.rules import (
     CommandInjectionRule,
     DangerousFunctionRule,
     DeserializationRule,
+    SecretDetectionRule,
     SQLInjectionRule,
 )
 
@@ -16,6 +17,7 @@ available_rules = [
     CommandInjectionRule(),
     SQLInjectionRule(),
     DeserializationRule(),
+    SecretDetectionRule(),
 ]
 
 __all__ = ["available_rules"]
