@@ -7,6 +7,7 @@ from scanner.engines.ast.rules import (
     DeserializationRule,
     SecretDetectionRule,
     SQLInjectionRule,
+    WeakCryptoRule,
 )
 
 # Catalog of AST rules available to the engine. New rules only need to be
@@ -18,6 +19,7 @@ available_rules = [
     SQLInjectionRule(),
     DeserializationRule(),
     SecretDetectionRule(),
+    WeakCryptoRule(),
 ]
 
 __all__ = ["available_rules"]

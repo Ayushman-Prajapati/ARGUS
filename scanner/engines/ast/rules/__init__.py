@@ -6,6 +6,7 @@ from scanner.engines.ast.rules.dangerous_functions import DangerousFunctionRule
 from scanner.engines.ast.rules.deserialization import DeserializationRule
 from scanner.engines.ast.rules.secrets import SecretDetectionRule
 from scanner.engines.ast.rules.sql_injection import SQLInjectionRule
+from scanner.engines.ast.rules.weak_crypto import WeakCryptoRule
 
 __all__ = [
     "CommandInjectionRule",
@@ -13,4 +14,5 @@ __all__ = [
     "DeserializationRule",
     "SecretDetectionRule",
     "SQLInjectionRule",
+    "WeakCryptoRule",
 ]
