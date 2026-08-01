@@ -30,6 +30,7 @@ def normalize_findings(findings: list[Any], file_path: str) -> list[dict[str, An
             "severity": finding.get("severity", "medium"),
             "description": finding.get("description", ""),
             "cwe_id": finding.get("cwe_id", finding.get("cwe", "")),
+            "owasp_category": finding.get("owasp_category", finding.get("owasp", "")),
             "file_path": file_path,
             "line_number": finding.get("line_number", finding.get("line", 0)),
             "end_line_number": finding.get("end_line_number", finding.get("end_line", finding.get("line", 0))),

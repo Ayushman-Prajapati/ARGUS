@@ -5,6 +5,7 @@ AST Rule Registry
 import logging
 from typing import Any
 
+from scanner.engines.ast import available_rules
 from scanner.engines.ast.base_rule import BaseRule
 
 logger = logging.getLogger(__name__)
@@ -21,8 +22,13 @@ class RuleRegistry:
     """
 
     def __init__(self) -> None:
-        """Initialize an empty rule registry."""
+        """Initialize the registry and register the available rule catalog."""
         self._rules: list[BaseRule] = []
+
+        # Rules are declared in scanner/engines/ast/__init__.py and
+        # auto-registered here so the engine stays a pure orchestrator.
+        for rule in available_rules:
+            self.register(rule)
 
     def register(self, rule: BaseRule) -> None:
         """
