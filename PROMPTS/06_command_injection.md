@@ -8,28 +8,31 @@ Follow the instructions in `.claude.md` before reading this prompt.
 
 # Objective
 
-Implement a Command Injection detection rule for the ARGUS AST Framework.
+Implement the second AST detection rule:
 
-This rule should identify Python code that executes operating system commands through common libraries and APIs.
+Command Injection Detection.
 
-The implementation must integrate with the existing AST framework.
+The AST framework is already complete.
 
-Do not modify the engine architecture.
+This sprint adds **one new rule only**.
+
+No framework changes.
+
+No architecture changes.
 
 ---
 
 # Background
 
-The AST framework is already complete.
-
-Current components:
+The following components are already complete and must remain unchanged:
 
 - AST Engine
 - Rule Registry
 - BaseRule
-- Dangerous Functions Rule
+- Finding Normalization
+- Dangerous Function Rule
 
-This sprint adds a new independent rule.
+This sprint extends the framework by introducing one additional rule.
 
 ---
 
@@ -39,39 +42,61 @@ Implement
 
 scanner/engines/ast/rules/command_injection.py
 
-Create a rule that inherits from BaseRule.
+The rule must inherit from BaseRule.
 
-The rule should analyze Python AST nodes and detect potentially unsafe command execution APIs.
+Follow the same implementation style, metadata structure, and finding format used by DangerousFunctionRule.
 
 ---
 
-# Detect
+# Detection Scope
 
-Detect calls such as:
+Detect direct calls to the following command execution APIs using the parsed AST.
 
-os.system()
+## os module
 
-os.popen()
+- os.system()
+- os.popen()
 
-subprocess.run()
+## subprocess module
 
-subprocess.Popen()
+- subprocess.run()
+- subprocess.Popen()
+- subprocess.call()
+- subprocess.check_call()
+- subprocess.check_output()
 
-subprocess.call()
+Use AST node analysis.
 
-subprocess.check_call()
+Do not rely on string searching.
 
-subprocess.check_output()
+Only detect fully-qualified function calls.
 
-Do not rely on string matching.
+---
 
-Use the parsed AST to identify fully-qualified function calls.
+# Detection Rules
+
+Report usage whenever one of the supported APIs is called.
+
+This sprint detects API usage only.
+
+Do NOT attempt to determine whether user input reaches the command.
+
+Do NOT perform:
+
+- taint analysis
+- data-flow analysis
+- symbolic execution
+- argument validation
+
+Those belong to future sprints.
 
 ---
 
 # Metadata
 
-Provide appropriate rule metadata including:
+Provide metadata consistent with existing AST rules.
+
+Include
 
 - id
 - name
@@ -81,66 +106,39 @@ Provide appropriate rule metadata including:
 - cwe
 - owasp
 
-Follow the same structure used by existing AST rules.
+Use the same style as DangerousFunctionRule.
 
 ---
 
 # Findings
 
-For every detected API call, generate a finding containing relevant information such as:
+Return findings using the existing normalized format.
 
-- rule id
+Each finding should include
+
+- rule_id
 - title
 - description
 - severity
-- line number
-- code snippet (if supported)
-- CWE
-- OWASP
-
-Return findings through the existing framework.
+- confidence
+- cwe_id
+- owasp_category
+- line_number
+- end_line_number
+- code_snippet
+- remediation
 
 Do not write directly to the database.
 
 ---
 
-# Registry
+# Registration
 
-Register this rule using the Rule Registry.
+Register the rule using the **existing registration mechanism**.
 
-The AST engine should execute it automatically without requiring changes to ast_engine.py.
+Do not redesign or replace the current registration process.
 
----
-
-# Scope
-
-This sprint detects usage of command execution APIs only.
-
-Do not attempt data-flow analysis.
-
-Do not determine whether user input reaches the command.
-
-Do not distinguish safe from unsafe arguments.
-
-That level of analysis belongs to a future enhancement.
-
----
-
-# Do NOT
-
-Do NOT implement
-
-- SQL Injection
-- Secret Detection
-- Weak Crypto Detection
-- Unsafe Deserialization
-- Taint Analysis
-- User Input Tracking
-- Data Flow Analysis
-
-Do not modify BaseRule.
-
-Do not modify the AST engine architecture.
+Do not modify the AST engine.
 
 ---
 
@@ -150,11 +148,23 @@ Primary
 
 scanner/engines/ast/rules/command_injection.py
 
-If required
+If required by the existing registration mechanism
 
-scanner/engines/ast/registry.py
+scanner/engines/ast/__init__.py
 
-No unrelated files.
+scanner/engines/ast/rules/__init__.py
+
+No other files.
+
+Specifically do NOT modify
+
+- ast_engine.py
+- registry.py
+- base_rule.py
+- findings.py
+- services.py
+- scanner/views.py
+- scanner/models.py
 
 ---
 
@@ -162,35 +172,42 @@ No unrelated files.
 
 Verify
 
-✓ os.system() is detected
+✓ os.system()
 
-✓ os.popen() is detected
+✓ os.popen()
 
-✓ subprocess.run() is detected
+✓ subprocess.run()
 
-✓ subprocess.Popen() is detected
+✓ subprocess.Popen()
 
-✓ subprocess.call() is detected
+✓ subprocess.call()
 
-✓ subprocess.check_call() is detected
+✓ subprocess.check_call()
 
-✓ subprocess.check_output() is detected
+✓ subprocess.check_output()
 
-✓ Multiple command execution calls produce multiple findings
+✓ Multiple command execution APIs generate multiple findings
 
-✓ Safe Python code produces zero findings
+✓ Safe Python code generates zero findings
+
+✓ Existing Dangerous Function detection still works
 
 ✓ Existing scans continue working
 
 ✓ Django starts successfully
 
+✓ No regressions
+
 ---
 
 # Deliverables
 
-The AST engine should successfully detect common command execution APIs and report findings through the existing framework.
+At the end of this sprint
 
-This sprint should introduce no changes to the overall engine architecture.
+- One new independent AST rule exists.
+- The rule integrates with the existing framework.
+- No framework architecture has changed.
+- No unrelated files have been modified.
 
 ---
 
@@ -206,4 +223,8 @@ After verification
 
 STOP.
 
-Do not begin SQL Injection detection.
+Do not refactor the AST framework.
+
+Do not improve existing rules.
+
+Do not begin SQL Injection Detection.
