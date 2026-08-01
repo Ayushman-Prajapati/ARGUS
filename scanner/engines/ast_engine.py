@@ -47,7 +47,8 @@ def scan_source(file_path: str, source: str) -> list[dict[str, Any]]:
             "confidence": "high",
         }]
 
-    # Initialize registry (rules will be registered in future sprints)
+    # Initialize registry (rules are auto-registered from the available
+    # rule catalog in scanner/engines/ast/__init__.py)
     registry = RuleRegistry()
 
     # Execute all rules against the AST

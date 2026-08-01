@@ -1,10 +1,7 @@
 """
 AST Finding Normalization
 """
-import logging
 from typing import Any
-
-logger = logging.getLogger(__name__)
 
 
 def normalize_findings(findings: list[Any], file_path: str) -> list[dict[str, Any]]:

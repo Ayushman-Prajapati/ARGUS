@@ -1,6 +1,6 @@
 # Phase 3 — Sprint 11
 
-## Testing, Validation & Cleanup
+## AST Framework Finalization
 
 Follow the instructions in `.claude.md` before reading this prompt.
 
@@ -8,22 +8,33 @@ Follow the instructions in `.claude.md` before reading this prompt.
 
 # Objective
 
-Finalize the ARGUS AST Framework by improving reliability, maintainability, and code quality.
+Finalize the ARGUS AST Framework.
 
-This sprint focuses on testing, cleanup, validation, and documentation.
+This sprint focuses exclusively on:
 
-Do not introduce new vulnerability categories.
+- Testing
+- Validation
+- Documentation
+- Cleanup
+
+No new vulnerability detection.
+
+No framework redesign.
+
+No architecture changes.
 
 ---
 
 # Background
 
-The AST framework now contains:
+The AST framework is complete.
+
+Framework components:
 
 - AST Engine
 - Rule Registry
 - BaseRule
-- Findings
+- Finding Normalization
 - Utilities
 
 Implemented rules:
@@ -32,28 +43,38 @@ Implemented rules:
 - Command Injection
 - SQL Injection
 - Unsafe Deserialization
-- Secret Detection
+- Hardcoded Secrets
 - Weak Cryptography
 
-This sprint prepares the framework for production use.
+The goal of this sprint is to improve reliability and prepare the framework for future expansion.
 
 ---
 
 # Testing
 
-Create comprehensive unit tests for every AST rule.
+Create comprehensive unit tests for every implemented AST rule.
 
-Verify both positive and negative cases.
+Each rule should include:
 
-Every rule should include:
+## Positive Tests
 
-- Valid detection examples
-- Safe code examples
-- Edge cases
-- Empty file handling
-- Syntax error handling
+Verify that vulnerable examples generate findings.
 
-The goal is to ensure reliable behavior across common scenarios.
+## Negative Tests
+
+Verify that safe examples generate zero findings.
+
+## Edge Cases
+
+Include tests for:
+
+- empty source
+- empty file
+- syntax errors
+- nested functions
+- nested classes
+- aliases
+- multiple findings in one file
 
 ---
 
@@ -61,11 +82,11 @@ The goal is to ensure reliable behavior across common scenarios.
 
 Verify the complete pipeline.
 
-Source Code
+Python Source
 
 ↓
 
-Python AST
+AST Parsing
 
 ↓
 
@@ -77,69 +98,88 @@ Rule Execution
 
 ↓
 
-Finding Collection
+Finding Normalization
 
 ↓
 
 Returned Findings
 
-Ensure every stage functions correctly.
+Every stage should execute successfully.
 
 ---
 
-# Finding Consistency
+# Finding Validation
 
-Verify that every rule returns findings using the same structure.
+Verify every rule returns the same normalized finding structure.
 
-Ensure consistent fields such as:
+Every finding should consistently include:
 
-- rule id
+- rule_id
 - title
 - description
 - severity
 - confidence
-- CWE
-- OWASP
-- line number
-- code snippet (if supported)
+- cwe_id
+- owasp_category
+- line_number
+- end_line_number
+- code_snippet
+- remediation
 
-No rule should return a custom format.
-
----
-
-# Code Quality
-
-Review the AST framework and remove:
-
-- dead code
-- unused imports
-- duplicated logic
-- unnecessary helper functions
-- obsolete comments
-
-Improve readability where appropriate without changing behavior.
+No rule should return a custom schema.
 
 ---
 
-# Documentation
+# Regression Testing
 
-Update module docstrings and inline documentation where needed.
+Verify existing functionality remains unchanged.
 
-Ensure public classes and methods have clear documentation.
+Existing rules:
 
-Avoid excessive comments that simply restate the code.
+✓ Dangerous Functions
+
+✓ Command Injection
+
+✓ SQL Injection
+
+✓ Unsafe Deserialization
+
+✓ Hardcoded Secrets
+
+✓ Weak Cryptography
+
+Verify the Django application still functions correctly.
+
+Existing scan workflow must remain operational.
+
+---
+
+# Code Cleanup
+
+Perform conservative cleanup only.
+
+Allowed:
+
+- remove dead code
+- remove unused imports
+- remove duplicated helper logic
+- improve docstrings
+- improve inline documentation
+- improve type hints
+
+Do NOT change behavior.
 
 ---
 
 # Performance Review
 
-Review the implementation for obvious inefficiencies.
+Review for obvious inefficiencies only.
 
-Examples include:
+Examples:
 
-- repeated AST traversal
-- duplicated parsing
+- duplicated AST traversal
 - unnecessary object creation
+- repeated normalization
 
 Only perform safe optimizations.
 
@@ -147,98 +187,76 @@ Do not redesign the architecture.
 
 ---
 
-# Regression Testing
+# Documentation
 
-Verify:
+Update public module documentation where needed.
 
-✓ Existing Django application works
+Ensure:
 
-✓ Existing authentication works
+- classes have docstrings
+- public methods have docstrings
+- comments explain intent rather than restating code
 
-✓ Existing dashboard works
-
-✓ Existing Bandit integration works
-
-✓ Existing Semgrep integration works
-
-✓ Existing reports work
-
-✓ Existing scan history works
-
-✓ Existing project isolation works
-
-✓ Existing UI works
-
-No regressions should be introduced.
-
----
-
-# Do NOT
-
-Do NOT implement
-
-- New vulnerability categories
-- Taint analysis
-- Data flow analysis
-- Interprocedural analysis
-- Symbol resolution
-- Constant propagation
-- AI-assisted detection
-
-Those belong to future phases.
+Do not over-comment.
 
 ---
 
 # Files Allowed To Change
 
-Only files necessary for:
+Only files required for:
 
 - tests
 - documentation
 - cleanup
-- minor refactoring
+- minor bug fixes discovered during testing
 
-Do not redesign the framework.
+Do NOT modify:
 
-Do not change public APIs unless necessary to fix defects.
+- scanner/views.py
+- scanner/models.py
+- reports/
+- templates/
+- CSS
+- JavaScript
 
----
+Do not redesign the AST framework.
 
-# Deliverables
-
-The AST framework should be:
-
-- fully tested
-- well documented
-- consistent
-- maintainable
-- production ready
-
-All implemented rules should function correctly.
-
-The overall architecture should remain unchanged.
+Do not modify public APIs unless required to fix a defect discovered during testing.
 
 ---
 
-# Verification Checklist
+# Verification
 
 Verify:
 
-✓ All implemented rules execute successfully
+✓ All AST rule tests pass
 
-✓ Every rule produces consistent findings
+✓ Existing rule behavior is preserved
 
 ✓ Empty projects scan successfully
 
 ✓ Invalid Python files are handled gracefully
 
-✓ Safe code produces zero false positives for provided test cases
+✓ Safe code produces zero findings for provided test cases
 
-✓ Existing scan functionality remains operational
+✓ Existing scan pipeline works
 
 ✓ Django starts successfully
 
-✓ No regressions are introduced
+✓ No regressions
+
+---
+
+# Deliverables
+
+At the end of this sprint:
+
+- Every AST rule has unit tests.
+- The framework has consistent finding structures.
+- Documentation is complete.
+- Dead code has been removed.
+- The framework is stable and maintainable.
+- No architectural changes have been introduced.
 
 ---
 
@@ -256,4 +274,8 @@ After verification:
 2. Review the feature branch.
 3. Prepare the branch for merge into `main`.
 
-Do not implement additional detection rules or architectural changes.
+Do not implement new detection rules.
+
+Do not redesign the framework.
+
+Phase 3 is complete.

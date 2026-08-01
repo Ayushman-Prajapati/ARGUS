@@ -8,30 +8,35 @@ Follow the instructions in `.claude.md` before reading this prompt.
 
 # Objective
 
-Implement a Weak Cryptography detection rule for the ARGUS AST Framework.
+Implement the sixth AST detection rule:
 
-This rule should identify the use of insecure cryptographic algorithms, weak hashing functions, and outdated cipher modes.
+Weak Cryptography Detection.
 
-The implementation must integrate with the existing AST framework.
+The AST framework is already complete.
 
-Do not modify the engine architecture.
+This sprint adds **one new rule only**.
+
+No framework changes.
+
+No architecture changes.
 
 ---
 
 # Background
 
-The AST framework already contains:
+The following components are already complete and must remain unchanged:
 
 - AST Engine
 - Rule Registry
 - BaseRule
-- Dangerous Functions Rule
+- Finding Normalization
+- Dangerous Function Rule
 - Command Injection Rule
 - SQL Injection Rule
 - Unsafe Deserialization Rule
-- Secret Detection Rule
+- Hardcoded Secret Detection Rule
 
-This sprint introduces a new independent rule.
+This sprint extends the framework with one additional independent rule.
 
 ---
 
@@ -41,56 +46,117 @@ Implement
 
 scanner/engines/ast/rules/weak_crypto.py
 
-Create a rule that inherits from BaseRule.
+The rule must inherit from BaseRule.
 
-The rule should analyze Python AST nodes and detect insecure cryptographic usage.
+Follow the same coding style, metadata structure, and finding format used by the existing AST rules.
 
 ---
 
-# Detect
+# Detection Scope
 
-Detect usage of weak hashing algorithms including:
+Detect usage of weak cryptographic primitives using Python AST.
+
+## Weak Hash Algorithms
+
+Detect:
 
 - hashlib.md5()
 - hashlib.sha1()
 
-Detect cryptographic library usage including:
+Do NOT report:
+
+- hashlib.sha256()
+- hashlib.sha384()
+- hashlib.sha512()
+- hashlib.sha3_256()
+- hashlib.sha3_512()
+- hashlib.blake2b()
+- hashlib.blake2s()
+
+---
+
+## Weak Cipher Algorithms
+
+Detect:
 
 - Crypto.Cipher.DES
 - Crypto.Cipher.ARC4
 - Crypto.Cipher.Blowfish
-- algorithms.DES
-- algorithms.ARC4
 
-Detect insecure cipher modes where applicable:
+Detect equivalent imported aliases where possible.
+
+Also detect:
+
+- cryptography.hazmat.primitives.ciphers.algorithms.DES
+- cryptography.hazmat.primitives.ciphers.algorithms.ARC4
+
+---
+
+## Insecure Cipher Modes
+
+Detect:
 
 - ECB mode
 
-Use AST analysis to identify imported modules and fully-qualified function or class usage.
+Examples include:
 
-Do not rely solely on string matching.
+- AES.MODE_ECB
+- modes.ECB()
 
 ---
 
 # Ignore
 
-Do NOT report secure algorithms such as:
+Do NOT report:
 
-- hashlib.sha256()
-- hashlib.sha384()
-- hashlib.sha512()
-- hashlib.blake2b()
-- hashlib.blake2s()
-- hashlib.sha3_256()
-- AES with secure modes such as GCM or CBC (unless another rule specifically addresses misuse)
+- AES-GCM
+- AES-CBC
+- ChaCha20
+- AES-CTR
+- Fernet
 
-Only report algorithms widely considered insecure.
+This sprint detects only algorithms and modes that are widely considered insecure.
+
+---
+
+# Detection Rules
+
+Use AST node analysis.
+
+Resolve imports and aliases in the same manner as the existing Command Injection and Unsafe Deserialization rules.
+
+Do NOT use:
+
+- regular expressions
+- plain text searching
+- string matching alone
+
+---
+
+# Scope
+
+This sprint detects usage of weak cryptographic primitives only.
+
+Do NOT implement:
+
+- cryptographic misuse analysis
+- random number analysis
+- TLS configuration analysis
+- certificate validation
+- key length validation
+- entropy analysis
+- padding validation
+- IV reuse detection
+
+Those belong to future enhancements.
 
 ---
 
 # Metadata
 
-Provide metadata including:
+Provide metadata consistent with existing AST rules.
+
+Include:
 
 - id
 - name
@@ -100,63 +166,48 @@ Provide metadata including:
 - cwe
 - owasp
 
-Use the same structure as existing AST rules.
+Use:
+
+- CWE-327 (Use of a Broken or Risky Cryptographic Algorithm)
+
+Use the appropriate OWASP category consistent with the existing rules.
 
 ---
 
 # Findings
 
-For every detected issue generate a finding containing:
+Return findings using the existing normalized format.
 
-- rule id
+Each finding should include:
+
+- rule_id
 - title
 - description
 - severity
-- line number
-- code snippet (if supported)
-- CWE
-- OWASP
-
-Return findings through the existing framework.
+- confidence
+- cwe_id
+- owasp_category
+- line_number
+- end_line_number
+- code_snippet
+- remediation
 
 Do not write directly to the database.
 
 ---
 
-# Registry
+# Registration
 
-Register the Weak Cryptography rule using the Rule Registry.
+Register the rule using the existing registration mechanism.
 
-The AST engine should execute it automatically.
+Do not redesign or modify the framework.
 
-Do not modify ast_engine.py.
+Do not modify:
 
----
-
-# Scope
-
-This sprint is limited to detecting known weak cryptographic primitives.
-
-Do not implement:
-
-- Cryptographic misuse analysis
-- Random number quality analysis
-- TLS configuration analysis
-- Certificate validation
-- Key length validation
-- Entropy analysis
-
-Those belong to future enhancements.
-
----
-
-# Do NOT
-
-Do NOT modify
-
-- BaseRule
-- AST Engine
-- Existing detection rules
+- ast_engine.py
+- registry.py
+- base_rule.py
+- findings.py
 
 ---
 
@@ -166,47 +217,82 @@ Primary
 
 scanner/engines/ast/rules/weak_crypto.py
 
-If required
+If required by the existing registration mechanism
 
-scanner/engines/ast/registry.py
+scanner/engines/ast/__init__.py
 
-No unrelated files.
+scanner/engines/ast/rules/__init__.py
+
+No other files.
+
+Specifically do NOT modify:
+
+- ast_engine.py
+- registry.py
+- base_rule.py
+- findings.py
+- services.py
+- scanner/views.py
+- scanner/models.py
 
 ---
 
 # Verification
 
-Verify
+Verify:
 
 ✓ hashlib.md5() is detected
 
 ✓ hashlib.sha1() is detected
 
-✓ DES usage is detected
+✓ Crypto.Cipher.DES is detected
 
-✓ ARC4 usage is detected
+✓ Crypto.Cipher.ARC4 is detected
 
-✓ Blowfish usage is detected
+✓ Crypto.Cipher.Blowfish is detected
 
-✓ ECB mode is detected
+✓ algorithms.DES is detected
+
+✓ algorithms.ARC4 is detected
+
+✓ AES.MODE_ECB is detected
+
+✓ modes.ECB() is detected
 
 ✓ hashlib.sha256() is NOT reported
 
 ✓ hashlib.sha512() is NOT reported
 
-✓ Safe cryptographic usage produces zero findings
+✓ AES-GCM is NOT reported
 
-✓ Existing scans continue working
+✓ AES-CBC is NOT reported
+
+✓ Safe cryptographic usage generates zero findings
+
+✓ Existing Dangerous Function detection still works
+
+✓ Existing Command Injection detection still works
+
+✓ Existing SQL Injection detection still works
+
+✓ Existing Unsafe Deserialization detection still works
+
+✓ Existing Hardcoded Secret detection still works
 
 ✓ Django starts successfully
+
+✓ No regressions
 
 ---
 
 # Deliverables
 
-The AST engine should successfully detect common weak cryptographic algorithms and insecure cipher usage while avoiding modern secure algorithms.
+At the end of this sprint:
 
-No engine architecture changes should be introduced.
+- One new independent Weak Cryptography Detection rule exists.
+- The rule integrates with the existing AST framework.
+- No framework architecture has changed.
+- Existing rules continue working unchanged.
 
 ---
 
@@ -222,4 +308,8 @@ After verification
 
 STOP.
 
-Do not begin new detection categories.
+Do not refactor the AST framework.
+
+Do not modify existing rules.
+
+Phase 3 rule implementation is complete.
