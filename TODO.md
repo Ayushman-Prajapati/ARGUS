@@ -6,43 +6,43 @@ Status
 
 Current Version
 
-**v0.3.0**
+**v0.4.0**
 
 Current Phase
 
-**Phase 3.5 — Design Refresh**
+**Phase 5 — Scan Experience**
 
 Current Branch
 
-`feature/design-refresh`
+`feature/scan-experience`
 
 ---
 
-# Sprint Goal
+# Phase Goal
 
-Establish the **Midnight Slate** design system that will define ARGUS's visual identity.
+Transform the scanning workflow into a modern, interactive experience that provides continuous feedback while preserving the existing backend architecture.
 
-This sprint focuses **only** on the global design system.
+This phase focuses on improving the user experience during scans without changing the security analysis engines.
 
 Objectives
 
-- Create reusable design tokens
-- Establish the new color palette
-- Improve typography
-- Standardize spacing
-- Standardize borders
-- Standardize shadows
-- Preserve all existing functionality
+- Live scan progress
+- Engine-by-engine progress
+- Improved scan lifecycle
+- Better re-scan behavior
+- Interactive demo scan
+- Live scan console
+- User notifications
+- Scan comparison
+- Improved scan history
 
-No backend changes.
+No scanner logic changes.
 
-No database changes.
-
-No scanner changes.
+No AST rule changes.
 
 No authentication changes.
 
-No architecture changes.
+No database schema changes unless explicitly required.
 
 ---
 
@@ -50,7 +50,7 @@ No architecture changes.
 
 One sprint at a time.
 
-Each completed sprint must be
+Every completed sprint must be:
 
 - Implemented
 - Reviewed
@@ -62,7 +62,7 @@ One prompt = One sprint = One commit.
 
 ---
 
-# Sprint 1 — Design System Foundation
+# Sprint 1 — Live Scan Progress
 
 Status
 
@@ -70,25 +70,20 @@ Status
 
 Objectives
 
-- CSS Design Tokens
-- Midnight Slate Color Palette
-- Typography
-- Border Radius
-- Shadows
-- Focus States
-- Transition Tokens
+- Progress Bar
+- Progress Percentage
+- Loading States
+- Estimated Progress
+- Prevent page reload feeling
 
-Primary Files
+Primary Areas
 
-- static/css/custom.css
-
-Optional
-
-- templates/base.html (fonts only)
+- Scan creation workflow
+- Progress UI
 
 ---
 
-# Sprint 2 — Navigation
+# Sprint 2 — Engine Progress
 
 Status
 
@@ -96,14 +91,22 @@ Status
 
 Objectives
 
-- Navbar
-- Sidebar
-- Active Navigation
-- Hover States
+- Bandit status
+- Semgrep status
+- Safety status
+- pip-audit status
+- ARGUS AST status
+
+Display
+
+- Pending
+- Running
+- Completed
+- Failed
 
 ---
 
-# Sprint 3 — Core Components
+# Sprint 3 — Scan Lifecycle
 
 Status
 
@@ -111,15 +114,15 @@ Status
 
 Objectives
 
-- Cards
-- Buttons
-- Badges
-- Alerts
-- Progress Bars
+- Running state
+- Success state
+- Failure state
+- Better loading flow
+- Improved completion handling
 
 ---
 
-# Sprint 4 — Forms & Tables
+# Sprint 4 — Re-scan Experience
 
 Status
 
@@ -127,16 +130,15 @@ Status
 
 Objectives
 
-- Inputs
-- Selects
-- Textareas
-- Tables
-- Pagination
-- Filters
+- Update scan timestamp
+- Refresh scan duration
+- Improve scan history
+- Prevent duplicate submissions
+- Better success feedback
 
 ---
 
-# Sprint 5 — Dashboard Polish
+# Sprint 5 — Demo Scan Experience
 
 Status
 
@@ -144,17 +146,14 @@ Status
 
 Objectives
 
-- Dashboard Cards
-- Analytics
-- Charts
-- Quick Actions
-- Activity Timeline
-
-No layout redesign.
+- Interactive demo scan
+- Simulated engine execution
+- Animated progress
+- Better onboarding
 
 ---
 
-# Sprint 6 — Scan Detail Polish
+# Sprint 6 — Live Scan Console
 
 Status
 
@@ -162,15 +161,14 @@ Status
 
 Objectives
 
-- Findings
-- Code Viewer
-- Severity Badges
-- Metadata
-- Executive Summary
+- Live log output
+- Engine messages
+- Scan timeline
+- Status updates
 
 ---
 
-# Sprint 7 — Reports
+# Sprint 7 — Notifications
 
 Status
 
@@ -178,15 +176,14 @@ Status
 
 Objectives
 
-- Report Layout
-- Typography
-- Tables
-- Charts
-- PDF Styling
+- Success notifications
+- Error notifications
+- Warning notifications
+- Toast messages
 
 ---
 
-# Sprint 8 — Accessibility & Final Polish
+# Sprint 8 — Scan History
 
 Status
 
@@ -194,11 +191,41 @@ Status
 
 Objectives
 
-- Keyboard Navigation
-- Contrast Improvements
-- Responsive Review
-- Animation Cleanup
-- Cross-browser Validation
+- Better scan history
+- Previous scan visibility
+- Latest scan highlighting
+- Improved timeline
+
+---
+
+# Sprint 9 — Scan Comparison
+
+Status
+
+⬜ Pending
+
+Objectives
+
+- Risk comparison
+- Finding comparison
+- Severity delta
+- Historical trends
+
+---
+
+# Sprint 10 — Testing & Cleanup
+
+Status
+
+⬜ Pending
+
+Objectives
+
+- Performance review
+- UI cleanup
+- Edge-case handling
+- Documentation
+- Final testing
 
 ---
 
@@ -207,12 +234,13 @@ Objectives
 Do NOT modify
 
 - AST Engine
+- Detection Rules
 - Bandit Integration
 - Semgrep Integration
 - Safety Integration
 - pip-audit Integration
-- Scanner Services
 - Authentication
+- Reports Architecture
 - REST API
 - Docker
 - Repository Explorer
@@ -232,21 +260,21 @@ Every completed sprint must satisfy
 
 ☐ Existing scans still work
 
-☐ Existing reports still work
+☐ Existing reports still generate
 
 ☐ Existing dashboard functionality preserved
 
-☐ Responsive layout maintained
+☐ Existing authentication preserved
 
-☐ Charts continue rendering
+☐ Responsive layout maintained
 
 ☐ Accessibility preserved
 
 ☐ No backend regressions
 
-☐ No CSS regressions
+☐ Existing scanners continue working
 
-☐ Design tokens reused
+☐ Progress states update correctly
 
 ---
 
@@ -256,23 +284,27 @@ One sprint = One commit
 
 Examples
 
-style(ui): establish Midnight Slate design tokens
+feat(scan): add live scan progress
 
-style(ui): refresh navigation
+feat(scan): implement engine progress tracking
 
-style(ui): modernize core components
+feat(scan): improve scan lifecycle
 
-style(ui): improve forms and tables
+feat(scan): enhance rescan workflow
 
-style(ui): polish dashboard
+feat(scan): redesign demo scan experience
 
-style(ui): refine scan detail
+feat(scan): add live scan console
 
-style(ui): refresh reports
+feat(ui): add scan notifications
 
-style(ui): finalize design system
+feat(scan): improve scan history
 
-Never combine multiple unrelated sprints into one commit.
+feat(scan): add scan comparison
+
+chore(scan): finalize scan experience
+
+Never combine multiple unrelated sprints into a single commit.
 
 ---
 
@@ -288,9 +320,9 @@ Before editing
 After editing
 
 1. Verify Django starts successfully.
-2. Verify existing functionality.
-3. Verify responsive layout.
-4. Verify accessibility.
+2. Verify existing scan functionality.
+3. Verify reports continue working.
+4. Verify responsive layout.
 5. Verify no backend regressions.
 6. Stop.
 

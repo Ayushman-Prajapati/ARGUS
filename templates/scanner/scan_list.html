@@ -1,46 +1,161 @@
 {% extends "base.html" %}
+{% load argus_tags %}
 {% block title %}All Scans{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold mb-0">All Scans</h3>
-    <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus"><i class="bi bi-plus-lg"></i> New Scan</a>
+    <h3 class="fw-bold mb-0">Scan History</h3>
+    <div class="d-flex gap-2">
+        <a href="{% url 'scanner:demo_scan' %}" class="btn btn-argus-neon btn-sm">
+            <i class="bi bi-play-circle me-1"></i> Demo Scan
+        </a>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus">
+            <i class="bi bi-plus-lg"></i> New Scan
+        </a>
+    </div>
+</div>
+
+{% if projects %}
+<div class="argus-card mb-4">
+    <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-warning text-dark">Latest</span>
+            <h5 class="fw-semibold mb-0">{{ projects.first.name }}</h5>
+            <span class="scan-status-badge scan-status-{{ projects.first.status }} ms-2">{{ projects.first.get_status_display }}</span>
+            <div class="text-muted small ms-auto">
+                {{ projects.first.created_at|date:"M d, Y H:i" }}
+                {% if projects.first.duration_seconds %} &middot; {{ projects.first.duration_seconds|format_duration }}{% endif %}
+            </div>
+        </div>
+        <div class="mt-2">
+            <a href="{% url 'scanner:scan_detail' projects.first.id %}" class="btn btn-argus-primary btn-sm">
+                <i class="bi bi-graph-up me-1"></i> View Results
+            </a>
+            <form method="post" action="{% url 'scanner:rescan' projects.first.id %}" class="d-inline ms-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-argus-neon btn-sm" aria-label="Re-scan">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Re-scan
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div class="argus-card">
+    <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
+        <h6 class="fw-semibold mb-0 text-muted small">Previous Scans</h6>
+    </div>
     <div class="table-responsive">
         <table class="table align-middle mb-0">
             <thead>
                 <tr style="color: var(--argus-text-muted); font-size:0.8rem; text-transform:uppercase;">
-                    <th>Name</th><th>Source</th><th>Status</th><th>Risk</th><th>Findings</th><th>Created</th><th></th>
+                    <th>Name</th><th>Source</th><th>Status</th><th>Risk</th><th>Findings</th><th>Duration</th><th>Created</th><th></th>
                 </tr>
             </thead>
             <tbody>
-            {% for scan in projects %}
+            {% for scan in projects|slice:"1:" %}
                 <tr>
                     <td class="fw-semibold">{{ scan.name|truncatechars:45 }}</td>
                     <td class="text-muted">{{ scan.get_source_type_display }}</td>
                     <td>
-                        {% if scan.status == 'completed' %}<span class="badge bg-success">Completed</span>
-                        {% elif scan.status == 'failed' %}<span class="badge bg-danger">Failed</span>
-                        {% elif scan.status == 'running' %}<span class="badge bg-warning text-dark">Running</span>
-                        {% else %}<span class="badge bg-secondary">Pending</span>{% endif %}
+                        {% if scan.status == 'completed' %}<span class="scan-status-badge scan-status-completed">Completed</span>
+                        {% elif scan.status == 'failed' %}<span class="scan-status-badge scan-status-failed">Failed</span>
+                        {% elif scan.status == 'running' %}<span class="scan-status-badge scan-status-running">Running</span>
+                        {% elif scan.status == 'cancelled' %}<span class="scan-status-badge scan-status-cancelled">Cancelled</span>
+                        {% else %}<span class="scan-status-badge scan-status-queued">Queued</span>{% endif %}
                     </td>
                     <td><span class="font-monospace">{{ scan.risk_score }}</span>/100</td>
                     <td>{{ scan.total_findings }}</td>
+                    <td class="text-muted">
+                        {% if scan.duration_seconds %}{{ scan.duration_seconds|format_duration }}{% else %}—{% endif %}
+                    </td>
                     <td class="text-muted">{{ scan.created_at|date:"M d, Y H:i" }}</td>
                     <td class="text-end">
-                        <a href="{% url 'scanner:scan_detail' scan.id %}" class="btn btn-sm btn-outline-light">View</a>
-                        <form method="post" action="{% url 'scanner:delete_scan' scan.id %}" class="d-inline" onsubmit="return confirm('Delete this scan and all its findings?');">
+                        <a href="{% url 'scanner:scan_detail' scan.id %}" class="btn btn-sm btn-argus-neon py-0 px-2" style="font-size:0.75rem;">View</a>
+                        <form method="post" action="{% url 'scanner:delete_scan' scan.id %}" class="d-inline ms-1" onsubmit="return confirm('Delete this scan and all its findings?');">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                         </form>
                     </td>
                 </tr>
             {% empty %}
-                <tr><td colspan="7" class="text-center text-muted py-4">No scans yet. <a href="{% url 'scanner:upload_file' %}">Run your first scan</a>.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-4">No previous scans. <a href="{% url 'scanner:upload_file' %}">Run your first scan</a>.</td></tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+{% else %}
+<div class="argus-card text-center py-5">
+    <i class="bi bi-search display-1 text-muted mb-3"></i>
+    <h4 class="fw-semibold mb-2">No scans yet</h4>
+    <p class="text-muted mb-4">Start your first security scan to see results here.</p>
+    <div class="d-flex gap-2 justify-content-center flex-wrap">
+        <a href="{% url 'scanner:demo_scan' %}" class="btn btn-argus-neon">
+            <i class="bi bi-play-circle me-1"></i> Try Demo Scan
+        </a>
+        <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary">
+            <i class="bi bi-plus-lg me-1"></i> New Scan
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Initialize toasts for scan list actions
+document.addEventListener('DOMContentLoaded', () => {
+    // Demo scan button toast
+    const demoBtn = document.querySelector('a[href*="demo_scan"]');
+    if (demoBtn) {
+        demoBtn.addEventListener('click', () => {
+            if (window.ArgusToast) {
+                window.ArgusToast.info('Starting demo scan...', {
+                    title: 'Demo Scan',
+                    duration: 3000
+                });
+            }
+        });
+    }
+
+    // Re-scan form toasts
+    const rescanForms = document.query.querySelectorAll('form[action*="rescan"]');
+    rescanForms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            if (window.ArgusToast) {
+                window.ArgusToast.info('Re-scan started', {
+                    title: 'Re-scan Triggered',
+                    duration: 3000
+                });
+            }
+        });
+    });
+
+    // Delete scan form toasts
+    const deleteForms = document.querySelectorAll('form[action*="delete_scan"]');
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            if (window.ArgusToast) {
+                window.ArgusToast.warning('Scan deleted', {
+                    title: 'Deleted',
+                    duration: 3000
+                });
+            }
+        });
+    });
+
+    // New scan buttons
+    const newScanBtns = document.querySelectorAll('a[href*="upload_file"]');
+    newScanBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (window.ArgusToast) {
+                window.ArgusToast.info('Opening upload page...', {
+                    title: 'New Scan',
+                    duration: 2000
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

@@ -4,6 +4,13 @@ register = template.Library()
 
 
 @register.filter
+def filter_by_source(projects, source_tuple):
+    """Filter projects by source type and reference."""
+    source_type, source_reference = source_tuple
+    return [p for p in projects if p.source_type == source_type and p.source_reference == source_reference]
+
+
+@register.filter
 def security_grade(risk_score):
     """Convert risk score (0-100) to security grade (A-F)."""
     if risk_score >= 90:
@@ -60,3 +67,12 @@ def format_duration(seconds):
     if remaining_seconds == 0:
         return f'{minutes}m'
     return f'{minutes}m {remaining_seconds:.0f}s'
+
+
+@register.filter
+def abs_value(value):
+    """Return absolute value of a number."""
+    try:
+        return abs(value)
+    except (TypeError, ValueError):
+        return value

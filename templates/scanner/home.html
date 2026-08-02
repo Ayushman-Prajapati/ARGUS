@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load argus_tags %}
 {% block title %}Home{% endblock %}
 {% block content %}
 <div class="row align-items-center mb-5 g-5 pt-4">
@@ -11,9 +12,12 @@
             audit-ready PDF reports.
         </p>
         <div class="d-flex flex-wrap gap-3 justify-content-lg-start justify-content-center">
-            <button id="trigger-scan-btn" class="btn-argus-primary btn-lg">
-                <i class="bi bi-play-fill me-1"></i> Trigger Scan Demo
-            </button>
+            <form method="post" action="{% url 'scanner:demo_scan' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn-argus-primary btn-lg" id="trigger-demo-btn">
+                    <i class="bi bi-play-fill me-1"></i> Run Demo Scan
+                </button>
+            </form>
             <a href="#start-scan-section" class="btn-argus-neon btn-lg text-decoration-none">
                 <i class="bi bi-chevron-down me-1"></i> Start New Scan
             </a>
@@ -25,28 +29,6 @@
         <div class="grid-visualizer-container cyber-panel">
             <!-- 14x10 grid dynamically populated by animations.js -->
             <div id="stagger-grid" class="stagger-grid"></div>
-            
-            <!-- Scan console overlay for simulation -->
-            <div id="scan-console" class="scan-console-overlay">
-                <div class="console-header">
-                    <span><i class="bi bi-terminal me-1" style="color: var(--argus-success);"></i> ARGUS SIMULATOR</span>
-                    <span id="scan-status-text">STATUS: ACTIVE_MONITOR</span>
-                </div>
-                <div class="console-body">
-                    <div id="laser-line" class="laser-sweep"></div>
-                    <div id="console-code" class="d-flex flex-column h-100 justify-content-center">
-                        <!-- Filled by animations.js during demo -->
-                    </div>
-                    
-                    <div id="sim-alert" class="sim-alert-box" style="border-color: var(--neon-pink); box-shadow: 0 4px 20px rgba(224, 71, 42, 0.3);">
-                        <i class="bi bi-exclamation-triangle-fill fs-5 animate-pulse" style="color: var(--argus-critical);"></i>
-                        <div>
-                            <div class="fw-bold" style="font-size:0.75rem; color: #ece3c6;">EMAIL LEAK DETECTED</div>
-                            <div class="text-muted" style="font-size:0.65rem;">Exposed: guest-user@argus-platform.com | Line: 6</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -133,7 +115,8 @@
                         {% if scan.status == 'completed' %}<span class="scan-status-badge scan-status-completed"><i class="bi bi-check-circle-fill me-1" style="font-size:0.55rem;"></i>Completed</span>
                         {% elif scan.status == 'failed' %}<span class="scan-status-badge scan-status-failed"><i class="bi bi-x-circle-fill me-1" style="font-size:0.55rem;"></i>Failed</span>
                         {% elif scan.status == 'running' %}<span class="scan-status-badge scan-status-running"><i class="bi bi-arrow-repeat me-1" style="font-size:0.55rem;"></i>Running</span>
-                        {% else %}<span class="scan-status-badge scan-status-pending"><i class="bi bi-hourglass-split me-1" style="font-size:0.55rem;"></i>Pending</span>{% endif %}
+                        {% elif scan.status == 'cancelled' %}<span class="scan-status-badge scan-status-cancelled"><i class="bi bi-stop-circle me-1" style="font-size:0.55rem;"></i>Cancelled</span>
+                        {% else %}<span class="scan-status-badge scan-status-queued"><i class="bi bi-hourglass-split me-1" style="font-size:0.55rem;"></i>Queued</span>{% endif %}
                     </td>
                     <td>{{ scan.total_findings }}</td>
                     <td class="text-muted">{{ scan.created_at|date:"M d, H:i" }}</td>
@@ -145,4 +128,38 @@
     </div>
 </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Initialize toasts for home page actions
+document.addEventListener('DOMContentLoaded', () => {
+    // Demo scan form toast
+    const demoForm = document.querySelector('form[action*="demo_scan"]');
+    if (demoForm) {
+        demoForm.addEventListener('submit', (e) => {
+            if (window.ArgusToast) {
+                window.ArgusToast.info('Starting demo scan...', {
+                    title: 'Demo Scan',
+                    duration: 3000
+                });
+            }
+        });
+    }
+
+    // New scan method card toasts
+    const methodCards = document.querySelectorAll('.argus-method-card');
+    methodCards.forEach(card => {
+        card.addEventListener('click', () => {
+            if (window.ArgusToast) {
+                const scanType = card.querySelector('h5')?.textContent || 'New Scan';
+                window.ArgusToast.info(`Opening ${scanType}...`, {
+                    title: scanType,
+                    duration: 2000
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

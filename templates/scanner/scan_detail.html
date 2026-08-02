@@ -49,12 +49,26 @@
         </div>
         <!-- Action Buttons -->
         <div class="d-flex flex-wrap gap-2 ms-3">
-            <form method="post" action="{% url 'scanner:rescan' project.id %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-argus-neon btn-sm" aria-label="Rescan project">
-                    <i class="bi bi-arrow-clockwise me-1"></i> Re-scan
-                </button>
-            </form>
+            {% if project.status in 'queued running' %}
+                <form method="post" action="{% url 'scanner:cancel_scan' project.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm" aria-label="Cancel scan">
+                        <i class="bi bi-stop-circle me-1"></i> Cancel
+                    </button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'scanner:rescan' project.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-argus-neon btn-sm" aria-label="Rescan project">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Re-scan
+                    </button>
+                </form>
+            {% endif %}
+            {% if previous_scans|length > 0 %}
+            <a href="{% url 'scanner:scan_compare' project.id %}" class="btn btn-outline-info btn-sm" aria-label="Compare with previous scan">
+                <i class="bi bi-graph-up-arrow me-1"></i> Compare
+            </a>
+            {% endif %}
             <a href="{% url 'reports:generate_report' project.id %}?appendix=1" class="btn btn-argus-primary btn-sm" aria-label="Generate full PDF report">
                 <i class="bi bi-file-earmark-pdf me-1"></i> Full PDF Report
             </a>
@@ -67,8 +81,10 @@
     <!-- Error/Warning Alerts (preserved) -->
     {% if project.status == 'failed' %}
         <div class="alert alert-danger alert-custom mb-3">Scan failed: {{ project.error_message }}</div>
-    {% elif project.status != 'completed' %}
-        <div class="alert alert-warning alert-custom mb-3">Scan is {{ project.get_status_display }}...</div>
+    {% elif project.status == 'cancelled' %}
+        <div class="alert alert-warning alert-custom mb-3">Scan was cancelled: {{ project.error_message }}</div>
+    {% elif project.status in 'queued running' %}
+        <div class="alert alert-info alert-custom mb-3">Scan is {{ project.get_status_display }}...</div>
     {% endif %}
 
     {% if project.error_message and project.status == 'completed' %}
@@ -157,6 +173,64 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+</div>
+
+    </div>
+</div>
+
+<!-- Scan History / Timeline -->
+<div class="argus-card mt-4">
+    <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
+        <h5 class="fw-semibold mb-0">Scan History</h5>
+    </div>
+    <div class="p-3">
+        {% with siblings=project.user.projects.all %}
+        {% if siblings|length > 1 %}
+        <div class="timeline">
+            {% for sibling in siblings %}
+            {% if sibling.id != project.id %}
+            <div class="timeline-item">
+                <div class="timeline-marker
+                    {% if sibling.status == 'completed' %}timeline-marker-success
+                    {% elif sibling.status == 'failed' %}timeline-marker-danger
+                    {% elif sibling.status == 'running' %}timeline-marker-info
+                    {% elif sibling.status == 'cancelled' %}timeline-marker-warning
+                    {% else %}timeline-marker-warning{% endif %}">
+                    <i class="bi
+                        {% if sibling.status == 'completed' %}bi-check
+                        {% elif sibling.status == 'failed' %}bi-x
+                        {% elif sibling.status == 'running' %}bi-arrow-repeat
+                        {% elif sibling.status == 'cancelled' %}bi-stop
+                        {% else %}bi-hourglass{% endif %}"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-content-header">
+                        <span class="timeline-event">{{ sibling.name }}</span>
+                        <span class="timeline-time">{{ sibling.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    <div class="timeline-desc">
+                        <span class="scan-status-badge scan-status-{{ sibling.status }}">{{ sibling.get_status_display }}</span>
+                        <span class="text-muted">Risk: <strong>{{ sibling.risk_score }}</strong>/100</span>
+                        <span class="text-muted ms-2">Findings: <strong>{{ sibling.total_findings }}</strong></span>
+                        {% if sibling.duration_seconds %}
+                        <span class="text-muted ms-2"><i class="bi bi-clock me-1"></i>{{ sibling.duration_seconds|format_duration }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-3">
+            <i class="bi bi-clock-history display-6 mb-2"></i>
+            <p class="mb-0">This is the first scan for this project.</p>
+        </div>
+        {% endif %}
+        {% endwith %}
     </div>
 </div>
 
@@ -329,5 +403,47 @@ if (Object.keys(sourceCounts).length > 0) {
         }
     });
 }
+
+// Initialize toasts for scan actions
+document.addEventListener('DOMContentLoaded', () => {
+    // Re-scan form toast
+    const rescanForm = document.querySelector('form[action*="rescan"]');
+    if (rescanForm) {
+        rescanForm.addEventListener('submit', (e) => {
+            if (window.ArgusToast) {
+                window.ArgusToast.info('Re-scan started', {
+                    title: 'Scan Triggered',
+                    duration: 3000
+                });
+            }
+        });
+    }
+
+    // Cancel scan form toast
+    const cancelForm = document.querySelector('form[action*="cancel_scan"]');
+    if (cancelForm) {
+        cancelForm.addEventListener('submit', (e) => {
+            if (window.ArgusToast) {
+                window.ArgusToast.warning('Scan cancelled', {
+                    title: 'Cancelled',
+                    duration: 3000
+                });
+            }
+        });
+    }
+
+    // Report generation links
+    const reportLinks = document.querySelectorAll('a[href*="generate_report"]');
+    reportLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.ArgusToast) {
+                window.ArgusToast.info('Generating report...', {
+                    title: 'Report Requested',
+                    duration: 3000
+                });
+            }
+        });
+    });
+});
 </script>
 {% endblock %}

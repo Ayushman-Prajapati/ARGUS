@@ -15,10 +15,11 @@ class ScanProject(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ("pending", "Pending"),
+        ("queued", "Queued"),
         ("running", "Scanning"),
         ("completed", "Completed"),
         ("failed", "Failed"),
+        ("cancelled", "Cancelled"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -33,7 +34,7 @@ class ScanProject(models.Model):
         max_length=1000, blank=True,
         help_text="Absolute path on disk to the scanned code root"
     )
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="queued")
     error_message = models.TextField(blank=True)
 
     run_bandit = models.BooleanField(default=True)

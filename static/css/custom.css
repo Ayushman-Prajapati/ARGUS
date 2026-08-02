@@ -1109,10 +1109,11 @@ a { color: var(--argus-accent); }
     flex-shrink: 0;
 }
 
+.scan-status-queued { background: rgba(74, 70, 48, 0.18); color: var(--argus-info); border: 1px solid rgba(74, 70, 48, 0.35); }
+.scan-status-running { background: rgba(245, 166, 35, 0.15); color: var(--argus-accent); border: 1px solid rgba(245, 166, 35, 0.35); }
 .scan-status-completed { background: rgba(122, 155, 92, 0.15); color: var(--argus-success); border: 1px solid rgba(122, 155, 92, 0.35); }
 .scan-status-failed { background: rgba(224, 71, 42, 0.15); color: var(--argus-critical); border: 1px solid rgba(224, 71, 42, 0.35); }
-.scan-status-pending { background: rgba(138, 122, 74, 0.18); color: var(--argus-text-secondary); border: 1px solid rgba(138, 122, 74, 0.35); }
-.scan-status-running { background: rgba(245, 166, 35, 0.15); color: var(--argus-accent); border: 1px solid rgba(245, 166, 35, 0.35); }
+.scan-status-cancelled { background: rgba(138, 122, 74, 0.18); color: var(--argus-text-muted); border: 1px solid rgba(138, 122, 74, 0.35); }
 
 /* Pulse animation for running status */
 .scan-status-running {

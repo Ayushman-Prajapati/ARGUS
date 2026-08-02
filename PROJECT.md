@@ -6,26 +6,26 @@
 
 # Vision
 
-ARGUS is a modular Secure Code Review Platform built with Django that helps developers and security teams identify, understand, and remediate security vulnerabilities through automated static analysis.
+ARGUS is a modular Secure Code Review Platform built with Django that helps developers and security teams identify, understand, prioritize, and remediate security vulnerabilities through automated static analysis.
 
-The platform combines multiple security engines into a unified workflow, producing consistent findings, project risk scores, and professional security reports.
+The platform combines multiple security analysis engines into a unified workflow, producing consistent findings, project risk scores, and professional security reports.
 
-ARGUS is designed with extensibility as a core principle, allowing new analysis engines, scanners, and integrations to be added with minimal architectural changes.
+ARGUS is designed around clean architecture and extensibility, allowing new scanners, analysis engines, and integrations to be added with minimal changes to the existing codebase.
 
-The long-term vision is to evolve ARGUS into a production-ready Application Security (AppSec) platform.
+The long-term vision is to evolve ARGUS into a production-ready Application Security (AppSec) platform suitable for professional security teams.
 
 ---
 
 # Inspiration
 
-ARGUS draws architectural inspiration from:
+ARGUS takes engineering inspiration from industry-leading security platforms, including:
 
 - GitHub Advanced Security
 - SonarQube
 - Snyk
 - Semgrep
 
-The objective is **not** to replicate these platforms, but to adopt the engineering principles that make them scalable, maintainable, and developer-friendly.
+The objective is **not** to replicate these products, but to adopt the architectural and engineering principles that make them scalable, maintainable, and developer-friendly.
 
 ---
 
@@ -33,15 +33,15 @@ The objective is **not** to replicate these platforms, but to adopt the engineer
 
 Current Version
 
-**v0.3.0**
+**v0.4.0**
 
 Current Phase
 
-**Phase 3.5 — Design Refresh**
+**Phase 5 — Scan Experience**
 
 Current Objective
 
-Modernize ARGUS's visual design system while preserving the stable backend architecture developed during previous phases.
+Improve the scan workflow by providing real-time progress feedback, a smoother scan lifecycle, enhanced re-scan behavior, and a more polished user experience while preserving the existing backend architecture.
 
 ---
 
@@ -51,7 +51,7 @@ Modernize ARGUS's visual design system while preserving the stable backend archi
 
 - Secure authentication
 - User isolation
-- Protected scan reports
+- Protected reports
 - User-specific dashboards
 - Authorization enforcement
 
@@ -70,7 +70,7 @@ Supported scan methods
 
 ## Security Analysis
 
-Integrated analysis engines
+Integrated security engines
 
 - Bandit
 - Semgrep
@@ -78,7 +78,7 @@ Integrated analysis engines
 - pip-audit
 - ARGUS AST Engine
 
-The modular AST Engine is ARGUS's primary differentiating feature and provides native security rule execution through an extensible rule framework.
+The modular ARGUS AST Engine is the platform's primary differentiator, providing native rule-based security analysis through an extensible framework.
 
 ---
 
@@ -105,7 +105,8 @@ The modular AST Engine is ARGUS's primary differentiating feature and provides n
 - Risk Score
 - Findings
 - Code Viewer
-- Filtering
+- Severity Filters
+- Engine Filters
 - Re-scan Support
 
 ---
@@ -113,9 +114,11 @@ The modular AST Engine is ARGUS's primary differentiating feature and provides n
 ## Reporting
 
 - Executive Summary
-- PDF Reports
+- Professional PDF Reports
 - Risk Metrics
 - Vulnerability Details
+- Engine Breakdown
+- Severity Charts
 
 ---
 
@@ -125,32 +128,29 @@ The modular AST Engine is ARGUS's primary differentiating feature and provides n
 argus_platform/
 
 accounts/
-authentication/
-
+reports/
 scanner/
-├── models.py
-├── views.py
-├── forms.py
-├── services.py
+│
 ├── engines/
 │   ├── bandit_engine.py
 │   ├── semgrep_engine.py
 │   ├── ast_engine.py
 │   └── ast/
-│       ├── registry.py
 │       ├── base_rule.py
+│       ├── registry.py
 │       ├── findings.py
 │       ├── utils.py
 │       └── rules/
+│
+├── services.py
+├── views.py
+├── forms.py
+├── models.py
 ├── templates/
 └── templatetags/
 
-reports/
-
-templates/
-
 static/
-
+templates/
 PROMPTS/
 
 README.md
@@ -189,19 +189,20 @@ Planned
 
 # Design Language
 
-ARGUS follows the **Midnight Slate** design system.
+ARGUS uses the **Amber Terminal** design system.
 
 Characteristics
 
 - Professional
 - Enterprise
-- Modern
 - Minimal
-- Calm
-- Information Dense
+- Terminal-inspired
 - Accessible
+- Information Dense
+- High Contrast
+- Monochromatic Identity
 
-The interface should emphasize readability, consistency, and usability over visual effects.
+The interface emphasizes readability, consistency, and developer-focused usability over decorative visual effects.
 
 ---
 
@@ -220,10 +221,10 @@ ARGUS emphasizes
 Prefer
 
 - Incremental development
-- Reusable components
+- Reusable services
 - Low coupling
 - High cohesion
-- Service-oriented architecture
+- Clear separation of concerns
 
 Avoid
 
@@ -239,17 +240,19 @@ Avoid
 
 Current focus
 
-**Phase 3.5 — Design Refresh**
+**Phase 5 — Scan Experience**
 
 Objectives
 
-- Establish the Midnight Slate design system
-- Modernize the user interface
-- Improve visual consistency
-- Improve accessibility
-- Preserve all existing functionality
+- Live scan progress
+- Engine-by-engine status
+- Improved scan lifecycle
+- Better re-scan workflow
+- Interactive demo scan
+- User notifications
+- Scan history improvements
 
-No backend architecture changes are planned during this phase.
+No major architectural redesigns are planned during this phase.
 
 ---
 
@@ -273,6 +276,7 @@ No backend architecture changes are planned during this phase.
 - Repository Explorer
 - GitHub Integration
 - GitLab Integration
+- Bitbucket Integration
 
 ## Reporting
 
@@ -285,7 +289,7 @@ No backend architecture changes are planned during this phase.
 
 - AI Vulnerability Explanations
 - AI Remediation Suggestions
-- Secure Coding Recommendations
+- Secure Code Examples
 - Risk Prioritization
 
 ## Enterprise Features
@@ -303,4 +307,6 @@ No backend architecture changes are planned during this phase.
 
 # Long-Term Goal
 
-ARGUS aims to become a modular, production-ready Application Security platform that enables developers and security teams to continuously identify, prioritize, and remediate security vulnerabilities while maintaining a clean, scalable, and maintainable architecture.
+ARGUS aims to become a modular, enterprise-grade Application Security platform that enables developers and security teams to continuously identify, prioritize, and remediate security vulnerabilities through automated analysis, professional reporting, and an intuitive user experience.
+
+Every new feature should strengthen the platform while preserving clean architecture, maintainability, and scalability.

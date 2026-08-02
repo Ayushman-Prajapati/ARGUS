@@ -1,6 +1,6 @@
 # ARGUS ROADMAP
 
-Version: 5.0
+Version: 6.0
 
 Status: Active Development
 
@@ -10,13 +10,13 @@ Status: Active Development
 
 ARGUS is a modular Secure Code Review Platform built with Django.
 
-Its long-term goal is to become a production-ready Application Security (AppSec) platform capable of helping developers continuously discover, understand, prioritize, and remediate security vulnerabilities.
+Its long-term objective is to become a production-ready Application Security (AppSec) platform capable of helping developers continuously discover, understand, prioritize, and remediate security vulnerabilities throughout the software development lifecycle.
 
-The platform will evolve incrementally while maintaining:
+The platform evolves incrementally while maintaining:
 
 - Security
 - Clean Architecture
-- Modular Design
+- Modularity
 - Extensibility
 - Performance
 - Maintainability
@@ -28,15 +28,15 @@ The platform will evolve incrementally while maintaining:
 
 Current Version
 
-**v0.3.0**
+**v0.4.0**
 
 Current Phase
 
-**Phase 3.5 — Design Refresh**
+**Phase 5 — Scan Experience**
 
 Current Branch
 
-`feature/design-refresh`
+`feature/scan-experience`
 
 ---
 
@@ -48,11 +48,11 @@ Every feature:
 
 - Lives on its own Git feature branch
 - Is independently testable
-- Preserves backward compatibility
+- Preserves existing functionality
 - Includes documentation updates
 - Is completed before the next major feature begins
 
-Every phase represents a significant milestone.
+Every phase represents a major milestone.
 
 ---
 
@@ -72,7 +72,7 @@ Highlights
 - Code Viewer
 - Charts
 - Responsive Design
-- Accessibility improvements
+- Accessibility Improvements
 
 ---
 
@@ -91,12 +91,12 @@ Highlights
 - Highest Risk Projects
 - Quick Actions
 - Authentication
-- User Data Isolation
+- User Isolation
 - Protected Reports
 
 ---
 
-## Phase 3 — Modular AST Engine
+## Phase 3 — ARGUS AST Engine
 
 Status
 
@@ -109,7 +109,7 @@ Architecture
 - Modular AST Engine
 - Rule Registry
 - Base Rule
-- Rule Discovery
+- Rule Framework
 - Finding Normalization
 
 Implemented Rules
@@ -118,7 +118,7 @@ Implemented Rules
 - Command Injection
 - SQL Injection
 - Unsafe Deserialization
-- Hardcoded Secrets
+- Hardcoded Secret Detection
 - Weak Cryptography
 
 Additional Work
@@ -130,7 +130,26 @@ Additional Work
 
 ---
 
-# Phase 3.5 — Design Refresh
+## Phase 4 — Design System Refresh
+
+Status
+
+✅ Completed
+
+Highlights
+
+- Amber Terminal Design System
+- Global Design Tokens
+- IBM Plex Typography
+- Enterprise UI Refresh
+- Consistent Component Styling
+- Improved Charts
+- PDF Theme Alignment
+- Accessibility Improvements
+
+---
+
+# Phase 5 — Scan Experience
 
 Status
 
@@ -138,23 +157,62 @@ Status
 
 Objective
 
-Modernize the visual identity of ARGUS while preserving the existing architecture.
+Transform scanning into a modern, interactive workflow that provides continuous feedback instead of static loading screens.
 
-Goals
+Planned Sprints
 
-- Midnight Slate design system
-- Design tokens
-- Typography improvements
-- Enterprise color palette
-- Component consistency
-- Accessibility improvements
-- Responsive refinement
+### Sprint 1
 
-This phase introduces no backend architecture changes.
+- Live Scan Progress
+- Progress Bar
+- Progress States
+
+### Sprint 2
+
+- Engine-by-Engine Progress
+- Individual Engine Status
+- Progress Indicators
+
+### Sprint 3
+
+- Scan Lifecycle Improvements
+- Better Running States
+- Success / Failure Handling
+
+### Sprint 4
+
+- Re-scan Improvements
+- Updated Scan Date
+- Improved Scan History
+- Duplicate Prevention
+
+### Sprint 5
+
+- Interactive Demo Scan
+- Simulated Progress
+- Better Demo Experience
+
+### Sprint 6
+
+- Live Scan Console
+- Scan Logs
+- Engine Output
+
+### Sprint 7
+
+- Notifications
+- Toast Messages
+- Better User Feedback
+
+### Sprint 8
+
+- Scan Comparison
+- Risk Delta
+- Findings Comparison
 
 ---
 
-# Phase 4 — Dedicated Secret Scanner
+# Phase 6 — Dedicated Secret Scanner
 
 Status
 
@@ -171,7 +229,7 @@ Features
 
 ---
 
-# Phase 5 — Dependency Scanner
+# Phase 7 — Dependency Scanner
 
 Status
 
@@ -188,15 +246,15 @@ Support
 
 Future
 
-- OSV
+- OSV Integration
 - CVE Database
-- CVSS
+- CVSS Scoring
 - License Analysis
 - Upgrade Recommendations
 
 ---
 
-# Phase 6 — Repository Explorer
+# Phase 8 — Repository Explorer
 
 Status
 
@@ -214,7 +272,7 @@ Features
 
 ---
 
-# Phase 7 — AI Security Assistant
+# Phase 9 — AI Security Assistant
 
 Status
 
@@ -231,13 +289,13 @@ Features
 
 ---
 
-# Phase 8 — Reporting
+# Phase 10 — Reporting
 
 Status
 
 📅 Planned
 
-Export Formats
+Exports
 
 - PDF
 - HTML
@@ -245,7 +303,7 @@ Export Formats
 - JSON
 - CSV
 
-Reporting
+Features
 
 - Executive Summary
 - Risk Metrics
@@ -258,7 +316,7 @@ Reporting
 
 ---
 
-# Phase 9 — Background Processing
+# Phase 11 — Background Processing
 
 Status
 
@@ -279,7 +337,7 @@ Features
 
 ---
 
-# Phase 10 — REST API
+# Phase 12 — REST API
 
 Status
 
@@ -299,11 +357,11 @@ Features
 - Filtering
 - Pagination
 - OpenAPI
-- Swagger UI
+- Swagger
 
 ---
 
-# Phase 11 — Enterprise Features
+# Phase 13 — Enterprise Features
 
 Status
 
@@ -313,7 +371,6 @@ Features
 
 - Organizations
 - Teams
-- Projects
 - RBAC
 - SSO
 - GitHub Login
@@ -322,7 +379,7 @@ Features
 
 ---
 
-# Phase 12 — Production Deployment
+# Phase 14 — Production Deployment
 
 Status
 
@@ -367,9 +424,9 @@ CI/CD
 
 # Long-Term Vision
 
-ARGUS should become a modern Application Security platform that enables developers and security teams to continuously improve software security throughout the software development lifecycle.
+ARGUS aims to become a modern Application Security platform that enables developers and security teams to continuously identify, prioritize, and remediate security vulnerabilities through automated analysis, professional reporting, and an exceptional developer experience.
 
-The project should always prioritize:
+The project will always prioritize:
 
 - Security
 - Accuracy

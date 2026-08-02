@@ -320,8 +320,10 @@
                         <span class="scan-status-badge scan-status-failed"><i class="bi bi-x-circle-fill me-1" style="font-size:0.55rem;"></i>Failed</span>
                         {% elif p.status == "running" %}
                         <span class="scan-status-badge scan-status-running"><i class="bi bi-arrow-repeat me-1" style="font-size:0.55rem;"></i>Running</span>
-                        {% elif p.status == "pending" %}
-                        <span class="scan-status-badge scan-status-pending"><i class="bi bi-hourglass-split me-1" style="font-size:0.55rem;"></i>Pending</span>
+                        {% elif p.status == "cancelled" %}
+                        <span class="scan-status-badge scan-status-cancelled"><i class="bi bi-stop-circle me-1" style="font-size:0.55rem;"></i>Cancelled</span>
+                        {% else %}
+                        <span class="scan-status-badge scan-status-queued"><i class="bi bi-hourglass-split me-1" style="font-size:0.55rem;"></i>Queued</span>
                         {% endif %}
                     </td>
                     <td>

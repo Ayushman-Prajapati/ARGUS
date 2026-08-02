@@ -79,6 +79,9 @@
 </nav>
 
 <main class="container-fluid px-4 py-4 argus-main">
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 4000;" id="argus-toast-container"></div>
+
     {% if messages %}
         <div class="argus-messages mb-3">
         {% for message in messages %}
@@ -100,6 +103,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
 <script src="{% static 'js/animations.js' %}?v=1.3"></script>
+<script src="{% static 'js/toast.js' %}"></script>
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>

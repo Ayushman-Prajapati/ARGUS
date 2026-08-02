@@ -204,3 +204,182 @@ def execute_scan(project: ScanProject) -> None:
     project.save(update_fields=[
         "status", "error_message", "files_scanned", "duration_seconds", "completed_at"
     ])
+
+
+def run_demo_scan(project: ScanProject) -> None:
+    """Run a fast demo scan with predefined findings for demonstration."""
+    project.status = "running"
+    project.save(update_fields=["status"])
+
+    start = time.monotonic()
+
+    # Predefined demo findings that simulate a real scan
+    demo_findings = [
+        {
+            "source": "bandit",
+            "rule_id": "B602",
+            "title": "Subprocess with shell=True",
+            "description": "Using shell=True with subprocess calls can lead to command injection vulnerabilities if user input is not properly sanitized.",
+            "severity": "high",
+            "confidence": "HIGH",
+            "file_path": "demo_app/utils.py",
+            "line_number": 42,
+            "end_line_number": 42,
+            "code_snippet": "result = subprocess.run(user_input, shell=True, capture_output=True)",
+            "cwe_id": "CWE-78",
+            "owasp_category": "A03:2021 - Injection",
+            "remediation": "Avoid shell=True. Use subprocess.run() with a list of arguments instead."
+        },
+        {
+            "source": "bandit",
+            "rule_id": "B311",
+            "title": "Use of weak cryptographic hash (MD5)",
+            "description": "MD5 is cryptographically broken and should not be used for security-sensitive operations.",
+            "severity": "medium",
+            "confidence": "HIGH",
+            "file_path": "demo_app/auth.py",
+            "line_number": 18,
+            "end_line_number": 18,
+            "code_snippet": "password_hash = hashlib.md5(password.encode()).hexdigest()",
+            "cwe_id": "CWE-327",
+            "owasp_category": "A02:2021 - Cryptographic Failures",
+            "remediation": "Use SHA-256 or stronger (e.g., hashlib.sha256) for password hashing. Consider using bcrypt or Argon2."
+        },
+        {
+            "source": "semgrep",
+            "rule_id": "django-raw-sql",
+            "title": "Potential SQL Injection via raw()",
+            "description": "Using raw SQL with string formatting can lead to SQL injection. Use parameterized queries instead.",
+            "severity": "critical",
+            "confidence": "MEDIUM",
+            "file_path": "demo_app/views.py",
+            "line_number": 56,
+            "end_line_number": 56,
+            "code_snippet": "User.objects.raw(f\"SELECT * FROM users WHERE name = '{username}'\")",
+            "cwe_id": "CWE-89",
+            "owasp_category": "A03:2021 - Injection",
+            "remediation": "Use Django ORM or parameterized queries: User.objects.raw('SELECT * FROM users WHERE name = %s', [username])"
+        },
+        {
+            "source": "semgrep",
+            "rule_id": "django-xss-template",
+            "title": "Potential XSS in template",
+            "description": "Using safe filter or unescaped variables in templates can lead to cross-site scripting.",
+            "severity": "high",
+            "confidence": "MEDIUM",
+            "file_path": "demo_app/templates/user_profile.html",
+            "line_number": 23,
+            "end_line_number": 23,
+            "code_snippet": "<div>{{ user.bio|safe }}</div>",
+            "cwe_id": "CWE-79",
+            "owasp_category": "A03:2021 - Injection",
+            "remediation": "Remove the |safe filter or ensure content is properly sanitized before rendering."
+        },
+        {
+            "source": "ast",
+            "rule_id": "hardcoded-secret",
+            "title": "Hardcoded API key detected",
+            "description": "An API key or secret appears to be hardcoded in source code.",
+            "severity": "critical",
+            "confidence": "HIGH",
+            "file_path": "demo_app/config.py",
+            "line_number": 7,
+            "end_line_number": 7,
+            "code_snippet": "API_KEY = \"sk_live_51H7x8J2K9LmN3oP4qR5sT6uV7wX8yZ9\"",
+            "cwe_id": "CWE-798",
+            "owasp_category": "A07:2021 - Identification and Authentication Failures",
+            "remediation": "Move secrets to environment variables or a secure vault. Use django-environ or similar."
+        },
+        {
+            "source": "ast",
+            "rule_id": "sql-injection",
+            "title": "SQL Injection via string formatting",
+            "description": "SQL query built via string formatting with user input.",
+            "severity": "high",
+            "confidence": "HIGH",
+            "file_path": "demo_app/reports.py",
+            "line_number": 34,
+            "end_line_number": 34,
+            "code_snippet": "cursor.execute(f\"SELECT * FROM reports WHERE id = {report_id}\")",
+            "cwe_id": "CWE-89",
+            "owasp_category": "A03:2021 - Injection",
+            "remediation": "Use parameterized queries: cursor.execute('SELECT * FROM reports WHERE id = %s', [report_id])"
+        },
+        {
+            "source": "ast",
+            "rule_id": "command-injection",
+            "title": "Command injection in os.system",
+            "description": "User input passed directly to os.system() without validation.",
+            "severity": "critical",
+            "confidence": "HIGH",
+            "file_path": "demo_app/tools.py",
+            "line_number": 12,
+            "end_line_number": 12,
+            "code_snippet": "os.system(f\"ping -c 4 {user_host}\")",
+            "cwe_id": "CWE-78",
+            "owasp_category": "A03:2021 - Injection",
+            "remediation": "Use subprocess.run() with list arguments and validate/sanitize input."
+        },
+        {
+            "source": "ast",
+            "rule_id": "weak-crypto",
+            "title": "Use of deprecated crypto algorithm (DES)",
+            "description": "DES is cryptographically weak and should not be used.",
+            "severity": "medium",
+            "confidence": "HIGH",
+            "file_path": "demo_app/crypto.py",
+            "line_number": 8,
+            "end_line_number": 8,
+            "code_snippet": "cipher = DES.new(key, DES.MODE_ECB)",
+            "cwe_id": "CWE-327",
+            "owasp_category": "A02:2021 - Cryptographic Failures",
+            "remediation": "Use AES with GCM mode or ChaCha20-Poly1305 instead."
+        },
+        {
+            "source": "ast",
+            "rule_id": "unsafe-deserialization",
+            "title": "Unsafe deserialization with pickle",
+            "description": "Pickle can execute arbitrary code during deserialization. Use JSON instead.",
+            "severity": "high",
+            "confidence": "MEDIUM",
+            "file_path": "demo_app/cache.py",
+            "line_number": 15,
+            "end_line_number": 15,
+            "code_snippet": "data = pickle.loads(user_supplied_data)",
+            "cwe_id": "CWE-502",
+            "owasp_category": "A08:2021 - Software and Data Integrity Failures",
+            "remediation": "Use json.loads() or a safe serialization format. Never unpickle untrusted data."
+        }
+    ]
+
+    # Create finding objects
+    finding_objs = [
+        Finding(
+            project=project,
+            source=f["source"],
+            rule_id=f["rule_id"],
+            title=f["title"][:500],
+            description=f["description"],
+            severity=f["severity"],
+            confidence=f["confidence"],
+            file_path=f["file_path"],
+            line_number=f["line_number"],
+            end_line_number=f["end_line_number"],
+            code_snippet=f["code_snippet"][:4000],
+            cwe_id=f["cwe_id"],
+            owasp_category=f["owasp_category"],
+            remediation=f["remediation"],
+        )
+        for f in demo_findings
+    ]
+
+    Finding.objects.bulk_create(finding_objs)
+
+    project.files_scanned = 8
+    project.status = "completed"
+    project.error_message = ""
+    project.duration_seconds = round(time.monotonic() - start, 2)
+    project.completed_at = timezone.now()
+    project.save(update_fields=[
+        "status", "error_message", "files_scanned", "duration_seconds", "completed_at"
+    ])

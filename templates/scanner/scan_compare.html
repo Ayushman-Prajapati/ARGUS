@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load argus_tags %}
+{% block title %}Compare Scans · {{ project.name }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Header -->
+        <div class="argus-panel mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <div>
+                    <h2 class="fw-bold mb-1">{{ project.name }}</h2>
+                    <div class="text-muted small">
+                        <span class="fw-semibold">{{ project.get_source_type_display }}</span>
+                        {% if project.source_reference %} &middot; {{ project.source_reference }}{% endif %}
+                    </div>
+                </div>
+                <span class="scan-status-badge scan-status-{{ project.status }}">{{ project.get_status_display }}</span>
+            </div>
+        </div>
+
+        <!-- Comparison Overview -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="argus-panel text-center h-100">
+                    <div class="text-muted small mb-1">Previous Scan</div>
+                    <div class="fw-bold fs-2 mb-1">
+                        <span class="scan-status-badge scan-status-{{ previous_scan.status }}">{{ previous_scan.get_status_display }}</span>
+                    </div>
+                    <div class="text-muted small">
+                        {{ previous_scan.created_at|date:"M d, Y H:i" }}
+                        {% if previous_scan.duration_seconds %} &middot; {{ previous_scan.duration_seconds|format_duration }}{% endif %}
+                    </div>
+                    <div class="mt-3">
+                        <div class="font-monospace fs-1 fw-bold {% if previous_scan.risk_score|add:0 >= 70 %}text-danger{% elif previous_scan.risk_score|add:0 >= 40 %}text-warning{% else %}text-success{% endif %}">
+                            {{ previous_scan.risk_score }}
+                        </div>
+                        <div class="text-muted small">Risk Score</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="argus-panel text-center h-100">
+                    <div class="text-muted small mb-1">Current Scan</div>
+                    <div class="fw-bold fs-2 mb-1">
+                        <span class="scan-status-badge scan-status-{{ project.status }}">{{ project.get_status_display }}</span>
+                    </div>
+                    <div class="text-muted small">
+                        {{ project.created_at|date:"M d, Y H:i" }}
+                        {% if project.duration_seconds %} &middot; {{ project.duration_seconds|format_duration }}{% endif %}
+                    </div>
+                    <div class="mt-3">
+                        <div class="font-monospace fs-1 fw-bold {% if project.risk_score|add:0 >= 70 %}text-danger{% elif project.risk_score|add:0 >= 40 %}text-warning{% else %}text-success{% endif %}">
+                            {{ project.risk_score }}
+                        </div>
+                        <div class="text-muted small">Risk Score</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Score Diff -->
+        <div class="argus-panel mb-4">
+            <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
+                <h5 class="fw-semibold mb-0">Risk Score Change</h5>
+            </div>
+            <div class="p-3">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <div class="font-monospace fs-2 fw-bold
+                            {% if risk_diff > 0 %}text-danger
+                            {% elif risk_diff < 0 %}text-success
+                            {% else %}text-muted{% endif %}">
+                            {% if risk_diff > 0 %}+{% endif %}{{ risk_diff }}
+                        </div>
+                        <div class="text-muted small">Points</div>
+                    </div>
+                    <div class="col ms-3">
+                        {% if risk_diff > 0 %}
+                        <div class="alert alert-danger py-2 mb-0">
+                            <i class="bi bi-arrow-up-right me-1"></i>
+                            Risk increased by {{ risk_diff }} points since last scan.
+                        </div>
+                        {% elif risk_diff < 0 %}
+                        <div class="alert alert-success py-2 mb-0">
+                            <i class="bi bi-arrow-down-right me-1"></i>
+                            Risk decreased by {{ risk_diff|abs_value }} points since last scan.
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info py-2 mb-0">
+                            <i class="bi bi-dash me-1"></i>
+                            Risk score unchanged since last scan.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Severity Comparison -->
+        <div class="argus-panel mb-4">
+            <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
+                <h5 class="fw-semibold mb-0">Findings by Severity</h5>
+            </div>
+            <div class="p-3">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr style="color: var(--argus-text-muted); font-size:0.8rem; text-transform:uppercase;">
+                                <th>Severity</th>
+                                <th class="text-center">Previous</th>
+                                <th class="text-center">Current</th>
+                                <th class="text-center">Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sev, data in severity_comparison.items %}
+                            <tr>
+                                <td>
+                                    <span class="badge severity-badge badge-{{ sev }}">{{ sev|upper }}</span>
+                                </td>
+                                <td class="text-center font-monospace">{{ data.previous }}</td>
+                                <td class="text-center font-monospace">{{ data.current }}</td>
+                                <td class="text-center">
+                                    {% if data.diff > 0 %}
+                                    <span class="text-danger font-monospace">+{{ data.diff }}</span>
+                                    {% elif data.diff < 0 %}
+                                    <span class="text-success font-monospace">{{ data.diff }}</span>
+                                    {% else %}
+                                    <span class="text-muted font-monospace">0</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Engine Comparison -->
+        <div class="argus-panel mb-4">
+            <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
+                <h5 class="fw-semibold mb-0">Findings by Engine</h5>
+            </div>
+            <div class="p-3">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr style="color: var(--argus-text-muted); font-size:0.8rem; text-transform:uppercase;">
+                                <th>Engine</th>
+                                <th class="text-center">Previous</th>
+                                <th class="text-center">Current</th>
+                                <th class="text-center">Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for src, data in source_comparison.items %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-{{ src }}">{{ src|title }}</span>
+                                </td>
+                                <td class="text-center font-monospace">{{ data.previous }}</td>
+                                <td class="text-center font-monospace">{{ data.current }}</td>
+                                <td class="text-center">
+                                    {% if data.diff > 0 %}
+                                    <span class="text-danger font-monospace">+{{ data.diff }}</span>
+                                    {% elif data.diff < 0 %}
+                                    <span class="text-success font-monospace">{{ data.diff }}</span>
+                                    {% else %}
+                                    <span class="text-muted font-monospace">0</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-2 justify-content-center">
+            <a href="{% url 'scanner:scan_detail' project.id %}" class="btn btn-argus-primary">
+                <i class="bi bi-graph-up me-1"></i> View Current Scan
+            </a>
+            <a href="{% url 'scanner:scan_detail' previous_scan.id %}" class="btn btn-argus-neon">
+                <i class="bi bi-clock-history me-1"></i> View Previous Scan
+            </a>
+            <a href="{% url 'scanner:scan_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-list-check me-1"></i> All Scans
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

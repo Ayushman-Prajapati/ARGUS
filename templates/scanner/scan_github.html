@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+{% load argus_tags %}
 {% block title %}Scan GitHub Repository{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-6">
@@ -16,10 +18,28 @@
                 </div>
                 {% include "scanner/_scan_options.html" %}
                 <button type="submit" class="btn btn-argus w-100">
-                    <i class="bi bi-play-fill"></i> Clone &amp; Scan
+                    <i class="bi bi-play-fill"></i> Clone & Scan
                 </button>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form[method="post"]');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            if (window.ArgusToast) {
+                window.ArgusToast.info('Cloning repository and starting scan...', {
+                    title: 'Scan Started',
+                    duration: 3000
+                });
+            }
+        });
+    }
+});
+</script>
 {% endblock %}
