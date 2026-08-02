@@ -29,7 +29,7 @@
             <!-- Scan console overlay for simulation -->
             <div id="scan-console" class="scan-console-overlay">
                 <div class="console-header">
-                    <span><i class="bi bi-terminal me-1 text-success"></i> ARGUS SIMULATOR</span>
+                    <span><i class="bi bi-terminal me-1" style="color: var(--argus-success);"></i> ARGUS SIMULATOR</span>
                     <span id="scan-status-text">STATUS: ACTIVE_MONITOR</span>
                 </div>
                 <div class="console-body">
@@ -38,10 +38,10 @@
                         <!-- Filled by animations.js during demo -->
                     </div>
                     
-                    <div id="sim-alert" class="sim-alert-box" style="border-color: var(--neon-pink); box-shadow: 0 4px 20px rgba(244, 63, 94, 0.3);">
-                        <i class="bi bi-exclamation-triangle-fill text-danger fs-5 animate-pulse"></i>
+                    <div id="sim-alert" class="sim-alert-box" style="border-color: var(--neon-pink); box-shadow: 0 4px 20px rgba(224, 71, 42, 0.3);">
+                        <i class="bi bi-exclamation-triangle-fill fs-5 animate-pulse" style="color: var(--argus-critical);"></i>
                         <div>
-                            <div class="fw-bold text-white" style="font-size:0.75rem;">EMAIL LEAK DETECTED</div>
+                            <div class="fw-bold" style="font-size:0.75rem; color: #ece3c6;">EMAIL LEAK DETECTED</div>
                             <div class="text-muted" style="font-size:0.65rem;">Exposed: guest-user@argus-platform.com | Line: 6</div>
                         </div>
                     </div>
@@ -130,14 +130,14 @@
                     <td class="fw-semibold">{{ scan.name|truncatechars:40 }}</td>
                     <td><span class="text-muted">{{ scan.get_source_type_display }}</span></td>
                     <td>
-                        {% if scan.status == 'completed' %}<span class="badge bg-success">Completed</span>
-                        {% elif scan.status == 'failed' %}<span class="badge bg-danger">Failed</span>
-                        {% elif scan.status == 'running' %}<span class="badge bg-warning text-dark">Running</span>
-                        {% else %}<span class="badge bg-secondary">Pending</span>{% endif %}
+                        {% if scan.status == 'completed' %}<span class="scan-status-badge scan-status-completed"><i class="bi bi-check-circle-fill me-1" style="font-size:0.55rem;"></i>Completed</span>
+                        {% elif scan.status == 'failed' %}<span class="scan-status-badge scan-status-failed"><i class="bi bi-x-circle-fill me-1" style="font-size:0.55rem;"></i>Failed</span>
+                        {% elif scan.status == 'running' %}<span class="scan-status-badge scan-status-running"><i class="bi bi-arrow-repeat me-1" style="font-size:0.55rem;"></i>Running</span>
+                        {% else %}<span class="scan-status-badge scan-status-pending"><i class="bi bi-hourglass-split me-1" style="font-size:0.55rem;"></i>Pending</span>{% endif %}
                     </td>
                     <td>{{ scan.total_findings }}</td>
                     <td class="text-muted">{{ scan.created_at|date:"M d, H:i" }}</td>
-                    <td><a href="{% url 'scanner:scan_detail' scan.id %}" class="btn btn-sm btn-outline-light">View</a></td>
+                    <td><a href="{% url 'scanner:scan_detail' scan.id %}" class="btn btn-sm btn-argus-neon py-0 px-2" style="font-size:0.75rem;">View</a></td>
                 </tr>
             {% endfor %}
             </tbody>

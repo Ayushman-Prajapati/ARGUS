@@ -19,7 +19,7 @@
                 {% csrf_token %}
 
                 {% if form.errors %}
-                <div class="alert alert-danger py-2 px-3" style="font-size: 0.82rem; border-radius: 8px; background: rgba(244, 63, 94, 0.15); border-color: var(--neon-pink); color: var(--argus-text);">
+                <div class="alert alert-danger py-2 px-3" style="font-size: 0.82rem; border-radius: 8px; background: rgba(224, 71, 42, 0.15); border-color: var(--neon-pink); color: var(--argus-text);">
                     <i class="bi bi-exclamation-triangle me-1"></i>
                     {% for field in form %}
                         {% for error in field.errors %}

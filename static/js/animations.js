@@ -90,9 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     {value: 1, easing: "easeOutQuad", duration: 300}
                 ],
                 backgroundColor: [
-                    {value: "rgba(59, 130, 246, 0.8)", easing: "easeOutSine", duration: 250}, // Cyan/Blue
-                    {value: "rgba(217, 70, 239, 0.8)", easing: "easeInOutQuad", duration: 400}, // Purple
-                    {value: "rgba(35, 45, 69, 0.4)", easing: "easeOutQuad", duration: 500} // Restore default
+                    {value: "rgba(245, 166, 35, 0.85)", easing: "easeOutSine", duration: 250}, // Amber
+                    {value: "rgba(201, 138, 46, 0.85)", easing: "easeInOutQuad", duration: 400}, // Deep amber
+                    {value: "rgba(42, 42, 31, 0.4)", easing: "easeOutQuad", duration: 500} // Restore default
                 ],
                 delay: anime.stagger(50, {grid: [14, 10], from: index})
             });
@@ -218,8 +218,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                     ],
                                     backgroundColor: [
                                         {value: "var(--neon-green)", duration: 200},
-                                        {value: "var(--neon-cyan)", duration: 300},
-                                        {value: "rgba(35, 45, 69, 0.4)", duration: 400}
+                                        {value: "var(--neon-blue)", duration: 300},
+                                        {value: "rgba(42, 42, 31, 0.4)", duration: 400}
                                     ],
                                     delay: anime.stagger(25, {grid: [14, 10], from: 'center'}),
                                     easing: "easeOutQuad"
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
             simTimeline.add({
                 targets: ".console-code-line:nth-child(4), .console-code-line:nth-child(5)",
                 color: "var(--neon-pink)",
-                backgroundColor: "rgba(244, 63, 94, 0.15)",
+                backgroundColor: "rgba(224, 71, 42, 0.15)",
                 opacity: 1,
                 fontWeight: "700",
                 duration: 300,

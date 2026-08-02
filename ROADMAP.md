@@ -1,6 +1,6 @@
 # ARGUS ROADMAP
 
-Version: 4.0
+Version: 5.0
 
 Status: Active Development
 
@@ -10,22 +10,16 @@ Status: Active Development
 
 ARGUS is a modular Secure Code Review Platform built with Django.
 
-Its long-term objective is to become a production-ready Application Security (AppSec) platform capable of performing:
+Its long-term goal is to become a production-ready Application Security (AppSec) platform capable of helping developers continuously discover, understand, prioritize, and remediate security vulnerabilities.
 
-- Static Application Security Testing (SAST)
-- Secret Detection
-- Dependency Analysis
-- Repository Exploration
-- AI-assisted Security Explanations
-- Professional Security Reporting
+The platform will evolve incrementally while maintaining:
 
-The platform should evolve incrementally while maintaining:
-
+- Security
 - Clean Architecture
 - Modular Design
-- Security
-- Performance
 - Extensibility
+- Performance
+- Maintainability
 - Professional User Experience
 
 ---
@@ -34,85 +28,109 @@ The platform should evolve incrementally while maintaining:
 
 Current Version
 
-**v0.2.0**
+**v0.3.0**
 
 Current Phase
 
-**Phase 3 — Custom AST Engine**
+**Phase 3.5 — Design Refresh**
 
-Current Development Branch
+Current Branch
 
-`feature/ast-engine`
+`feature/design-refresh`
 
 ---
 
 # Development Strategy
 
-Development is feature-driven.
+ARGUS follows feature-driven development.
 
-Each feature:
+Every feature:
 
 - Lives on its own Git feature branch
 - Is independently testable
-- Is fully documented
-- Preserves existing functionality
-- Is completed before another major feature begins
+- Preserves backward compatibility
+- Includes documentation updates
+- Is completed before the next major feature begins
 
-Every phase represents a major milestone.
+Every phase represents a significant milestone.
 
 ---
 
-# Phase 1 — Scan Detail Experience
+# Completed Milestones
+
+## Phase 1 — Scan Detail Experience
 
 Status
 
 ✅ Completed
 
-Deliverables
+Highlights
 
+- Professional Scan Detail page
 - Executive Summary
-- Metadata Grid
-- Findings
-- Filters
 - Risk Score
 - Code Viewer
 - Charts
-- Responsive Layout
-- Accessibility
-- UI Cleanup
+- Responsive Design
+- Accessibility improvements
 
 ---
 
-# Phase 2 — Dashboard & User Isolation
+## Phase 2 — Dashboard & Security
 
 Status
 
 ✅ Completed
 
-Deliverables
+Highlights
 
-- Dashboard
-- Analytics
-- Activity Timeline
+- Security Dashboard
+- Dashboard Analytics
 - Recent Scans
+- Activity Timeline
 - Highest Risk Projects
 - Quick Actions
-- Responsive Design
-- Empty States
 - Authentication
 - User Data Isolation
-- Report Authorization
-
-Security Improvements
-
-- Per-user scan ownership
-- Protected reports
-- User-scoped dashboards
-- Broken Access Control mitigation
+- Protected Reports
 
 ---
 
-# Phase 3 — Custom AST Engine
+## Phase 3 — Modular AST Engine
+
+Status
+
+✅ Completed
+
+Highlights
+
+Architecture
+
+- Modular AST Engine
+- Rule Registry
+- Base Rule
+- Rule Discovery
+- Finding Normalization
+
+Implemented Rules
+
+- Dangerous Functions
+- Command Injection
+- SQL Injection
+- Unsafe Deserialization
+- Hardcoded Secrets
+- Weak Cryptography
+
+Additional Work
+
+- Unit Tests
+- Documentation
+- Cleanup
+- Performance Improvements
+
+---
+
+# Phase 3.5 — Design Refresh
 
 Status
 
@@ -120,106 +138,23 @@ Status
 
 Objective
 
-Build ARGUS's own modular static analysis framework.
+Modernize the visual identity of ARGUS while preserving the existing architecture.
+
+Goals
+
+- Midnight Slate design system
+- Design tokens
+- Typography improvements
+- Enterprise color palette
+- Component consistency
+- Accessibility improvements
+- Responsive refinement
+
+This phase introduces no backend architecture changes.
 
 ---
 
-## Sprint 1 — Engine Architecture
-
-- AST Engine
-- Rule Registry
-- Base Rule
-- Rule Discovery
-- Finding Generator
-- Engine Integration
-
----
-
-## Sprint 2 — Dangerous Functions
-
-Detect
-
-- eval()
-- exec()
-- compile()
-- input() misuse
-- globals()
-- locals()
-
----
-
-## Sprint 3 — Command Injection
-
-Detect
-
-- os.system()
-- os.popen()
-- subprocess.run(shell=True)
-- subprocess.Popen(shell=True)
-- subprocess.call(shell=True)
-
----
-
-## Sprint 4 — SQL Injection
-
-Detect
-
-- f-strings
-- string concatenation
-- .format()
-- %-formatting
-- execute() misuse
-
----
-
-## Sprint 5 — Unsafe Deserialization
-
-Detect
-
-- pickle.loads()
-- marshal.loads()
-- yaml.load()
-- dill.loads()
-
----
-
-## Sprint 6 — Secret Detection
-
-Detect
-
-- Hardcoded Passwords
-- API Keys
-- JWT Secrets
-- AWS Keys
-- GitHub Tokens
-- Environment Secrets
-
----
-
-## Sprint 7 — Weak Cryptography
-
-Detect
-
-- MD5
-- SHA1
-- DES
-- ECB Mode
-- Weak Random
-- Predictable Tokens
-
----
-
-## Sprint 8 — Optimization
-
-- Performance
-- Caching
-- Parallel Rule Execution
-- Documentation
-- Test Suite
-
----
-
-# Phase 4 — Secret Scanner
+# Phase 4 — Dedicated Secret Scanner
 
 Status
 
@@ -228,10 +163,11 @@ Status
 Features
 
 - Entropy Analysis
-- Regex Engine
-- Custom Rules
-- Ignore Lists
-- User-defined Patterns
+- Regex Detection
+- Ignore Rules
+- Custom Patterns
+- File Type Support
+- Secret Classification
 
 ---
 
@@ -244,8 +180,8 @@ Status
 Support
 
 - requirements.txt
-- poetry.lock
 - Pipfile.lock
+- poetry.lock
 - package.json
 - Cargo.toml
 - composer.json
@@ -256,7 +192,7 @@ Future
 - CVE Database
 - CVSS
 - License Analysis
-- Upgrade Suggestions
+- Upgrade Recommendations
 
 ---
 
@@ -268,13 +204,13 @@ Status
 
 Features
 
-- Folder Tree
+- Repository Tree
 - File Preview
 - Syntax Highlighting
-- Breadcrumbs
 - Search
+- Breadcrumb Navigation
 - Jump to Finding
-- File Metadata
+- Repository Metadata
 
 ---
 
@@ -287,12 +223,11 @@ Status
 Features
 
 - Vulnerability Explanation
-- Attack Scenario
-- Remediation
-- Secure Code Example
-- CWE Explanation
-- OWASP Explanation
-- AI Risk Prioritization
+- Attack Scenarios
+- Secure Code Suggestions
+- CWE Guidance
+- OWASP Guidance
+- Risk Prioritization
 
 ---
 
@@ -302,7 +237,7 @@ Status
 
 📅 Planned
 
-Exports
+Export Formats
 
 - PDF
 - HTML
@@ -310,10 +245,10 @@ Exports
 - JSON
 - CSV
 
-Include
+Reporting
 
 - Executive Summary
-- Risk Score
+- Risk Metrics
 - Findings
 - Charts
 - CWE Mapping
@@ -337,7 +272,7 @@ Technology
 Features
 
 - Scan Queue
-- Progress Tracking
+- Live Progress
 - Retry
 - Cancellation
 - Worker Monitoring
@@ -363,8 +298,8 @@ Features
 - Authentication
 - Filtering
 - Pagination
-- Swagger
 - OpenAPI
+- Swagger UI
 
 ---
 
@@ -393,21 +328,17 @@ Status
 
 📅 Planned
 
-Technology
+Infrastructure
 
 - Docker
 - Docker Compose
 - PostgreSQL
 - Gunicorn
 - Nginx
-
-Infrastructure
-
-- Environment Variables
-- Logging
 - GitHub Actions
 - CI/CD
 - Monitoring
+- Structured Logging
 
 ---
 
@@ -434,16 +365,16 @@ CI/CD
 
 ---
 
-# Long-Term Goal
+# Long-Term Vision
 
-ARGUS should become a complete Application Security platform capable of helping developers discover, understand, prioritize, and remediate security vulnerabilities throughout the software development lifecycle.
+ARGUS should become a modern Application Security platform that enables developers and security teams to continuously improve software security throughout the software development lifecycle.
 
 The project should always prioritize:
 
 - Security
 - Accuracy
-- Performance
 - Scalability
+- Performance
 - Developer Experience
 - Maintainability
 
@@ -451,7 +382,7 @@ The project should always prioritize:
 
 # Definition of Done
 
-A sprint is complete only when:
+A phase is complete only when:
 
 - ✅ Django starts successfully
 - ✅ No Python errors
@@ -460,6 +391,6 @@ A sprint is complete only when:
 - ✅ No CSS regressions
 - ✅ Existing functionality preserved
 - ✅ Tests pass
-- ✅ Feature committed
-- ✅ Merged into `main`
+- ✅ Feature merged into `main`
 - ✅ Documentation updated
+- ✅ Version tag created

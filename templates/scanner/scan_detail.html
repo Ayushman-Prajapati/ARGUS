@@ -213,8 +213,8 @@
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                 <div>
                     <span class="badge severity-badge badge-{{ f.severity }}">{{ f.get_severity_display|upper }}</span>
-                    <span class="badge bg-secondary severity-badge">{{ f.get_source_display }}</span>
-                    {% if f.cwe_id %}<span class="badge bg-dark severity-badge">{{ f.cwe_id }}</span>{% endif %}
+                    <span class="badge badge-{{ f.source }} severity-badge">{{ f.get_source_display }}</span>
+                    {% if f.cwe_id %}<span class="badge badge-cwe severity-badge">{{ f.cwe_id }}</span>{% endif %}
                     <div class="fw-semibold mt-2">{{ f.title }}</div>
                     <div class="text-muted small font-monospace finding-filepath">{{ f.file_path }}:{{ f.line_number }}</div>
                 </div>
@@ -253,7 +253,7 @@
                 </details>
             {% endif %}
             {% if f.remediation %}
-                <div class="mt-2 small"><i class="bi bi-wrench-adjustable text-primary"></i> <strong>Remediation:</strong> {{ f.remediation|truncatechars:300 }}</div>
+                <div class="mt-2 small"><i class="bi bi-wrench-adjustable" style="color: var(--argus-accent);"></i> <strong>Remediation:</strong> {{ f.remediation|truncatechars:300 }}</div>
             {% endif %}
         </div>
     {% empty %}
@@ -291,15 +291,15 @@ if (Object.keys(severityCounts).length > 0) {
             labels: Object.keys(severityCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
             datasets: [{
                 data: Object.values(severityCounts),
-                backgroundColor: ['#ef4444', '#f97316', '#06b6d4', '#6b7280', '#94a3b8'],
+                backgroundColor: ['#e0472a', '#f5a623', '#c98a2e', '#8a7a4a', '#4a4630'],
                 borderRadius: 6,
             }]
         },
         options: {
             plugins: { legend: { display: false } },
             scales: {
-                x: { ticks: { color: '#8b96ad' }, grid: { display: false } },
-                y: { ticks: { color: '#8b96ad', precision: 0 }, grid: { color: '#232d45' } }
+                x: { ticks: { color: '#8a7a4a' }, grid: { display: false } },
+                y: { ticks: { color: '#8a7a4a', precision: 0 }, grid: { color: '#2a2a1f' } }
             }
         }
     });
@@ -312,11 +312,20 @@ if (Object.keys(sourceCounts).length > 0) {
             labels: Object.keys(sourceCounts).map(s => s.charAt(0).toUpperCase() + s.slice(1)),
             datasets: [{
                 data: Object.values(sourceCounts),
-                backgroundColor: ['#4c6ef5', '#37b24d', '#f59f00', '#adb5bd'],
+                backgroundColor: Object.keys(sourceCounts).map(k => ({
+                    bandit: '#F5A623',
+                    semgrep: '#C98A2E',
+                    safety: '#7A9B5C',
+                    'pip-audit': '#6B7280',
+                    ast: '#8C6B3E'
+                }[k.toLowerCase()] || '#4A4630')),
+                borderColor: '#17170f',
+                borderWidth: 2,
+                hoverOffset: 10
             }]
         },
         options: {
-            plugins: { legend: { position: 'bottom', labels: { color: '#8b96ad' } } }
+            plugins: { legend: { position: 'bottom', labels: { color: '#8a7a4a' } } }
         }
     });
 }

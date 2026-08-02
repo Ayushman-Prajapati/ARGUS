@@ -36,29 +36,29 @@ from .chart_generator import risk_gauge_chart, severity_bar_chart, source_pie_ch
 SEVERITY_ORDER = ["critical", "high", "medium", "low", "info"]
 
 SEVERITY_COLOR_HEX = {
-    "critical": colors.HexColor("#dc3545"),
-    "high": colors.HexColor("#fd7e14"),
-    "medium": colors.HexColor("#0dcaf0"),
-    "low": colors.HexColor("#6c757d"),
-    "info": colors.HexColor("#adb5bd"),
+    "critical": colors.HexColor("#e0472a"),
+    "high": colors.HexColor("#f5a623"),
+    "medium": colors.HexColor("#c98a2e"),
+    "low": colors.HexColor("#8a7a4a"),
+    "info": colors.HexColor("#4a4630"),
 }
 
-BRAND_NAVY = colors.HexColor("#0b1f3a")
-BRAND_ACCENT = colors.HexColor("#2563eb")
+BRAND_DARK = colors.HexColor("#0c0c0a")
+BRAND_ACCENT = colors.HexColor("#f5a623")
 
 
 def _styles():
     ss = getSampleStyleSheet()
     ss.add(ParagraphStyle(
-        name="ArgusTitle", fontSize=26, leading=30, textColor=BRAND_NAVY,
+        name="ArgusTitle", fontSize=26, leading=30, textColor=BRAND_DARK,
         fontName="Helvetica-Bold", spaceAfter=6,
     ))
     ss.add(ParagraphStyle(
-        name="ArgusSubtitle", fontSize=13, leading=16, textColor=colors.HexColor("#495057"),
+        name="ArgusSubtitle", fontSize=13, leading=16, textColor=colors.HexColor("#8a7a4a"),
         fontName="Helvetica", spaceAfter=20,
     ))
     ss.add(ParagraphStyle(
-        name="ArgusH2", fontSize=15, leading=18, textColor=BRAND_NAVY,
+        name="ArgusH2", fontSize=15, leading=18, textColor=BRAND_DARK,
         fontName="Helvetica-Bold", spaceBefore=18, spaceAfter=8,
     ))
     ss.add(ParagraphStyle(
@@ -66,11 +66,11 @@ def _styles():
         fontName="Helvetica-Bold", spaceBefore=10, spaceAfter=4,
     ))
     ss.add(ParagraphStyle(
-        name="ArgusBody", fontSize=9.5, leading=13.5, textColor=colors.HexColor("#212529"),
+        name="ArgusBody", fontSize=9.5, leading=13.5, textColor=colors.HexColor("#ece3c6"),
     ))
     ss.add(ParagraphStyle(
         name="ArgusMono", fontName="Courier", fontSize=8, leading=10.5,
-        backColor=colors.HexColor("#f1f3f5"), textColor=colors.HexColor("#212529"),
+        backColor=colors.HexColor("#17170f"), textColor=colors.HexColor("#ece3c6"),
         borderPadding=6,
     ))
     ss.add(ParagraphStyle(
@@ -82,7 +82,7 @@ def _styles():
 def _cover_page(story, project, styles):
     story.append(Spacer(1, 1.2 * inch))
     story.append(Paragraph("ARGUS", ParagraphStyle(
-        name="Logo", fontSize=42, fontName="Helvetica-Bold", textColor=BRAND_NAVY,
+        name="Logo", fontSize=42, fontName="Helvetica-Bold", textColor=BRAND_DARK,
         alignment=TA_CENTER,
     )))
     story.append(Paragraph("SECURE CODE REVIEW PLATFORM", ParagraphStyle(
@@ -92,7 +92,7 @@ def _cover_page(story, project, styles):
     story.append(Spacer(1, 0.6 * inch))
     story.append(Paragraph("Security Scan Report", styles["ArgusTitle"]))
     story.append(Paragraph(project.name, ParagraphStyle(
-        name="ProjName", fontSize=16, textColor=colors.HexColor("#212529"),
+        name="ProjName", fontSize=16, textColor=colors.HexColor("#12100a"),
         fontName="Helvetica-Bold", spaceAfter=4,
     )))
     story.append(Paragraph(
@@ -100,7 +100,7 @@ def _cover_page(story, project, styles):
         f"Generated: {timezone.now():%B %d, %Y at %H:%M UTC}",
         styles["ArgusSubtitle"],
     ))
-    story.append(HRFlowable(width="100%", color=colors.HexColor("#dee2e6"), thickness=1))
+    story.append(HRFlowable(width="100%", color=colors.HexColor("#2a2a1f"), thickness=1))
     story.append(PageBreak())
 
 
@@ -150,12 +150,12 @@ def _executive_summary(story, project, styles):
 
     sev_table = Table(table_data, colWidths=[3 * inch, 1.5 * inch])
     style_cmds = [
-        ("BACKGROUND", (0, 0), (-1, 0), BRAND_NAVY),
+        ("BACKGROUND", (0, 0), (-1, 0), BRAND_DARK),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ("FONTSIZE", (0, 0), (-1, -1), 9.5),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#dee2e6")),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f8f9fa")]),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#2a2a1f")),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#17170f")]),
         ("TOPPADDING", (0, 0), (-1, -1), 6),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
     ]
@@ -193,12 +193,12 @@ def _top_findings_table(story, project, styles):
 
     t = Table(table_data, colWidths=[0.75 * inch, 2.5 * inch, 1.75 * inch, 0.5 * inch, 0.9 * inch], repeatRows=1)
     style_cmds = [
-        ("BACKGROUND", (0, 0), (-1, 0), BRAND_NAVY),
+        ("BACKGROUND", (0, 0), (-1, 0), BRAND_DARK),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ("FONTSIZE", (0, 0), (-1, -1), 8),
-        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#dee2e6")),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f8f9fa")]),
+        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#2a2a1f")),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#17170f")]),
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ("TOPPADDING", (0, 0), (-1, -1), 5),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
@@ -257,14 +257,14 @@ def _technical_appendix(story, project, styles):
             if f.remediation:
                 story.append(Paragraph(f"<b>Remediation:</b> {f.remediation[:500]}", styles["ArgusBody"]))
             story.append(Spacer(1, 8))
-        story.append(HRFlowable(width="100%", color=colors.HexColor("#dee2e6"), thickness=0.5))
+        story.append(HRFlowable(width="100%", color=colors.HexColor("#2a2a1f"), thickness=0.5))
         story.append(Spacer(1, 8))
 
 
 def _footer(canvas, doc):
     canvas.saveState()
     canvas.setFont("Helvetica", 8)
-    canvas.setFillColor(colors.HexColor("#868e96"))
+    canvas.setFillColor(colors.HexColor("#8a7a4a"))
     canvas.drawString(0.75 * inch, 0.5 * inch, "ARGUS Secure Code Review Platform")
     canvas.drawRightString(letter[0] - 0.75 * inch, 0.5 * inch, f"Page {doc.page}")
     canvas.restoreState()

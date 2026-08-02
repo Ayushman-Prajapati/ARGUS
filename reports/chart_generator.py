@@ -16,17 +16,19 @@ import matplotlib.pyplot as plt  # noqa: E402
 from django.conf import settings  # noqa: E402
 
 SEVERITY_COLORS = {
-    "critical": "#dc3545",
-    "high": "#fd7e14",
-    "medium": "#0dcaf0",
-    "low": "#6c757d",
-    "info": "#e9ecef",
+    "critical": "#e0472a",
+    "high": "#f5a623",
+    "medium": "#c98a2e",
+    "low": "#8a7a4a",
+    "info": "#4a4630",
 }
 
 SOURCE_COLORS = {
-    "bandit": "#4c6ef5",
-    "semgrep": "#37b24d",
-    "ast": "#f59f00",
+    "bandit": "#F5A623",
+    "semgrep": "#C98A2E",
+    "safety": "#7A9B5C",
+    "pip-audit": "#6B7280",
+    "ast": "#8C6B3E",
 }
 
 
@@ -64,7 +66,7 @@ def source_pie_chart(source_counts: dict) -> Path:
         source_counts = {"none": 1}
     labels = [k.capitalize() for k in source_counts.keys()]
     values = list(source_counts.values())
-    colors = [SOURCE_COLORS.get(k, "#adb5bd") for k in source_counts.keys()]
+    colors = [SOURCE_COLORS.get(k, "#4A4630") for k in source_counts.keys()]
 
     fig, ax = plt.subplots(figsize=(4.5, 3.2), dpi=150)
     ax.pie(values, labels=labels, colors=colors, autopct="%1.0f%%", startangle=90,
@@ -80,11 +82,11 @@ def source_pie_chart(source_counts: dict) -> Path:
 
 def risk_gauge_chart(risk_score: int) -> Path:
     fig, ax = plt.subplots(figsize=(4.5, 2.6), dpi=150, subplot_kw={"aspect": "equal"})
-    color = "#dc3545" if risk_score >= 70 else "#fd7e14" if risk_score >= 40 else "#37b24d"
+    color = "#e0472a" if risk_score >= 70 else "#f5a623" if risk_score >= 40 else "#7a9b5c"
 
     ax.pie(
         [risk_score, 100 - risk_score],
-        colors=[color, "#e9ecef"],
+        colors=[color, "#2a2a1f"],
         startangle=90,
         counterclock=False,
         wedgeprops={"width": 0.35},

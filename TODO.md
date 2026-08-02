@@ -1,4 +1,4 @@
-# ARGUS - CURRENT SPRINT
+# ARGUS — CURRENT SPRINT
 
 Status
 
@@ -6,42 +6,43 @@ Status
 
 Current Version
 
-v0.2.0
+**v0.3.0**
 
 Current Phase
 
-Phase 3 — Custom AST Engine
+**Phase 3.5 — Design Refresh**
 
 Current Branch
 
-feature/ast-engine
+`feature/design-refresh`
 
 ---
 
 # Sprint Goal
 
-Build the foundation of the ARGUS AST Engine.
+Establish the **Midnight Slate** design system that will define ARGUS's visual identity.
 
-This sprint focuses ONLY on the AST engine architecture.
+This sprint focuses **only** on the global design system.
 
 Objectives
 
-- Design a modular AST analysis framework.
-- Build an extensible rule execution system.
-- Integrate AST findings with the existing Finding model.
-- Preserve compatibility with Bandit and Semgrep.
+- Create reusable design tokens
+- Establish the new color palette
+- Improve typography
+- Standardize spacing
+- Standardize borders
+- Standardize shadows
+- Preserve all existing functionality
 
-No UI redesigns.
+No backend changes.
 
-No CSS changes.
+No database changes.
 
-No JavaScript changes.
-
-No dashboard improvements.
+No scanner changes.
 
 No authentication changes.
 
-No report redesign.
+No architecture changes.
 
 ---
 
@@ -52,165 +53,152 @@ One sprint at a time.
 Each completed sprint must be
 
 - Implemented
-- Tested
 - Reviewed
+- Tested
 - Committed
 - Verified
-
-before beginning the next sprint.
 
 One prompt = One sprint = One commit.
 
 ---
 
-# Sprint 1 — AST Engine Architecture
+# Sprint 1 — Design System Foundation
 
 Status
 
 ⬜ Pending
 
-Requirements
+Objectives
 
-Create the AST engine foundation.
+- CSS Design Tokens
+- Midnight Slate Color Palette
+- Typography
+- Border Radius
+- Shadows
+- Focus States
+- Transition Tokens
 
-Implement
+Primary Files
 
-- AST Parser
-- Engine Entry Point
-- Rule Registry
-- Base Rule
-- Finding Generator
-- Rule Loader
+- static/css/custom.css
 
-Architecture should support adding future rules without modifying the engine.
+Optional
 
-Files (expected)
-
-scanner/scanners/ast_engine/
+- templates/base.html (fonts only)
 
 ---
 
-# Sprint 2 — Dangerous Function Detection
+# Sprint 2 — Navigation
 
 Status
 
 ⬜ Pending
 
-Detect
+Objectives
 
-- eval()
-- exec()
-- compile()
-- globals()
-- locals()
-
-Each finding should include
-
-- Severity
-- Confidence
-- CWE
-- OWASP
-- Evidence
-- Remediation
+- Navbar
+- Sidebar
+- Active Navigation
+- Hover States
 
 ---
 
-# Sprint 3 — Command Injection
+# Sprint 3 — Core Components
 
 Status
 
 ⬜ Pending
 
-Detect
+Objectives
 
-- os.system()
-- os.popen()
-- subprocess.run(shell=True)
-- subprocess.Popen(shell=True)
-- subprocess.call(shell=True)
+- Cards
+- Buttons
+- Badges
+- Alerts
+- Progress Bars
 
 ---
 
-# Sprint 4 — SQL Injection
+# Sprint 4 — Forms & Tables
 
 Status
 
 ⬜ Pending
 
-Detect insecure SQL execution
+Objectives
 
-Examples
-
-- execute(f"...")
-- execute("%s" % ...)
-- execute("..." + user_input)
-- .format()
+- Inputs
+- Selects
+- Textareas
+- Tables
+- Pagination
+- Filters
 
 ---
 
-# Sprint 5 — Unsafe Deserialization
+# Sprint 5 — Dashboard Polish
 
 Status
 
 ⬜ Pending
 
-Detect
+Objectives
 
-- pickle.loads()
-- yaml.load()
-- marshal.loads()
-- dill.loads()
+- Dashboard Cards
+- Analytics
+- Charts
+- Quick Actions
+- Activity Timeline
+
+No layout redesign.
 
 ---
 
-# Sprint 6 — Secret Detection
+# Sprint 6 — Scan Detail Polish
 
 Status
 
 ⬜ Pending
 
-Detect
+Objectives
 
-- Hardcoded Passwords
-- AWS Keys
-- GitHub Tokens
-- JWT Secrets
-- API Keys
-- Private Keys
+- Findings
+- Code Viewer
+- Severity Badges
+- Metadata
+- Executive Summary
 
 ---
 
-# Sprint 7 — Weak Cryptography
+# Sprint 7 — Reports
 
 Status
 
 ⬜ Pending
 
-Detect
+Objectives
 
-- MD5
-- SHA1
-- DES
-- ECB Mode
-- Weak Random
-- Predictable Tokens
+- Report Layout
+- Typography
+- Tables
+- Charts
+- PDF Styling
 
 ---
 
-# Sprint 8 — Optimization & Testing
+# Sprint 8 — Accessibility & Final Polish
 
 Status
 
 ⬜ Pending
 
-Requirements
+Objectives
 
-- Improve performance
-- Reduce duplicate traversals
-- Optimize rule execution
-- Documentation
-- Unit Tests
-- Integration Tests
+- Keyboard Navigation
+- Contrast Improvements
+- Responsive Review
+- Animation Cleanup
+- Cross-browser Validation
 
 ---
 
@@ -218,13 +206,13 @@ Requirements
 
 Do NOT modify
 
-- Dashboard
-- Scan Detail UI
-- Homepage
-- CSS
-- JavaScript
+- AST Engine
+- Bandit Integration
+- Semgrep Integration
+- Safety Integration
+- pip-audit Integration
+- Scanner Services
 - Authentication
-- Reports
 - REST API
 - Docker
 - Repository Explorer
@@ -234,7 +222,7 @@ Unless explicitly requested.
 
 ---
 
-# Testing Checklist
+# Verification Checklist
 
 Every completed sprint must satisfy
 
@@ -244,19 +232,21 @@ Every completed sprint must satisfy
 
 ☐ Existing scans still work
 
-☐ Existing reports still generate
+☐ Existing reports still work
 
-☐ Existing dashboard remains functional
+☐ Existing dashboard functionality preserved
 
-☐ Bandit integration still works
+☐ Responsive layout maintained
 
-☐ Semgrep integration still works
+☐ Charts continue rendering
 
-☐ AST findings integrate correctly
+☐ Accessibility preserved
 
-☐ No performance regressions
+☐ No backend regressions
 
-☐ Code follows PEP 8
+☐ No CSS regressions
+
+☐ Design tokens reused
 
 ---
 
@@ -266,25 +256,23 @@ One sprint = One commit
 
 Examples
 
-feat(ast): create engine architecture
+style(ui): establish Midnight Slate design tokens
 
-feat(ast): implement rule registry
+style(ui): refresh navigation
 
-feat(ast): detect dangerous functions
+style(ui): modernize core components
 
-feat(ast): detect command injection
+style(ui): improve forms and tables
 
-feat(ast): detect SQL injection
+style(ui): polish dashboard
 
-feat(ast): detect unsafe deserialization
+style(ui): refine scan detail
 
-feat(ast): implement secret detection
+style(ui): refresh reports
 
-feat(ast): implement weak crypto detection
+style(ui): finalize design system
 
-feat(ast): optimize engine
-
-Never combine multiple unrelated sprints into a single commit.
+Never combine multiple unrelated sprints into one commit.
 
 ---
 
@@ -300,10 +288,10 @@ Before editing
 After editing
 
 1. Verify Django starts successfully.
-2. Verify existing scans still work.
-3. Verify Bandit integration.
-4. Verify Semgrep integration.
-5. Verify AST engine integration.
+2. Verify existing functionality.
+3. Verify responsive layout.
+4. Verify accessibility.
+5. Verify no backend regressions.
 6. Stop.
 
 Never automatically continue to the next sprint.
