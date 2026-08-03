@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from . import services
@@ -15,13 +16,33 @@ from .models import Finding, ScanProject
 
 @login_required
 def home(request):
+    return render(request, "scanner/home.html", _home_context(request))
+
+
+def _home_context(request, demo=False):
+    """Build the homepage context.
+
+    The homepage carries the static demo timeline so the "Run Demo Scan"
+    experience is fully client-side and never navigates away. ``demo=True``
+    also signals the client to auto-start the demo on load (used by the
+    Scan History demo buttons). No database records are created for a demo.
+    """
+    from . import demo_service
+
     recent_scans = ScanProject.objects.filter(user=request.user)[:8]
     stats = {
         "total_scans": ScanProject.objects.filter(user=request.user).count(),
         "total_findings": Finding.objects.filter(project__user=request.user).count(),
         "critical_findings": Finding.objects.filter(project__user=request.user, severity="critical").count(),
     }
-    return render(request, "scanner/home.html", {"recent_scans": recent_scans, "stats": stats})
+    demo_payload = demo_service.demo_data()
+    ctx = {
+        "recent_scans": recent_scans,
+        "stats": stats,
+        "demo_mode": demo,
+        "demo_data_json": json.dumps(demo_payload),
+    }
+    return ctx
 
 
 def _run_and_redirect(request, project: ScanProject):
@@ -541,45 +562,13 @@ def scan_compare(request, project_id):
 @login_required
 @require_http_methods(["POST"])
 def demo_scan(request):
-    """Create and run a demo scan with predefined findings."""
-    from django.conf import settings
-    import tempfile
-    from pathlib import Path
+    """Start an isolated, read-only demo scan on the homepage.
 
-    project = ScanProject.objects.create(
-        user=request.user,
-        name="ARGUS Demo Project",
-        source_type="paste",
-        source_reference="demo scan",
-        run_bandit=True,
-        run_semgrep=True,
-        run_ast_checks=True,
-    )
-
-    # Create a temporary directory for the demo
-    demo_dir = Path(settings.ARGUS_UPLOAD_DIR) / str(project.id)
-    demo_dir.mkdir(parents=True, exist_ok=True)
-
-    # Create a few demo Python files to scan
-    demo_files = {
-        "utils.py": "import subprocess\n\ndef run_command(user_input):\n    result = subprocess.run(user_input, shell=True, capture_output=True)\n    return result.stdout",
-        "auth.py": "import hashlib\n\ndef hash_password(password):\n    return hashlib.md5(password.encode()).hexdigest()",
-        "views.py": "from django.contrib.auth.models import User\n\ndef get_user(username):\n    return User.objects.raw(f\"SELECT * FROM users WHERE name = '{username}'\")",
-        "config.py": "API_KEY = \"sk_live_51H7x8J2K9LmN3oP4qR5sT6uV7wX8yZ9\"",
-    }
-
-    for filename, content in demo_files.items():
-        (demo_dir / filename).write_text(content)
-
-    project.scan_path = str(demo_dir)
-    project.save(update_fields=["scan_path"])
-
-    # Run demo scan in background
-    thread = threading.Thread(target=services.run_demo_scan, args=(project,))
-    thread.daemon = True
-    thread.start()
-
-    return redirect("scanner:scan_progress", project_id=project.id)
+    The user stays on "/". The homepage is re-rendered in demo mode and the
+    whole experience is driven client-side from static demo data. No Project /
+    Scan / Finding / Report is created and no database writes occur.
+    """
+    return render(request, "scanner/home.html", _home_context(request, demo=True))
 
 
 @login_required

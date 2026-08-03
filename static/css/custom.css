@@ -1885,3 +1885,60 @@ button:focus-visible,
     color: #12100a;
 }
 
+/* ==========================================================================
+   Homepage Demo: Live Code Viewer + Terminal
+   ========================================================================== */
+.demo-code-panel {
+    background: var(--argus-bg-code);
+    border: 1px solid var(--argus-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.demo-code-body {
+    padding: 0.85rem 1rem;
+    max-height: 220px;
+    overflow: auto;
+}
+
+.demo-code-body .code-viewer-pre {
+    font-size: 0.78rem;
+    line-height: 1.75;
+}
+
+/* Individual code line in the demo viewer */
+.demo-code-line {
+    display: inline;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Brief flash when a line is first detected */
+.demo-code-line.demo-flash {
+    animation: argusDemoFlash 0.6s ease-out;
+}
+
+@keyframes argusDemoFlash {
+    0%   { box-shadow: 0 0 0 3px var(--sev-color); background-color: var(--sev-color); color: #12100a; }
+    100% { box-shadow: 0 0 0 3px transparent; }
+}
+
+/* Persistent highlight after detection (background fill set inline by JS) */
+.demo-code-line.demo-line-highlight {
+    box-shadow: 0 0 0 2px var(--sev-color);
+    border-radius: 3px;
+}
+
+/* Terminal */
+.demo-terminal {
+    background: var(--argus-bg-code);
+    border: 1px solid var(--argus-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.demo-terminal .console-body {
+    min-height: 150px;
+    max-height: 190px;
+    overflow: auto;
+    color: var(--argus-success);
+}

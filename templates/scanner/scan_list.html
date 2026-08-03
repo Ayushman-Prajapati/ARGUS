@@ -5,9 +5,12 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold mb-0">Scan History</h3>
     <div class="d-flex gap-2">
-        <a href="{% url 'scanner:demo_scan' %}" class="btn btn-argus-neon btn-sm">
-            <i class="bi bi-play-circle me-1"></i> Demo Scan
-        </a>
+        <form method="post" action="{% url 'scanner:demo_scan' %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-argus-neon btn-sm">
+                <i class="bi bi-play-circle me-1"></i> Demo Scan
+            </button>
+        </form>
         <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus">
             <i class="bi bi-plus-lg"></i> New Scan
         </a>
@@ -90,9 +93,12 @@
     <h4 class="fw-semibold mb-2">No scans yet</h4>
     <p class="text-muted mb-4">Start your first security scan to see results here.</p>
     <div class="d-flex gap-2 justify-content-center flex-wrap">
-        <a href="{% url 'scanner:demo_scan' %}" class="btn btn-argus-neon">
-            <i class="bi bi-play-circle me-1"></i> Try Demo Scan
-        </a>
+        <form method="post" action="{% url 'scanner:demo_scan' %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-argus-neon">
+                <i class="bi bi-play-circle me-1"></i> Try Demo Scan
+            </button>
+        </form>
         <a href="{% url 'scanner:upload_file' %}" class="btn btn-argus-primary">
             <i class="bi bi-plus-lg me-1"></i> New Scan
         </a>
@@ -106,7 +112,7 @@
 // Initialize toasts for scan list actions
 document.addEventListener('DOMContentLoaded', () => {
     // Demo scan button toast
-    const demoBtn = document.querySelector('a[href*="demo_scan"]');
+    const demoBtn = document.querySelector('form[action*="demo_scan"] button');
     if (demoBtn) {
         demoBtn.addEventListener('click', () => {
             if (window.ArgusToast) {

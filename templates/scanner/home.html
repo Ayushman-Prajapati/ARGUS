@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load argus_tags %}
+{% load argus_tags static %}
 {% block title %}Home{% endblock %}
 {% block content %}
 <div class="row align-items-center mb-5 g-5 pt-4">
@@ -12,23 +12,58 @@
             audit-ready PDF reports.
         </p>
         <div class="d-flex flex-wrap gap-3 justify-content-lg-start justify-content-center">
-            <form method="post" action="{% url 'scanner:demo_scan' %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn-argus-primary btn-lg" id="trigger-demo-btn">
-                    <i class="bi bi-play-fill me-1"></i> Run Demo Scan
-                </button>
-            </form>
+            <button type="button" class="btn-argus-primary btn-lg" id="trigger-demo-btn">
+                <i class="bi bi-play-fill me-1"></i> Run Demo Scan
+            </button>
             <a href="#start-scan-section" class="btn-argus-neon btn-lg text-decoration-none">
                 <i class="bi bi-chevron-down me-1"></i> Start New Scan
             </a>
         </div>
+
+        <!-- Demo stage readout (hidden until demo runs) -->
+        <div id="demo-stage-panel" class="mt-4 text-lg-start text-center" style="display:none;">
+            <div class="d-inline-flex align-items-center gap-2 small mb-2">
+                <span class="spinner-border spinner-border-sm text-warning" id="demo-stage-spinner" role="status" aria-hidden="true"></span>
+                <span class="fw-semibold" id="demo-stage-label">Initializing</span>
+                <span class="text-muted ms-1" id="demo-stage-progress">0%</span>
+            </div>
+            <!-- Demo completion state + single "Run Demo Again" action -->
+            <div id="demo-complete-state" class="d-flex flex-wrap align-items-center gap-3 justify-content-lg-start justify-content-center" style="display:none;">
+                <span class="badge bg-success fs-6 px-3 py-2">
+                    <i class="bi bi-check-circle-fill me-1"></i> Demo Complete
+                </span>
+                <button type="button" class="btn-argus-neon btn-sm" id="demo-run-again-btn">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Run Demo Again
+                </button>
+            </div>
+        </div>
     </div>
-    
-    <!-- Right Stagger Grid Column -->
+
+    <!-- Right Code Viewer Column -->
     <div class="col-lg-6">
-        <div class="grid-visualizer-container cyber-panel">
-            <!-- 14x10 grid dynamically populated by animations.js -->
-            <div id="stagger-grid" class="stagger-grid"></div>
+        <!-- Animated vulnerable-code viewer (replaces the decorative grid) -->
+        <div class="demo-code-panel cyber-panel">
+            <div class="code-viewer-header">
+                <div class="d-flex align-items-center gap-2 min-width-0">
+                    <i class="bi bi-file-earmark-code"></i>
+                    <span class="code-viewer-filename text-truncate">demo_app.py</span>
+                    <span class="code-viewer-engine-badge" id="demo-active-engine">Demo</span>
+                </div>
+            </div>
+            <div class="demo-code-body">
+                <pre class="code-viewer-pre"><code id="demo-code-lines"></code></pre>
+            </div>
+        </div>
+
+        <!-- Live terminal feed -->
+        <div class="demo-terminal cyber-panel mt-3">
+            <div class="console-header">
+                <span>ARGUS DEMO TERMINAL</span>
+                <span class="text-warning" id="demo-terminal-status">WAITING</span>
+            </div>
+            <div class="console-body" id="demo-terminal-lines">
+                <!-- Terminal lines injected by home_demo.js -->
+            </div>
         </div>
     </div>
 </div>
@@ -36,25 +71,25 @@
 <div class="row g-3 mb-5">
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value" data-target="{{ stats.total_scans }}">0</div>
+            <div class="stat-value" data-target="{{ stats.total_scans }}" data-demo-target="1">0</div>
             <div class="stat-label">Scans Run</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value" data-target="{{ stats.total_findings }}">0</div>
+            <div class="stat-value" data-target="{{ stats.total_findings }}" data-demo-target="4">0</div>
             <div class="stat-label">Total Findings</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value" data-target="{{ stats.critical_findings }}" style="color:var(--argus-critical)">0</div>
+            <div class="stat-value" data-target="{{ stats.critical_findings }}" data-demo-target="2" style="color:var(--argus-critical)">0</div>
             <div class="stat-label">Critical Issues</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="argus-stat-card">
-            <div class="stat-value" data-target="3" style="color:var(--argus-success)">0</div>
+            <div class="stat-value" data-target="3" data-demo-target="3" style="color:var(--argus-success)">0</div>
             <div class="stat-label">Scan Engines</div>
         </div>
     </div>
@@ -131,35 +166,19 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<script src="{% static 'js/home_demo.js' %}?v=2.0"></script>
 <script>
-// Initialize toasts for home page actions
 document.addEventListener('DOMContentLoaded', () => {
-    // Demo scan form toast
-    const demoForm = document.querySelector('form[action*="demo_scan"]');
-    if (demoForm) {
-        demoForm.addEventListener('submit', (e) => {
-            if (window.ArgusToast) {
-                window.ArgusToast.info('Starting demo scan...', {
-                    title: 'Demo Scan',
-                    duration: 3000
-                });
-            }
-        });
+    // The homepage carries the static demo dataset so the whole demo is
+    // client-side. If the demo_scan view rendered the page in demo mode,
+    // auto-start it on load.
+    const demoConfig = {
+        data: {{ demo_data_json|safe }},
+        autoStart: {{ demo_mode|yesno:"true,false" }}
+    };
+    if (window.HomeDemo) {
+        window.HomeDemo.init(demoConfig);
     }
-
-    // New scan method card toasts
-    const methodCards = document.querySelectorAll('.argus-method-card');
-    methodCards.forEach(card => {
-        card.addEventListener('click', () => {
-            if (window.ArgusToast) {
-                const scanType = card.querySelector('h5')?.textContent || 'New Scan';
-                window.ArgusToast.info(`Opening ${scanType}...`, {
-                    title: scanType,
-                    duration: 2000
-                });
-            }
-        });
-    });
 });
 </script>
 {% endblock %}

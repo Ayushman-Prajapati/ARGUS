@@ -181,59 +181,6 @@
     </div>
 </div>
 
-<!-- Scan History / Timeline -->
-<div class="argus-card mt-4">
-    <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
-        <h5 class="fw-semibold mb-0">Scan History</h5>
-    </div>
-    <div class="p-3">
-        {% with siblings=project.user.projects.all %}
-        {% if siblings|length > 1 %}
-        <div class="timeline">
-            {% for sibling in siblings %}
-            {% if sibling.id != project.id %}
-            <div class="timeline-item">
-                <div class="timeline-marker
-                    {% if sibling.status == 'completed' %}timeline-marker-success
-                    {% elif sibling.status == 'failed' %}timeline-marker-danger
-                    {% elif sibling.status == 'running' %}timeline-marker-info
-                    {% elif sibling.status == 'cancelled' %}timeline-marker-warning
-                    {% else %}timeline-marker-warning{% endif %}">
-                    <i class="bi
-                        {% if sibling.status == 'completed' %}bi-check
-                        {% elif sibling.status == 'failed' %}bi-x
-                        {% elif sibling.status == 'running' %}bi-arrow-repeat
-                        {% elif sibling.status == 'cancelled' %}bi-stop
-                        {% else %}bi-hourglass{% endif %}"></i>
-                </div>
-                <div class="timeline-content">
-                    <div class="timeline-content-header">
-                        <span class="timeline-event">{{ sibling.name }}</span>
-                        <span class="timeline-time">{{ sibling.created_at|date:"M d, Y H:i" }}</span>
-                    </div>
-                    <div class="timeline-desc">
-                        <span class="scan-status-badge scan-status-{{ sibling.status }}">{{ sibling.get_status_display }}</span>
-                        <span class="text-muted">Risk: <strong>{{ sibling.risk_score }}</strong>/100</span>
-                        <span class="text-muted ms-2">Findings: <strong>{{ sibling.total_findings }}</strong></span>
-                        {% if sibling.duration_seconds %}
-                        <span class="text-muted ms-2"><i class="bi bi-clock me-1"></i>{{ sibling.duration_seconds|format_duration }}</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="text-center text-muted py-3">
-            <i class="bi bi-clock-history display-6 mb-2"></i>
-            <p class="mb-0">This is the first scan for this project.</p>
-        </div>
-        {% endif %}
-        {% endwith %}
-    </div>
-</div>
-
 <div class="argus-card">
     <!-- Filter Toolbar -->
     <div class="argus-filter-toolbar mb-4">
