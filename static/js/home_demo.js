@@ -1,61 +1,115 @@
 // ARGUS Homepage Demo Scan Driver
-// Runs the entire demo scan on the homepage, entirely client-side:
-// - Renders a realistic vulnerable Python file in a code viewer.
-// - Streams a live terminal feed as "engines" detect findings.
-// - Highlights each vulnerable line with its severity color as it's detected.
-// - Animates the homepage stat cards on completion and shows "Demo Complete".
-// - "Run Demo Again" resets and replays.
-// No page navigation and no database writes are involved.
+//
+// Fully self-contained client-side demo. Static demo data lives here — no
+// fetch, no page navigation, and no database writes of any kind. Nothing here
+// ever creates a Scan / Project / Finding / Report, and the demo never shows up
+// in Scan History.
+//
+// Behavior:
+// - "Run Demo Scan" shows a temporary code-viewer + terminal overlay on top of
+//   the idle animated grid. The grid keeps animating underneath (laser sweep +
+//   severity pulses) while detections flash the vulnerable lines.
+// - When the demo ends the overlay fades out, the grid returns to its idle
+//   animated state, and the button reverts to "Run Demo Scan".
+// - No "Demo Complete" state, no "Run Demo Again", no report buttons.
 
 (function () {
     'use strict';
 
-    // Mirrors the platform severity colors (see custom.css).
-    const SEVERITY = {
+    // Platform severity colors (see custom.css).
+    const SEVERITY_COLORS = {
         critical: '#e0472a',
         high: '#f5a623',
         medium: '#c98a2e',
         low: '#8a7a4a',
     };
 
-    const LINE_MS = 1000; // ms per terminal line / detection step
+    // The "vulnerable" file shown in the demo code viewer.
+    const DEMO_CODE = [
+        'import sqlite3',
+        'import subprocess',
+        'import pickle',
+        '',
+        'def login(username, password):',
+        '    query = f"SELECT * FROM users WHERE username=\'{username}\'"',
+        '    cursor.execute(query)',
+        '',
+        'def run(command):',
+        '    subprocess.run(command, shell=True)',
+        '',
+        'secret_key = "sk_live_demo_secret"',
+        '',
+        'password = "admin123"',
+        '',
+        'data = pickle.loads(user_input)',
+    ];
+
+    // Detections in the order they are announced. ``step`` is the index into
+    // DEMO_TERMINAL at which the finding is revealed; ``line`` is 1-based and
+    // matches DEMO_CODE.
+    const DEMO_VULNERABILITIES = [
+        {
+            step: 2,
+            line: 10,
+            engine: 'Bandit',
+            severity: 'high',
+            label: 'subprocess.run(command, shell=True)',
+        },
+        {
+            step: 3,
+            line: 7,
+            engine: 'Semgrep',
+            severity: 'critical',
+            label: 'cursor.execute(query)',
+        },
+        {
+            step: 4,
+            line: 12,
+            engine: 'ARGUS AST',
+            severity: 'critical',
+            label: 'secret_key = "sk_live_demo_secret"',
+        },
+        {
+            step: 5,
+            line: 16,
+            engine: 'ARGUS AST',
+            severity: 'high',
+            label: 'pickle.loads(user_input)',
+        },
+    ];
+
+    // Terminal feed, paced 1 line per second. Ends on a plain completion line —
+    // there is no "Demo Complete" state in the UI.
+    const DEMO_TERMINAL = [
+        '[00:01] Loading project...',
+        '[00:02] Parsing AST...',
+        '[00:03] Bandit detected insecure subprocess usage.',
+        '[00:04] Semgrep detected SQL Injection.',
+        '[00:05] ARGUS AST detected Hardcoded Secret.',
+        '[00:06] ARGUS AST detected Unsafe Deserialization.',
+        '[00:07] Aggregating findings...',
+        '[00:08] Scan complete — 4 vulnerabilities found.',
+    ];
+
+    const LINE_MS = 1000;
 
     class HomeDemo {
-        constructor(config) {
-            this.config = config || {};
-            // Static dataset injected from the view (see demo_service.py).
-            this.data = this.config.data || {
-                code: [], vulnerabilities: [], terminal: [], stats: {},
-            };
+        constructor() {
             this.running = false;
-
-            this.elements = {
-                triggerBtn: document.getElementById('trigger-demo-btn'),
-                stagePanel: document.getElementById('demo-stage-panel'),
-                stageLabel: document.getElementById('demo-stage-label'),
-                stageProgress: document.getElementById('demo-stage-progress'),
-                stageSpinner: document.getElementById('demo-stage-spinner'),
-                completeState: document.getElementById('demo-complete-state'),
-                runAgainBtn: document.getElementById('demo-run-again-btn'),
-                codeLines: document.getElementById('demo-code-lines'),
-                activeEngine: document.getElementById('demo-active-engine'),
-                terminalStatus: document.getElementById('demo-terminal-status'),
-                terminalLines: document.getElementById('demo-terminal-lines'),
-            };
-
             this.timers = [];
+            this.overlay = null;
+            this.laser = null;
+            this.sweepAnim = null;
+
+            this.triggerBtn = document.getElementById('trigger-demo-btn');
+            this.container = document.querySelector('.grid-visualizer-container');
+
             this.bind();
         }
 
         bind() {
-            if (this.elements.triggerBtn) {
-                this.elements.triggerBtn.addEventListener('click', () => this.start());
-            }
-            if (this.elements.runAgainBtn) {
-                this.elements.runAgainBtn.addEventListener('click', () => this.start());
-            }
-            if (this.config.autoStart) {
-                this.start();
+            if (this.triggerBtn) {
+                this.triggerBtn.addEventListener('click', () => this.start());
             }
         }
 
@@ -65,59 +119,92 @@
         }
 
         start() {
-            // Reset any in-flight run.
+            if (this.running) return;
             this.clearTimers();
+            this.teardown(); // Remove any leftover overlay/laser from a prior run.
+
+            if (!this.container || !this.triggerBtn) return;
             this.running = true;
-            this.animFrame = null;
 
-            // Reset trigger button + show stage panel, hide completion.
-            if (this.elements.triggerBtn) {
-                this.elements.triggerBtn.disabled = true;
-                this.elements.triggerBtn.innerHTML =
-                    '<span class="spinner-border spinner-border-sm me-1"></span> Scanning...';
-            }
-            if (this.elements.completeState) this.elements.completeState.style.display = 'none';
-            if (this.elements.stagePanel) this.elements.stagePanel.style.display = 'block';
-            if (this.elements.stageSpinner) {
-                this.elements.stageSpinner.className = 'spinner-border spinner-border-sm text-warning';
-            }
+            this.setButtonScanning();
 
-            // Render the code viewer.
+            // Build the overlay (code viewer + terminal) above the grid.
+            this.buildOverlay();
             this.renderCode();
 
-            // Reset terminal.
-            if (this.elements.terminalLines) this.elements.terminalLines.innerHTML = '';
-            if (this.elements.terminalStatus) {
-                this.elements.terminalStatus.textContent = 'RUNNING';
-                this.elements.terminalStatus.className = 'text-warning';
+            // Reset the terminal feed.
+            if (this.terminalLines) this.terminalLines.innerHTML = '';
+            if (this.terminalStatus) {
+                this.terminalStatus.textContent = 'SCANNING';
+                this.terminalStatus.className = 'text-warning';
             }
+            if (this.activeEngine) this.activeEngine.textContent = 'Demo';
 
-            // Play the terminal feed, one line per step.
-            const lines = this.data.terminal || [];
-            lines.forEach((line, index) => {
+            // The grid keeps animating underneath: start a looping laser sweep.
+            this.startLaserSweep();
+
+            // Stream the terminal feed, one line per step.
+            DEMO_TERMINAL.forEach((line, index) => {
                 this.timers.push(setTimeout(() => this.appendTerminal(line), index * LINE_MS));
             });
 
-            // Each detection highlights a vulnerable line right as its
-            // terminal message appears.
-            const vulns = this.data.vulnerabilities || [];
-            // Terminal indices where detections are announced:
-            //  index 2 -> Bandit, 3 -> Semgrep, 4 & 5 -> ARGUS AST.
-            vulns.forEach((vuln, idx) => {
-                const atLine = 3 + idx; // lines 3..6 in terminal correspond
-                this.timers.push(setTimeout(() => this.highlight(vuln), atLine * LINE_MS));
+            // Reveal each detection as its terminal line lands.
+            DEMO_VULNERABILITIES.forEach((vuln) => {
+                this.timers.push(setTimeout(() => this.onDetect(vuln), vuln.step * LINE_MS));
             });
 
-            // Finish after the last terminal line + a short beat.
-            this.timers.push(setTimeout(() => this.finish(), (lines.length + 1) * LINE_MS));
+            // Finish after the feed ends + a short beat.
+            this.timers.push(setTimeout(() => this.finish(), DEMO_TERMINAL.length * LINE_MS + 500));
+        }
+
+        buildOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'demo-scan-overlay';
+            overlay.innerHTML = `
+                <div class="demo-code-panel cyber-panel">
+                    <div class="code-viewer-header">
+                        <div class="d-flex align-items-center gap-2 min-width-0">
+                            <i class="bi bi-file-earmark-code"></i>
+                            <span class="code-viewer-filename text-truncate">demo_app.py</span>
+                            <span class="code-viewer-engine-badge" id="demo-active-engine">Demo</span>
+                        </div>
+                    </div>
+                    <div class="demo-code-body">
+                        <pre class="code-viewer-pre"><code id="demo-code-lines"></code></pre>
+                    </div>
+                </div>
+                <div class="demo-terminal cyber-panel">
+                    <div class="console-header">
+                        <span>ARGUS DEMO TERMINAL</span>
+                        <span id="demo-terminal-status" class="text-warning">SCANNING</span>
+                    </div>
+                    <div class="console-body" id="demo-terminal-lines"></div>
+                </div>
+            `;
+            this.container.appendChild(overlay);
+            this.overlay = overlay;
+
+            this.codeLines = overlay.querySelector('#demo-code-lines');
+            this.terminalLines = overlay.querySelector('#demo-terminal-lines');
+            this.terminalStatus = overlay.querySelector('#demo-terminal-status');
+            this.activeEngine = overlay.querySelector('#demo-active-engine');
+
+            // Slide the overlay in.
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: overlay,
+                    opacity: [0, 1],
+                    translateY: [12, 0],
+                    duration: 350,
+                    easing: 'easeOutQuad',
+                });
+            }
         }
 
         renderCode() {
-            if (!this.elements.codeLines) return;
-            const code = this.data.code || [];
-            // Build line-by-line so each line can be targeted for highlight.
+            if (!this.codeLines) return;
             const frag = document.createDocumentFragment();
-            code.forEach((text, i) => {
+            DEMO_CODE.forEach((text, i) => {
                 const span = document.createElement('span');
                 span.className = 'demo-code-line';
                 span.dataset.line = i + 1; // 1-based
@@ -125,105 +212,157 @@
                 frag.appendChild(span);
                 frag.appendChild(document.createTextNode('\n'));
             });
-            this.elements.codeLines.innerHTML = '';
-            this.elements.codeLines.appendChild(frag);
+            this.codeLines.innerHTML = '';
+            this.codeLines.appendChild(frag);
         }
 
         lineEl(lineNum) {
-            return this.elements.codeLines
-                ? this.elements.codeLines.querySelector(`.demo-code-line[data-line="${lineNum}"]`)
+            return this.codeLines
+                ? this.codeLines.querySelector(`.demo-code-line[data-line="${lineNum}"]`)
                 : null;
         }
 
-        highlight(vuln) {
+        startLaserSweep() {
+            if (typeof anime === 'undefined') return;
+            const laser = document.createElement('div');
+            laser.className = 'laser-sweep';
+            laser.style.zIndex = '2100';
+            this.container.appendChild(laser);
+            this.laser = laser;
+
+            this.sweepAnim = anime({
+                targets: laser,
+                top: ['-5px', '100%'],
+                opacity: [0, 1, 1, 0],
+                easing: 'easeInOutQuad',
+                duration: 2000,
+                loop: true,
+            });
+        }
+
+        onDetect(vuln) {
+            // Flash the matching code line with its severity color.
             const el = this.lineEl(vuln.line);
-            if (!el) return;
-            const color = SEVERITY[vuln.severity] || SEVERITY.medium;
-            // Clear any prior highlight state.
-            el.classList.remove('demo-flash');
-            el.classList.remove('demo-line-highlight');
-            // Force reflow so the flash animation restarts on replay.
-            void el.offsetWidth;
-            el.classList.add('demo-flash');
-            el.style.setProperty('--sev-color', color);
-            // ~20% alpha fill for the persistent highlight (hex + alpha suffix).
-            el.style.backgroundColor = color + '33';
-            el.dataset.severity = vuln.severity;
+            if (el) {
+                const color = SEVERITY_COLORS[vuln.severity] || SEVERITY_COLORS.medium;
+                el.classList.remove('demo-flash', 'demo-line-highlight');
+                void el.offsetWidth; // Force reflow so the flash restarts on replay.
+                el.classList.add('demo-flash');
+                el.style.setProperty('--sev-color', color);
+                el.style.backgroundColor = color + '33';
+                el.dataset.severity = vuln.severity;
 
-            // Move to persistent highlight after the flash is out.
-            this.timers.push(setTimeout(() => {
-                el.classList.remove('demo-flash');
-                el.classList.add('demo-line-highlight');
-            }, 650));
-
-            // Reflect the detecting engine in the viewer header.
-            if (this.elements.activeEngine) {
-                this.elements.activeEngine.textContent = vuln.engine;
+                this.timers.push(setTimeout(() => {
+                    el.classList.remove('demo-flash');
+                    el.classList.add('demo-line-highlight');
+                }, 650));
             }
+
+            // Reflect the detecting engine in the overlay header.
+            if (this.activeEngine) this.activeEngine.textContent = vuln.engine;
+
+            // Pulse the grid underneath with the severity color.
+            this.pulseGrid(SEVERITY_COLORS[vuln.severity] || SEVERITY_COLORS.medium);
         }
 
         appendTerminal(line) {
-            if (!this.elements.terminalLines) return;
+            if (!this.terminalLines) return;
             const div = document.createElement('div');
             div.className = 'console-code-line active';
             div.textContent = line;
-            this.elements.terminalLines.appendChild(div);
-            // Auto-scroll to keep the latest line visible.
-            this.elements.terminalLines.scrollTop = this.elements.terminalLines.scrollHeight;
+            this.terminalLines.appendChild(div);
+            this.terminalLines.scrollTop = this.terminalLines.scrollHeight;
+        }
+
+        pulseGrid(color) {
+            const cells = document.querySelectorAll('.grid-cell');
+            if (!cells.length || typeof anime === 'undefined') return;
+            anime({
+                targets: cells,
+                scale: [
+                    { value: 0.5, easing: 'easeOutSine', duration: 250 },
+                    { value: 1.15, easing: 'easeInOutQuad', duration: 400 },
+                    { value: 1, easing: 'easeOutQuad', duration: 300 },
+                ],
+                backgroundColor: [
+                    { value: color, easing: 'easeOutSine', duration: 250 },
+                    { value: 'rgba(245, 166, 35, 0.5)', easing: 'easeInOutQuad', duration: 400 },
+                    { value: 'rgba(42, 42, 31, 0.45)', easing: 'easeOutQuad', duration: 400 },
+                ],
+                delay: anime.stagger(20, { grid: [14, 10], from: 'center' }),
+                easing: 'easeOutQuad',
+            });
         }
 
         finish() {
             this.running = false;
+            this.clearTimers();
 
-            // Final terminal status.
-            if (this.elements.terminalStatus) {
-                this.elements.terminalStatus.textContent = 'COMPLETE';
-                this.elements.terminalStatus.className = 'text-success';
+            // Stop the laser sweep and fade the overlay out, revealing the idle grid.
+            if (this.sweepAnim) this.sweepAnim.pause();
+            if (this.laser) {
+                this.laser.style.opacity = '0';
+                this.laser.remove();
+                this.laser = null;
+            }
+            if (this.overlay) {
+                const overlay = this.overlay;
+                if (typeof anime !== 'undefined') {
+                    anime({
+                        targets: overlay,
+                        opacity: 0,
+                        translateY: [0, 8],
+                        duration: 400,
+                        easing: 'easeOutQuad',
+                        complete: () => overlay.remove(),
+                    });
+                } else {
+                    overlay.remove();
+                }
+                this.overlay = null;
             }
 
-            // Stage label → Complete, 100%.
-            if (this.elements.stageLabel) this.elements.stageLabel.textContent = 'Complete';
-            if (this.elements.stageProgress) this.elements.stageProgress.textContent = '100%';
-            if (this.elements.stageSpinner) {
-                this.elements.stageSpinner.className = 'bi bi-check-circle-fill text-success fs-5';
-            }
+            // Back to the idle grid.
+            this.pulseGrid(null);
 
             // Restore the trigger button.
-            if (this.elements.triggerBtn) {
-                this.elements.triggerBtn.disabled = false;
-                this.elements.triggerBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i> Run Demo Scan';
-            }
-
-            // Show "Demo Complete" + single "Run Demo Again" action.
-            if (this.elements.completeState) this.elements.completeState.style.display = 'flex';
-
-            // Animate stats to their temporary demo values.
-            this.animateCounters();
+            this.setButtonIdle();
         }
 
-        animateCounters() {
-            const values = document.querySelectorAll('.stat-value');
-            if (typeof anime === 'undefined') return;
-            values.forEach((stat) => {
-                const demoTarget = stat.getAttribute('data-demo-target');
-                if (demoTarget === null) return;
-                const targetVal = parseInt(demoTarget, 10) || 0;
-                const countObj = { value: 0 };
-                anime({
-                    targets: countObj,
-                    value: targetVal,
-                    round: 1,
-                    duration: 1200,
-                    easing: 'easeOutExpo',
-                    update: () => {
-                        stat.textContent = countObj.value;
-                    },
-                });
-            });
+        setButtonScanning() {
+            if (!this.triggerBtn) return;
+            this.triggerBtn.disabled = true;
+            this.triggerBtn.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Scanning...';
+        }
+
+        setButtonIdle() {
+            if (!this.triggerBtn) return;
+            this.triggerBtn.disabled = false;
+            this.triggerBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i> Run Demo Scan';
+        }
+
+        // Remove any leftover overlay / laser from a previous run.
+        teardown() {
+            if (this.sweepAnim) this.sweepAnim.pause();
+            this.sweepAnim = null;
+            if (this.laser) {
+                this.laser.remove();
+                this.laser = null;
+            }
+            if (this.overlay) {
+                this.overlay.remove();
+                this.overlay = null;
+            }
         }
     }
 
     window.HomeDemo = {
-        init: (config) => new HomeDemo(config),
+        init: () => {
+            if (!window.HomeDemo._instance) {
+                window.HomeDemo._instance = new HomeDemo();
+            }
+            return window.HomeDemo._instance;
+        },
     };
 })();

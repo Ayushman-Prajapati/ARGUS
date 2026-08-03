@@ -835,28 +835,7 @@ a { color: var(--argus-accent); }
     transform: scale(1.12);
 }
 
-/* Simulated Scan Console Overlay */
-.scan-console-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(10, 10, 8, 0.95);
-    display: flex;
-    flex-direction: column;
-    padding: 1.25rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-slow);
-    z-index: var(--z-overlay);
-}
-
-.scan-console-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
+/* Homepage demo terminal header */
 .console-header {
     display: flex;
     justify-content: space-between;
@@ -891,6 +870,8 @@ a { color: var(--argus-accent); }
     top: -5px;
     z-index: 5;
     opacity: 0;
+    transition: opacity var(--transition-slow);
+    pointer-events: none;
 }
 
 .console-code-line {
@@ -903,30 +884,6 @@ a { color: var(--argus-accent); }
 .console-code-line.active {
     opacity: 1;
     color: var(--argus-text);
-}
-
-.console-code-line.vuln {
-    opacity: 1;
-    color: var(--argus-danger);
-    background: rgba(224, 71, 42, 0.15);
-    border-left: 2px solid var(--argus-danger);
-    padding-left: 4px;
-}
-
-.sim-alert-box {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    background: var(--argus-bg-elevated);
-    border: 1px solid var(--argus-danger);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: var(--shadow-md);
-    opacity: 0;
-    transform: translateY(10px) scale(0.95);
 }
 
 /* Stat Cards & Counters */
@@ -1886,12 +1843,24 @@ button:focus-visible,
 }
 
 /* ==========================================================================
-   Homepage Demo: Live Code Viewer + Terminal
+   Homepage Demo: temporary scan overlay above the idle animated grid
    ========================================================================== */
-.demo-code-panel {
+
+/* Overlay sits inside the grid container; the grid keeps animating below it. */
+.demo-scan-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
     background: var(--argus-bg-code);
-    border: 1px solid var(--argus-border);
-    border-radius: var(--radius-lg);
+    z-index: var(--z-overlay);
+    overflow: hidden;
+}
+
+.demo-code-panel {
+    flex-shrink: 0;
     overflow: hidden;
 }
 
@@ -1928,17 +1897,16 @@ button:focus-visible,
     border-radius: 3px;
 }
 
-/* Terminal */
+/* Terminal feed below the code viewer */
 .demo-terminal {
-    background: var(--argus-bg-code);
-    border: 1px solid var(--argus-border);
-    border-radius: var(--radius-lg);
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
 .demo-terminal .console-body {
-    min-height: 150px;
-    max-height: 190px;
+    min-height: 96px;
+    max-height: 130px;
     overflow: auto;
     color: var(--argus-success);
 }

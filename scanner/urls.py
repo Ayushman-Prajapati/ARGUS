@@ -15,7 +15,6 @@ urlpatterns = [
     path("scans/<uuid:project_id>/progress/", views.scan_progress, name="scan_progress"),
     path("scans/<uuid:project_id>/progress/status/", views.scan_progress_status, name="scan_progress_status"),
     path("scans/<uuid:project_id>/compare/", views.scan_compare, name="scan_compare"),
-    path("demo/", views.demo_scan, name="demo_scan"),
     path("upload/file/", views.upload_file, name="upload_file"),
     path("upload/zip/", views.upload_zip, name="upload_zip"),
     path("upload/paste/", views.paste_code, name="paste_code"),

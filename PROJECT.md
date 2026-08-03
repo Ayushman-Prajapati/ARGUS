@@ -248,7 +248,7 @@ Objectives
 - Engine-by-engine status
 - Improved scan lifecycle
 - Better re-scan workflow
-- Interactive demo scan
+- Client-side homepage demo (self-contained)
 - User notifications
 - Scan history improvements
 

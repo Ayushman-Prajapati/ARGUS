@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from . import services
@@ -16,33 +15,13 @@ from .models import Finding, ScanProject
 
 @login_required
 def home(request):
-    return render(request, "scanner/home.html", _home_context(request))
-
-
-def _home_context(request, demo=False):
-    """Build the homepage context.
-
-    The homepage carries the static demo timeline so the "Run Demo Scan"
-    experience is fully client-side and never navigates away. ``demo=True``
-    also signals the client to auto-start the demo on load (used by the
-    Scan History demo buttons). No database records are created for a demo.
-    """
-    from . import demo_service
-
     recent_scans = ScanProject.objects.filter(user=request.user)[:8]
     stats = {
         "total_scans": ScanProject.objects.filter(user=request.user).count(),
         "total_findings": Finding.objects.filter(project__user=request.user).count(),
         "critical_findings": Finding.objects.filter(project__user=request.user, severity="critical").count(),
     }
-    demo_payload = demo_service.demo_data()
-    ctx = {
-        "recent_scans": recent_scans,
-        "stats": stats,
-        "demo_mode": demo,
-        "demo_data_json": json.dumps(demo_payload),
-    }
-    return ctx
+    return render(request, "scanner/home.html", {"recent_scans": recent_scans, "stats": stats})
 
 
 def _run_and_redirect(request, project: ScanProject):
@@ -557,18 +536,6 @@ def scan_compare(request, project_id):
         "source_comparison": source_comparison,
     }
     return render(request, "scanner/scan_compare.html", context)
-
-
-@login_required
-@require_http_methods(["POST"])
-def demo_scan(request):
-    """Start an isolated, read-only demo scan on the homepage.
-
-    The user stays on "/". The homepage is re-rendered in demo mode and the
-    whole experience is driven client-side from static demo data. No Project /
-    Scan / Finding / Report is created and no database writes occur.
-    """
-    return render(request, "scanner/home.html", _home_context(request, demo=True))
 
 
 @login_required

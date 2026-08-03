@@ -30,7 +30,7 @@ Objectives
 - Engine-by-engine progress
 - Improved scan lifecycle
 - Better re-scan behavior
-- Interactive demo scan
+- Client-side homepage demo (self-contained)
 - Live scan console
 - User notifications
 - Scan comparison
@@ -146,7 +146,7 @@ Status
 
 Objectives
 
-- Interactive demo scan
+- Client-side homepage demo (self-contained)
 - Simulated engine execution
 - Animated progress
 - Better onboarding
@@ -291,8 +291,6 @@ feat(scan): implement engine progress tracking
 feat(scan): improve scan lifecycle
 
 feat(scan): enhance rescan workflow
-
-feat(scan): redesign demo scan experience
 
 feat(scan): add live scan console
 
