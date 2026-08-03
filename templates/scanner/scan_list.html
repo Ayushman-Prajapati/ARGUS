@@ -39,7 +39,7 @@
 
 <div class="argus-card">
     <div class="p-3 border-bottom" style="border-color: var(--argus-border);">
-        <h6 class="fw-semibold mb-0 text-muted small">Previous Scans</h6>
+        <h6 class="fw-semibold mb-0 text-muted small">All Scans</h6>
     </div>
     <div class="table-responsive">
         <table class="table align-middle mb-0">
@@ -49,7 +49,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for scan in projects|slice:"1:" %}
+            {% for scan in projects %}
                 <tr>
                     <td class="fw-semibold">{{ scan.name|truncatechars:45 }}</td>
                     <td class="text-muted">{{ scan.get_source_type_display }}</td>
@@ -75,7 +75,7 @@
                     </td>
                 </tr>
             {% empty %}
-                <tr><td colspan="8" class="text-center text-muted py-4">No previous scans. <a href="{% url 'scanner:upload_file' %}">Run your first scan</a>.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-4">No scans yet. <a href="{% url 'scanner:upload_file' %}">Run your first scan</a>.</td></tr>
             {% endfor %}
             </tbody>
         </table>

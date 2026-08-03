@@ -1,0 +1,64 @@
+[35mreports/chart_generator.py[m[36m:[m[32m83[m[36m:[mdef ri[1;31msk_[mgauge_chart(ri[1;31msk_[mscore: int) -> Path:
+[35mreports/chart_generator.py[m[36m:[m[32m85[m[36m:[m    color = "#e0472a" if ri[1;31msk_[mscore >= 70 else "#f5a623" if ri[1;31msk_[mscore >= 40 else "#7a9b5c"
+[35mreports/chart_generator.py[m[36m:[m[32m88[m[36m:[m        [ri[1;31msk_[mscore, 100 - ri[1;31msk_[mscore],
+[35mreports/chart_generator.py[m[36m:[m[32m94[m[36m:[m    ax.text(0, 0, f"{ri[1;31msk_[mscore}", ha="center", va="center", fontsize=22, fontweight="bold")
+[35mreports/chart_generator.py[m[36m:[m[32m97[m[36m:[m    out_path = _chart_dir() / f"ri[1;31msk_[m{uuid.uuid4().hex}.png"
+[35mreports/pdf_generator.py[m[36m:[m[32m34[m[36m:[mfrom .chart_generator import ri[1;31msk_[mgauge_chart, severity_bar_chart, source_pie_chart
+[35mreports/pdf_generator.py[m[36m:[m[32m112[m[36m:[m    ri[1;31msk_[mscore = project.ri[1;31msk_[mscore()
+[35mreports/pdf_generator.py[m[36m:[m[32m115[m[36m:[m    ri[1;31msk_[mlabel = "Critical Risk" if ri[1;31msk_[mscore >= 70 else "Elevated Risk" if ri[1;31msk_[mscore >= 40 else \
+[35mreports/pdf_generator.py[m[36m:[m[32m116[m[36m:[m        "Moderate Risk" if ri[1;31msk_[mscore >= 15 else "Low Risk"
+[35mreports/pdf_generator.py[m[36m:[m[32m123[m[36m:[m        f"The overall risk posture is assessed as <b>{ri[1;31msk_[mlabel}</b> "
+[35mreports/pdf_generator.py[m[36m:[m[32m124[m[36m:[m        f"(score {ri[1;31msk_[mscore}/100)."
+[35mreports/pdf_generator.py[m[36m:[m[32m130[m[36m:[m    ri[1;31msk_[mimg_path = ri[1;31msk_[mgauge_chart(ri[1;31msk_[mscore)
+[35mreports/pdf_generator.py[m[36m:[m[32m135[m[36m:[m        [[Image(str(ri[1;31msk_[mimg_path), width=2.3 * inch, height=1.35 * inch),
+[35mscanner/models.py[m[36m:[m[32m74[m[36m:[m    def ri[1;31msk_[mscore(self):
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m14[m[36m:[mdef security_grade(ri[1;31msk_[mscore):
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m16[m[36m:[m    if ri[1;31msk_[mscore >= 90:
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m18[m[36m:[m    elif ri[1;31msk_[mscore >= 70:
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m20[m[36m:[m    elif ri[1;31msk_[mscore >= 50:
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m22[m[36m:[m    elif ri[1;31msk_[mscore >= 30:
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m24[m[36m:[m    elif ri[1;31msk_[mscore >= 15:
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m31[m[36m:[mdef security_grade_color(ri[1;31msk_[mscore):
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m33[m[36m:[m    grade = security_grade(ri[1;31msk_[mscore)
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m45[m[36m:[mdef security_grade_label(ri[1;31msk_[mscore):
+[35mscanner/templatetags/argus_tags.py[m[36m:[m[32m47[m[36m:[m    grade = security_grade(ri[1;31msk_[mscore)
+[35mscanner/views.py[m[36m:[m[32m423[m[36m:[m        "ri[1;31msk_[mscore": project.ri[1;31msk_[mscore(),
+[35mscanner/views.py[m[36m:[m[32m452[m[36m:[m        "top_ri[1;31msk_[mprojects": sorted(projects, key=lambda p: p.ri[1;31msk_[mscore(), reverse=True)[:5],
+[35mscanner/views.py[m[36m:[m[32m498[m[36m:[m    current_risk = project.ri[1;31msk_[mscore()
+[35mscanner/views.py[m[36m:[m[32m499[m[36m:[m    previous_risk = previous_scan.ri[1;31msk_[mscore()
+[35mscanner/views.py[m[36m:[m[32m500[m[36m:[m    ri[1;31msk_[mdiff = current_risk - previous_risk
+[35mscanner/views.py[m[36m:[m[32m532[m[36m:[m        "ri[1;31msk_[mscore": current_risk,
+[35mscanner/views.py[m[36m:[m[32m534[m[36m:[m        "ri[1;31msk_[mdiff": ri[1;31msk_[mdiff,
+[35mstatic/js/home_demo.js[m[36m:[m[32m40[m[36m:[m        'secret_key = "[1;31msk_[mlive_demo_secret"',
+[35mstatic/js/home_demo.js[m[36m:[m[32m70[m[36m:[m            label: 'secret_key = "[1;31msk_[mlive_demo_secret"',
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m64[m[36m:[m                    {% with ri[1;31msk_[mpct=severity_agg.critical|add:severity_agg.high %}
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m65[m[36m:[m                    {% widthratio ri[1;31msk_[mpct total_findings 100 as ri[1;31msk_[mraw %}
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m66[m[36m:[m                    <span class="risk-indicator risk-indicator-{% if ri[1;31msk_[mraw|add:0 >= 70 %}critical{% elif ri[1;31msk_[mraw|add:0 >= 40 %}high{% elif ri[1;31msk_[mraw|add:0 >= 20 %}medium{% else %}low{% endif %}">
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m67[m[36m:[m                        {% if ri[1;31msk_[mraw|add:0 >= 70 %}Critical{% elif ri[1;31msk_[mraw|add:0 >= 40 %}High{% elif ri[1;31msk_[mraw|add:0 >= 20 %}Medium{% else %}Low{% endif %}
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m217[m[36m:[m                            <span class="timeline-stat">{{ p.total_findings }} finding{{ p.total_findings|pluralize }}, score {{ p.ri[1;31msk_[mscore }}</span>
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m330[m[36m:[m                        {% with score=p.ri[1;31msk_[mscore %}
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m377[m[36m:[m        {% if top_ri[1;31msk_[mprojects %}
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m378[m[36m:[m        <span class="text-muted small">Top {{ top_ri[1;31msk_[mprojects|length }}</span>
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m382[m[36m:[m    {% if top_ri[1;31msk_[mprojects %}
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m395[m[36m:[m            {% for p in top_ri[1;31msk_[mprojects %}
+[35mtemplates/scanner/dashboard.html[m[36m:[m[32m417[m[36m:[m                        {% with score=p.ri[1;31msk_[mscore %}
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m34[m[36m:[m                        <div class="font-monospace fs-1 fw-bold {% if previous_scan.ri[1;31msk_[mscore|add:0 >= 70 %}text-danger{% elif previous_scan.ri[1;31msk_[mscore|add:0 >= 40 %}text-warning{% else %}text-success{% endif %}">
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m35[m[36m:[m                            {{ previous_scan.ri[1;31msk_[mscore }}
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m52[m[36m:[m                        <div class="font-monospace fs-1 fw-bold {% if project.ri[1;31msk_[mscore|add:0 >= 70 %}text-danger{% elif project.ri[1;31msk_[mscore|add:0 >= 40 %}text-warning{% else %}text-success{% endif %}">
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m53[m[36m:[m                            {{ project.ri[1;31msk_[mscore }}
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m70[m[36m:[m                            {% if ri[1;31msk_[mdiff > 0 %}text-danger
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m71[m[36m:[m                            {% elif ri[1;31msk_[mdiff < 0 %}text-success
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m73[m[36m:[m                            {% if ri[1;31msk_[mdiff > 0 %}+{% endif %}{{ ri[1;31msk_[mdiff }}
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m78[m[36m:[m                        {% if ri[1;31msk_[mdiff > 0 %}
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m81[m[36m:[m                            Risk increased by {{ ri[1;31msk_[mdiff }} points since last scan.
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m83[m[36m:[m                        {% elif ri[1;31msk_[mdiff < 0 %}
+[35mtemplates/scanner/scan_compare.html[m[36m:[m[32m86[m[36m:[m                            Risk decreased by {{ ri[1;31msk_[mdiff|abs_value }} points since last scan.
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m14[m[36m:[m                <span class="security-grade-badge security-grade-{{ project.ri[1;31msk_[mscore|security_grade }}" title="{{ project.ri[1;31msk_[mscore|security_grade_label }}">{{ project.ri[1;31msk_[mscore|security_grade }}</span>
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m99[m[36m:[m                <div class="risk-gauge risk-gauge-enhanced mx-auto" style="--risk-percent: {{ ri[1;31msk_[mscore }}; border-color: {% if ri[1;31msk_[mscore >= 70 %}var(--argus-critical){% elif ri[1;31msk_[mscore >= 40 %}var(--argus-high){% else %}var(--argus-success){% endif %};">
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m100[m[36m:[m                    <div class="risk-value">{{ ri[1;31msk_[mscore }}</div>
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m105[m[36m:[m                    <span class="risk-level-badge risk-level-{% if ri[1;31msk_[mscore >= 70 %}critical{% elif ri[1;31msk_[mscore >= 40 %}high{% else %}low{% endif %}">
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m106[m[36m:[m                        {% if ri[1;31msk_[mscore >= 70 %}Critical{% elif ri[1;31msk_[mscore >= 40 %}High{% else %}Low{% endif %}
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m112[m[36m:[m                        <div class="risk-progress-bar risk-progress-{% if ri[1;31msk_[mscore >= 70 %}critical{% elif ri[1;31msk_[mscore >= 40 %}high{% else %}low{% endif %}" style="width: {{ ri[1;31msk_[mscore }}%;"></div>
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m122[m[36m:[m                        Overall project risk is <strong>{% if ri[1;31msk_[mscore >= 70 %}Critical{% elif ri[1;31msk_[mscore >= 40 %}High{% else %}Low{% endif %}</strong> based on the current findings.
+[35mtemplates/scanner/scan_detail.html[m[36m:[m[32m127[m[36m:[m                    <span class="risk-grade-label">Security Grade <span class="grade-badge-inline">{{ project.ri[1;31msk_[mscore|security_grade }}</span> <span class="text-muted">· {{ project.ri[1;31msk_[mscore|security_grade_label }}</span></span>
+[35mtemplates/scanner/scan_list.html[m[36m:[m[32m63[m[36m:[m                    <td><span class="font-monospace">{{ scan.ri[1;31msk_[mscore }}</span>/100</td>
